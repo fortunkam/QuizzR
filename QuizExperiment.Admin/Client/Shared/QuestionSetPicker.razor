@@ -1,0 +1,53 @@
+﻿@using QuizExperiment.Models
+@inject HttpClient Http
+
+<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+    <h1>Select the question set to run?</h1>
+    <div class="mb-3">
+        <select class="form-select" @onchange="OnSelectQuestionSet">
+            <option value="">Select a question set</option>
+            @foreach (var qs in _questionSets)
+            {
+                <option value=@qs.Id>@qs.Title</option>
+            }
+        </select>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<QuestionSet> OnQuestionSetSubmit { get; set; }
+
+    private QuestionSetSummary[] _questionSets = new QuestionSetSummary[] { };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync($"quiz/getQuestionSets");
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error getting the list of quizzes! {errorMessage}");
+            return;
+        }
+
+        _questionSets = await response.Content.ReadFromJsonAsync<QuestionSetSummary[]>();
+        return;
+    }
+
+
+    private async Task OnSelectQuestionSet(ChangeEventArgs e)
+    {
+        if (e.Value.ToString() == "") return;
+
+        var response = await Http.GetAsync($"quiz/getQuestionSet?Id={e.Value.ToString()}");
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error generating the new Quiz Client Id! {errorMessage}");
+            return;
+        }
+        var questionSet = await response.Content.ReadFromJsonAsync<QuestionSet>();
+        await OnQuestionSetSubmit.InvokeAsync(questionSet);
+        return;
+    }
+}

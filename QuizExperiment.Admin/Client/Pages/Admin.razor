@@ -1,0 +1,301 @@
+﻿@page "/manage"
+@layout AdminLayout
+@using Microsoft.AspNetCore.SignalR.Client
+@using QuizExperiment.Models
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@implements IAsyncDisposable
+
+<AdminComponent />
+
+<div class="form-group">
+    <label>
+        Quiz Id for Users:
+        <input @bind="clientQuizId" readonly="readonly" />
+    </label>
+</div>
+
+<div class="form-group">
+    <label>
+        Question Set Id:
+        <input @bind="questionSetId" />
+    </label>
+</div>
+
+<div class="form-group">
+    <label>
+        Current State:
+        <input @bind="quizState" readonly="readonly" />
+    </label>
+</div>
+<button @onclick="GenerateClientQuizId" disabled="@(quizState != QuizState.Closed)">Generate Quiz Id</button>
+<hr>
+
+<div class="form-group">
+    <label>
+        Question:
+        <input @bind="currentQuestion" />
+    </label>
+    <label>
+        Correct Answer:
+        <input @bind="correctAnswer" />
+    </label>
+</div>
+<button @onclick="SendTypeAnswerQuestion">Send TypeAnswer Question</button>
+
+<hr>
+
+<div class="form-group">
+    <label>
+        Question:
+        <input @bind="currentQuestion" />
+    </label>
+    <label>
+        Number of Possible Answers:
+        <input @bind="numberOfPossibleAnswers" />
+    </label>
+    <label>
+        Correct Answer:
+        <input @bind="correctAnswer" />
+    </label>
+</div>
+<button @onclick="SendMultiChoiceQuestion">Send MultiChoice Question</button>
+
+
+<hr>
+
+<h3>Users</h3>
+<ul id="users">
+    @foreach (var user in users)
+    {
+        <li>@user.Key (@user.Value)</li>
+    }
+</ul>
+
+
+
+<hr>
+
+<h3>Messages</h3>
+<ul id="messages">
+    @foreach (var message in messages)
+    {
+        <li>@message</li>
+    }
+</ul>
+
+<hr>
+
+<h3>Question Answers</h3>
+<ul id="answers">
+    @foreach (var a in currentAnswers)
+    {
+        <li>@a.Key answered the question with "@a.Value.Answer" in @a.Value.TimeTaken milliseconds</li>
+    }
+</ul>
+
+<hr>
+
+<h3>Leaderboard</h3>
+<table class="table">
+    <th>
+        <td>Name</td>
+        <td>Score</td>
+    </th>
+    @foreach (var a in orderedLeaderboard)
+    {
+        <tr>
+            <td>@users[a.Key]</td>
+            <td>@a.Value</td>
+        </tr>
+    }
+</table>
+
+
+
+
+@code {
+
+    private struct UserAnswer
+    {
+        public string Answer;
+        public double TimeTaken;
+    }
+    private HubConnection hubConnection;
+
+    private string clientQuizId;
+    private string questionSetId = Guid.NewGuid().ToString();
+    private string currentQuestion = "What is the answer to life the universe and everything?";
+    private string correctAnswer = "42";
+
+    private int numberOfPossibleAnswers = 4;
+
+    private Dictionary<string, string> users = new Dictionary<string, string>();
+    private List<string> messages = new List<string>();
+
+    private Dictionary<string,  UserAnswer> currentAnswers = new Dictionary<string, UserAnswer>();
+    private Dictionary<string, int> leaderboard = new Dictionary<string, int>();
+    private Dictionary<string, int> orderedLeaderboard = new Dictionary<string, int>();
+
+    private CancellationTokenSource cts = new CancellationTokenSource();
+
+    private int questionTimeoutSeconds = 60;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
+            .Build();
+
+        hubConnection.On<string, string, string>("UserJoined", (quizId, userName, connectionId) =>
+        {
+            users.Add(connectionId, userName);
+            messages.Add($"{userName} joined with connection id {connectionId})");
+            StateHasChanged();
+        });
+
+        hubConnection.On<string, string>("AdminInfoMessage", (quizId, message) =>
+        {
+            messages.Add(message);
+            StateHasChanged();
+        });
+
+        hubConnection.On<string, string, string, double>("ClientAnswerReceived", async (quizId, clientConnectionId, answer, timeTaken) =>
+            {
+                currentAnswers.Add(clientConnectionId, new UserAnswer { Answer = answer, TimeTaken = timeTaken } );
+                if(currentAnswers.Count >= users.Count)
+                {
+                    messages.Add("All clients have answered");
+                    await CloseQuestion();
+                }
+                StateHasChanged();
+            });
+
+        await hubConnection.StartAsync();
+    }
+
+    protected enum QuizState
+    {
+        Closed,
+        WaitingForUsers,
+        Running,
+        WrapUp
+    };
+
+    private QuizState quizState = QuizState.Closed;
+
+    private async Task GenerateClientQuizId(){
+        leaderboard.Clear();
+        var response = await Http.GetAsync($"quiz/generateClientQuizId?questionSetId={questionSetId}");
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error generating the new Quiz Client Id! {errorMessage}");
+            return;
+        }
+        clientQuizId = await response.Content.ReadAsStringAsync();
+        await hubConnection.SendAsync("RegisterQuizSession", clientQuizId);
+        quizState = QuizState.WaitingForUsers;
+    }
+
+
+    private async Task SendTypeAnswerQuestion()
+    {
+        if(string.IsNullOrWhiteSpace(currentQuestion))
+        {
+            Console.WriteLine("No Question provided");
+            return;
+        }
+        currentAnswers.Clear();
+        quizState = QuizState.Running;
+        await hubConnection.SendAsync("SendQuestion", clientQuizId, currentQuestion, QuestionType.TypeAnswer, new string[]{});
+
+        cts = new CancellationTokenSource();
+
+        using var tmr = new PeriodicTimer(TimeSpan.FromSeconds(questionTimeoutSeconds));
+        await tmr.WaitForNextTickAsync(cts.Token);
+
+        tmr.Dispose();
+
+        messages.Add("Question Timer expired");
+
+        await CloseQuestion();
+        StateHasChanged();
+
+    }
+
+    private async Task SendMultiChoiceQuestion()
+    {
+        if(string.IsNullOrWhiteSpace(currentQuestion))
+        {
+            Console.WriteLine("No Question provided");
+            return;
+        }
+        currentAnswers.Clear();
+
+        var possibleAnswers = Enumerable.Range(0, numberOfPossibleAnswers).Select(r => r.ToString()).ToArray();
+
+        quizState = QuizState.Running;
+        await hubConnection.SendAsync("SendQuestion", clientQuizId, currentQuestion, QuestionType.MultiChoice,possibleAnswers);
+
+        cts = new CancellationTokenSource();
+
+        using var tmr = new PeriodicTimer(TimeSpan.FromSeconds(questionTimeoutSeconds));
+        await tmr.WaitForNextTickAsync(cts.Token);
+
+        tmr.Dispose();
+
+        messages.Add("Question Timer expired");
+
+        await CloseQuestion();
+        StateHasChanged();
+
+    }
+
+
+    private async Task CloseQuestion()
+    {
+        cts.Cancel();
+
+        var questionMaxMs = (double)(questionTimeoutSeconds * 1000);
+
+        var correctAnswers = currentAnswers
+            .Where(r => r.Value.Answer == correctAnswer)
+            .OrderByDescending(r => r.Value.TimeTaken)
+            .Select(r=>new { 
+                UserId = r.Key, 
+                Answer = r.Value.Answer, 
+                Score = (int)(((questionMaxMs - r.Value.TimeTaken) / questionMaxMs) * 1000), 
+                TimeTaken = r.Value.TimeTaken  })
+            .ToArray();
+
+        var incorrectAnswers = currentAnswers
+            .Where(r => r.Value.Answer != correctAnswer)
+            .Select(r=>new { UserId = r.Key, Answer = r.Value.Answer, Score = 0, TimeTaken = r.Value.TimeTaken  })
+            .ToArray();
+
+        var unionAnswers = correctAnswers.Union(incorrectAnswers).ToArray();
+
+        foreach(var c in unionAnswers)
+        {
+            leaderboard[c.UserId] = (leaderboard.ContainsKey(c.UserId) ? leaderboard[c.UserId] : 0) + c.Score;
+        }
+
+        orderedLeaderboard = leaderboard.OrderByDescending(r => r.Value).ToDictionary(k=>k.Key, v=>v.Value);
+
+        foreach (var c in unionAnswers)
+        {
+            await hubConnection.SendAsync("SendAnswerResult", clientQuizId, c.UserId, correctAnswer, leaderboard[c.UserId], (orderedLeaderboard.Keys.ToList().IndexOf(c.UserId) + 1));
+        }
+
+
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

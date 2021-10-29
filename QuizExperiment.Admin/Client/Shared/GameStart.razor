@@ -1,0 +1,53 @@
+﻿@using QuizExperiment.Models
+@inject HttpClient Http
+
+<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+    <h1 class="h1 text-center">Please join the quiz using the following code</h1>
+    <h1 class="display-1">@_clientQuizId</h1>
+    <button class="btn btn-primary btn-lg" @onclick="@(e=> OnGameStarted.InvokeAsync())">Start</button>
+
+    @if (Users.Count > 0)
+    {
+        <h3 class="h3 mt-4">Current Players....</h3>
+        <div class="d-flex flex-wrap mt-4">
+            @foreach (var u in Users)
+            {
+                <div class="card text-white bg-success mb-3 mx-1" style="max-width: 18rem;">
+                    <div class="card-body">
+                    <h5 class="card-title">@u.Value</h5>
+                </div>
+            </div>
+        }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnGameStarted { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnGameRegistered { get; set; }
+
+    [Parameter]
+    public string QuestionSetId { get; set; }
+
+    [Parameter]
+    public Dictionary<string,string> Users { get; set; }
+
+    private string _clientQuizId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync($"quiz/generateClientQuizId?questionSetId={QuestionSetId}");
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error getting the list of quizzes! {errorMessage}");
+            return;
+        }
+        _clientQuizId = await response.Content.ReadAsStringAsync();
+        OnGameRegistered.InvokeAsync(_clientQuizId);
+        return;
+    }
+}

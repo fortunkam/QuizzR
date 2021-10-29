@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace QuizExperiment.Models
 {
-    public class MultiChoiceAnswer : Answer
+    public enum QuestionType
     {
-        public bool IsCorrect { get; set; }
+        TypeAnswer,
+        MultiChoice
     }
 }

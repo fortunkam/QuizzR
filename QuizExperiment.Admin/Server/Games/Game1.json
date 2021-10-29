@@ -1,0 +1,40 @@
+{
+  "id": "054e6758-db4e-4523-9641-4a27582fe79b",
+  "title": "My First Quiz Set",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Suspendisse faucibus interdum posuere lorem ipsum. Ligula ullamcorper malesuada proin libero nunc. Sagittis orci a scelerisque purus semper. Netus et malesuada fames ac turpis egestas. Proin sed libero enim sed faucibus turpis in eu. Diam in arcu cursus euismod quis viverra nibh. Lacus viverra vitae congue eu consequat ac. In eu mi bibendum neque egestas congue. Sit amet luctus venenatis lectus magna fringilla. Elit ut aliquam purus sit amet luctus venenatis. Ullamcorper sit amet risus nullam eget felis eget nunc. Diam sit amet nisl suscipit adipiscing bibendum est ultricies integer. Ultrices tincidunt arcu non sodales neque. Urna molestie at elementum eu facilisis sed odio morbi quis. Natoque penatibus et magnis dis parturient montes. Feugiat nibh sed pulvinar proin gravida.",
+  "questions": [
+    {
+      "title": "QUESTION 1: What is the number?",
+      "type": "SingleAnswerMultiSelect",
+      "imageUrl": "",
+      "timeout": 20,
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
+      "correctAnswers": [ "0" ]
+    },
+    {
+      "title": "QUESTION 2: What is the next number?",
+      "type": "SingleAnswerMultiSelect",
+      "imageUrl": "",
+      "timeout": 20,
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
+      "correctAnswers": [ "2" ]
+    },
+    {
+      "title": "QUESTION 3: Type a Number?",
+      "type": "TypeAnswer",
+      "timeout": 20,
+      "imageUrl": "",
+      "correctAnswers": [ "42" ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+    @if (MyAnswer == CorrectAnswer)
+    {
+        <h1>Good job!</h1>
+        <div class="answer-icon answer-correct">
+            <span class="oi oi-check" title="icon name" aria-hidden="true"></span>
+        </div>
+        
+    }
+    else
+    {
+        <h1>Better luck next time</h1>
+        <div class="answer-icon answer-wrong">
+            <span class="oi oi-x" title="icon name" aria-hidden="true"></span>
+        </div>  
+    }
+    <h2>You are currently in @Position place with a score of @CurrentScore</h2>
+    <h2>Another question is on it's way!</h2>
+</div>
+
+@code {
+    [Parameter]
+    public string MyAnswer { get; set; }
+
+    [Parameter]
+    public string CorrectAnswer { get; set; }
+
+    [Parameter]
+    public int CurrentScore { get; set; }
+
+    [Parameter]
+    public int Position { get; set; }
+}

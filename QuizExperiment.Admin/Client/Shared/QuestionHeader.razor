@@ -1,0 +1,10 @@
+﻿<div class="form-group">
+    <label>
+        Incoming Question:
+        <input @bind="Question" />
+    </label>
+</div>
+@code {
+    [Parameter]
+    public string Question { get; set; }
+}

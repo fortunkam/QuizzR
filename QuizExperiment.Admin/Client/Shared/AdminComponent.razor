@@ -1,0 +1,141 @@
+﻿@using QuizExperiment.Admin.Client.Enums
+@using QuizExperiment.Models
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+
+@if(_state == AdminUserState.PickingGame)
+{
+    <QuestionSetPicker OnQuestionSetSubmit="@OnQuestionSetSelected" />
+}
+
+@if(_state == AdminUserState.WaitingForGameStart)
+{
+    <GameStart Users="@_users" 
+                QuestionSetId="@_questionSet.Id" 
+                OnGameStarted="@OnGameStarted"
+                OnGameRegistered="@OnGameRegistered"/>
+}
+
+@if(_state == AdminUserState.WaitingForAnswers)
+{
+    
+}
+
+
+@code {
+    private AdminUserState _state = AdminUserState.PickingGame;
+
+    private HubConnection _hubConnection;
+
+    private string _clientQuizId;
+
+    private QuestionSet _questionSet = null;
+
+    private Dictionary<string, string> _users = new Dictionary<string, string>();
+
+    private Dictionary<string,  UserAnswer> _userCurrentAnswers = new Dictionary<string, UserAnswer>();
+
+    private Dictionary<string, int> _leaderboard = new Dictionary<string, int>();
+    private Dictionary<string, int> _orderedLeaderboard = new Dictionary<string, int>();
+
+    private CancellationTokenSource _cts = new CancellationTokenSource();
+
+    private int _questionTimeoutSeconds = 60;
+
+    private int _currentQuestionIndex = 0;
+
+    private void OnQuestionSetSelected(QuestionSet questionSet){
+        _questionSet = questionSet;
+        _state = AdminUserState.WaitingForGameStart;
+    }
+
+     private async Task OnGameRegistered(string clientQuizId){
+        _clientQuizId = clientQuizId;
+        await _hubConnection.SendAsync("RegisterQuizSession", clientQuizId);
+    }
+
+    private void OnGameStarted(){
+        _currentQuestionIndex = 0;
+        _userCurrentAnswers.Clear();
+        _state = AdminUserState.WaitingForAnswers;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
+            .Build();
+
+        _hubConnection.On<string, string, string>("UserJoined", (quizId, userName, connectionId) =>
+        {
+            _users.Add(connectionId, userName);
+            StateHasChanged();
+        });
+
+@*        _hubConnection.On<string, string>("AdminInfoMessage", (quizId, message) =>
+        {
+            messages.Add(message);
+            StateHasChanged();
+        });
+*@
+        @*_hubConnection.On<string, string, string, double>("ClientAnswerReceived", async (quizId, clientConnectionId, answer, timeTaken) =>
+        {
+            _userCurrentAnswers.Add(clientConnectionId, new UserAnswer { Answer = answer, TimeTaken = timeTaken } );
+            if(_userCurrentAnswers.Count >= _users.Count)
+            {
+                await CloseQuestion();
+            }
+            StateHasChanged();
+        });*@
+
+        await _hubConnection.StartAsync();
+    }
+
+  @*  private async Task CloseQuestion()
+    {
+        _cts.Cancel();
+
+        var questionMaxMs = (double)(questionTimeoutSeconds * 1000);
+
+        var correctAnswers = currentAnswers
+            .Where(r => r.Value.Answer == correctAnswer)
+            .OrderByDescending(r => r.Value.TimeTaken)
+            .Select(r=>new { 
+                UserId = r.Key, 
+                Answer = r.Value.Answer, 
+                Score = (int)(((questionMaxMs - r.Value.TimeTaken) / questionMaxMs) * 1000), 
+                TimeTaken = r.Value.TimeTaken  })
+            .ToArray();
+
+        var incorrectAnswers = currentAnswers
+            .Where(r => r.Value.Answer != correctAnswer)
+            .Select(r=>new { UserId = r.Key, Answer = r.Value.Answer, Score = 0, TimeTaken = r.Value.TimeTaken  })
+            .ToArray();
+
+        var unionAnswers = correctAnswers.Union(incorrectAnswers).ToArray();
+
+        foreach(var c in unionAnswers)
+        {
+            leaderboard[c.UserId] = (leaderboard.ContainsKey(c.UserId) ? leaderboard[c.UserId] : 0) + c.Score;
+        }
+
+        orderedLeaderboard = leaderboard.OrderByDescending(r => r.Value).ToDictionary(k=>k.Key, v=>v.Value);
+
+        foreach (var c in unionAnswers)
+        {
+            await hubConnection.SendAsync("SendAnswerResult", clientQuizId, c.UserId, correctAnswer, leaderboard[c.UserId], (orderedLeaderboard.Keys.ToList().IndexOf(c.UserId) + 1));
+        }
+
+
+    }*@
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+
+
+}

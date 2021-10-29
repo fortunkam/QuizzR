@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace QuizExperiment.Models
 {
-    public class TypeTheAnswer : Answer
+    public struct UserAnswer
     {
-        public IEnumerable<string> Answers { get; set; }
+        public string Answer;
+        public double TimeTaken;
     }
 }
