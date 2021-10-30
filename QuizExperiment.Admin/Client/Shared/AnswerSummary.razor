@@ -1,7 +1,7 @@
 ﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    @if (MyAnswer == CorrectAnswer)
+    @if (CorrectAnswer.Any(r=>r == MyAnswer))
     {
-        <h1>Good job!</h1>
+        <h1 class="h1 text-center">Good job!</h1>
         <div class="answer-icon answer-correct">
             <span class="oi oi-check" title="icon name" aria-hidden="true"></span>
         </div>
@@ -9,13 +9,21 @@
     }
     else
     {
-        <h1>Better luck next time</h1>
+        <h1 class="h1 text-center">Better luck next time</h1>
         <div class="answer-icon answer-wrong">
             <span class="oi oi-x" title="icon name" aria-hidden="true"></span>
         </div>  
     }
-    <h2>You are currently in @Position place with a score of @CurrentScore</h2>
-    <h2>Another question is on it's way!</h2>
+    @if (!IsLastQuestion)
+    {
+        <h2 class="h2 text-center">You are currently in @Position place with a score of @CurrentScore</h2>
+        <h3 class="h3 text-center">Another question is on it's way!</h3>
+    }
+    else
+    {
+        <h2 class="h2 text-center">That was the last question, let's see how you did!</h2>
+    }
+
 </div>
 
 @code {
@@ -23,7 +31,10 @@
     public string MyAnswer { get; set; }
 
     [Parameter]
-    public string CorrectAnswer { get; set; }
+    public bool IsLastQuestion { get; set; }
+
+    [Parameter]
+    public string[] CorrectAnswer { get; set; }
 
     [Parameter]
     public int CurrentScore { get; set; }

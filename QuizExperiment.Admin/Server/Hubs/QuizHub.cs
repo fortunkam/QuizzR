@@ -34,9 +34,9 @@ namespace QuizExperiment.Admin.Server.Hubs
             await Clients.Groups(clientQuizId).SendAsync("ClientAnswerReceived", clientQuizId, Context.ConnectionId, answer, timeTaken);
         }
 
-        public async Task SendAnswerResult(string clientQuizId, string clientId, string correctAnswer, int currentScore, int position)
+        public async Task SendAnswerResult(string clientQuizId, string clientId, string[] correctAnswer, int currentScore, int position, bool isLastQuestion)
         {
-            await Clients.Client(clientId).SendAsync("AnswerArrived", correctAnswer, currentScore, position);
+            await Clients.Client(clientId).SendAsync("AnswerArrived", correctAnswer, currentScore, position, isLastQuestion);
         }
 
         //public async Task SendUserMessage(string userId, string message)

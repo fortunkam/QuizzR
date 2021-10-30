@@ -1,0 +1,29 @@
+﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+    <h1 class="h1 text-center">Congratulations to our winner, @(Users[Leaderboard.First().Key])..</h1>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var a in Leaderboard)
+        {
+            <tr>
+                <td>@Users[a.Key]</td>
+                <td>@a.Value</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+
+@code {
+    [Parameter]
+    public Dictionary<string,int> Leaderboard { get; set; }
+
+    [Parameter]
+    public Dictionary<string,string> Users { get; set; }
+}

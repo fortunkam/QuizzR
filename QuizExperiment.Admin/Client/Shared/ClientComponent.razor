@@ -20,6 +20,8 @@
     <WaitingForQuestions />
 }
 
+
+
 @if (_userState == ClientUserState.WaitingForAnswer)
 {
 
@@ -35,11 +37,16 @@
     }
 }
 
+@if (_userState == ClientUserState.WaitForAnswerCheck)
+{
+        <WaitingForAnswerCheck />
+}
+
 @if (_userState == ClientUserState.IdleInGame)
 {
     <AnswerSummary MyAnswer="@currentAnswer" CorrectAnswer="@correctAnswer" 
         CurrentScore=@_currentScore
-        Position=@_position/>
+        Position=@_position IsLastQuestion="@_isLastQuestion"/>
 }
 
 
@@ -52,8 +59,9 @@
     private string currentAnswer = "";
     private string[] currentPossibleAnswers = null;
 
-    private string correctAnswer = "";
+    private string[] correctAnswer = new String[] { };
     private bool wasLastAnswerCorrect = false;
+    private bool _isLastQuestion = false;
 
     private int _currentScore;
     private int _position;
@@ -74,19 +82,20 @@
             currentQuestionType = questionType;
             currentPossibleAnswers = possibleAnswers;
             currentAnswer = "";
-            correctAnswer = "";
+            correctAnswer = new String[] { };
             wasLastAnswerCorrect = false;
             _questionStartTime = DateTime.UtcNow;
             _userState = ClientUserState.WaitingForAnswer;
             StateHasChanged();
         });
 
-        hubConnection.On<string, int,int>("AnswerArrived", (answer, currentScore, position) =>
+        hubConnection.On<string[], int,int, bool>("AnswerArrived", (answer, currentScore, position, isLastQuestion) =>
         {
             correctAnswer = answer;
-            wasLastAnswerCorrect = (answer == currentAnswer);
+            wasLastAnswerCorrect = (answer.Any(r=>r == currentAnswer));
             _position = position;
             _currentScore = currentScore;
+            _isLastQuestion = isLastQuestion;
             _userState = ClientUserState.IdleInGame; 
             StateHasChanged();
         });

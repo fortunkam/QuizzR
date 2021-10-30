@@ -29,7 +29,7 @@ namespace QuizExperiment.Models
         public string Title { get; set; }
 
         [JsonPropertyName("type")]
-        public string Type { get; set; }
+        public QuestionType Type { get; set; }
 
         [JsonPropertyName("imageUrl")]
         public string ImageUrl { get; set; }

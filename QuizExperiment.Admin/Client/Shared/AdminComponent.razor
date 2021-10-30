@@ -18,7 +18,25 @@
 
 @if(_state == AdminUserState.WaitingForAnswers)
 {
-    
+    switch(_currentQuestion.Type)
+    {
+        case QuestionType.TypeAnswer:
+            <TypeAnswerQuestionDisplay Question="@_currentQuestion.Title" />
+            break;
+        case QuestionType.MultiChoice:
+            <SingleAnswerMultiSelectQuestionDisplay Question="@_currentQuestion.Title" Options="@_currentQuestion.Options" />
+            break;
+    }
+}
+
+@if(_state == AdminUserState.WaitingForQuestionStart)
+{
+    <QuestionAnswerChart CorrectAnswers="@_currentQuestion.CorrectAnswers" Options="@_currentQuestion.Options" UserAnswers="@_userCurrentAnswers" OnNextQuestion="@OnNextQuestion" QuestionType="@_currentQuestion.Type" />
+}
+
+@if(_state == AdminUserState.ShowingPodium)
+{
+    <Podium Leaderboard="@_orderedLeaderboard"  Users="@_users" />
 }
 
 
@@ -40,24 +58,54 @@
 
     private CancellationTokenSource _cts = new CancellationTokenSource();
 
-    private int _questionTimeoutSeconds = 60;
-
     private int _currentQuestionIndex = 0;
+
+    private Question _currentQuestion = null;
 
     private void OnQuestionSetSelected(QuestionSet questionSet){
         _questionSet = questionSet;
         _state = AdminUserState.WaitingForGameStart;
     }
 
-     private async Task OnGameRegistered(string clientQuizId){
+    private async Task OnGameRegistered(string clientQuizId){
         _clientQuizId = clientQuizId;
         await _hubConnection.SendAsync("RegisterQuizSession", clientQuizId);
     }
 
-    private void OnGameStarted(){
+    private async Task OnGameStarted(){
         _currentQuestionIndex = 0;
+        await SendQuestion();
+    }
+
+    private async Task SendQuestion()
+    {
+        _currentQuestion = _questionSet.Questions[_currentQuestionIndex];
         _userCurrentAnswers.Clear();
         _state = AdminUserState.WaitingForAnswers;
+
+        _cts = new CancellationTokenSource();
+        await _hubConnection.SendAsync("SendQuestion", _clientQuizId, _currentQuestion.Title, _currentQuestion.Type, _currentQuestion.Options);
+
+        using var tmr = new PeriodicTimer(TimeSpan.FromSeconds(_currentQuestion.Timeout));
+        await tmr.WaitForNextTickAsync(_cts.Token);
+
+        tmr.Dispose();
+        await CloseQuestion();
+        StateHasChanged();
+    }
+
+    private async Task OnNextQuestion()
+    {
+        if(_currentQuestionIndex + 1 >= _questionSet.Questions.Length)
+        {
+            //Show the final leaderboard
+            _state = AdminUserState.ShowingPodium;
+        }
+        else
+        {
+            _currentQuestionIndex += 1;
+            await SendQuestion();
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -72,13 +120,7 @@
             StateHasChanged();
         });
 
-@*        _hubConnection.On<string, string>("AdminInfoMessage", (quizId, message) =>
-        {
-            messages.Add(message);
-            StateHasChanged();
-        });
-*@
-        @*_hubConnection.On<string, string, string, double>("ClientAnswerReceived", async (quizId, clientConnectionId, answer, timeTaken) =>
+        _hubConnection.On<string, string, string, double>("ClientAnswerReceived", async (quizId, clientConnectionId, answer, timeTaken) =>
         {
             _userCurrentAnswers.Add(clientConnectionId, new UserAnswer { Answer = answer, TimeTaken = timeTaken } );
             if(_userCurrentAnswers.Count >= _users.Count)
@@ -86,19 +128,19 @@
                 await CloseQuestion();
             }
             StateHasChanged();
-        });*@
+        });
 
         await _hubConnection.StartAsync();
     }
 
-  @*  private async Task CloseQuestion()
+    private async Task CloseQuestion()
     {
         _cts.Cancel();
 
-        var questionMaxMs = (double)(questionTimeoutSeconds * 1000);
+        var questionMaxMs = (double)(_currentQuestion.Timeout * 1000);
 
-        var correctAnswers = currentAnswers
-            .Where(r => r.Value.Answer == correctAnswer)
+        var correctAnswers = _userCurrentAnswers
+            .Where(r => _currentQuestion.CorrectAnswers.Any(c=>r.Value.Answer == c))
             .OrderByDescending(r => r.Value.TimeTaken)
             .Select(r=>new { 
                 UserId = r.Key, 
@@ -107,27 +149,33 @@
                 TimeTaken = r.Value.TimeTaken  })
             .ToArray();
 
-        var incorrectAnswers = currentAnswers
-            .Where(r => r.Value.Answer != correctAnswer)
+        var incorrectAnswers = _userCurrentAnswers
+            .Where(r => !_currentQuestion.CorrectAnswers.Any(c=>r.Value.Answer == c))
             .Select(r=>new { UserId = r.Key, Answer = r.Value.Answer, Score = 0, TimeTaken = r.Value.TimeTaken  })
             .ToArray();
 
+        var noAnswer = _users.Where(r => !_userCurrentAnswers.ContainsKey(r.Key))
+                        .Select(r => new { UserId = r.Key, Answer = "", Score = 0, TimeTaken = 0.0 })
+                        .ToArray();
+
         var unionAnswers = correctAnswers.Union(incorrectAnswers).ToArray();
+        unionAnswers = unionAnswers.Union(noAnswer).ToArray();
 
         foreach(var c in unionAnswers)
         {
-            leaderboard[c.UserId] = (leaderboard.ContainsKey(c.UserId) ? leaderboard[c.UserId] : 0) + c.Score;
+            _leaderboard[c.UserId] = (_leaderboard.ContainsKey(c.UserId) ? _leaderboard[c.UserId] : 0) + c.Score;
         }
 
-        orderedLeaderboard = leaderboard.OrderByDescending(r => r.Value).ToDictionary(k=>k.Key, v=>v.Value);
+        _orderedLeaderboard = _leaderboard.OrderByDescending(r => r.Value).ToDictionary(k=>k.Key, v=>v.Value);
 
         foreach (var c in unionAnswers)
         {
-            await hubConnection.SendAsync("SendAnswerResult", clientQuizId, c.UserId, correctAnswer, leaderboard[c.UserId], (orderedLeaderboard.Keys.ToList().IndexOf(c.UserId) + 1));
+            await _hubConnection.SendAsync("SendAnswerResult", _clientQuizId, c.UserId, _currentQuestion.CorrectAnswers, _leaderboard[c.UserId], (_orderedLeaderboard.Keys.ToList().IndexOf(c.UserId) + 1), (_currentQuestionIndex + 1 >= _questionSet.Questions.Length));
         }
 
+        _state = AdminUserState.WaitingForQuestionStart;
 
-    }*@
+    }
 
     public async ValueTask DisposeAsync()
     {

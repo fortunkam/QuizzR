@@ -5,7 +5,7 @@
         PickingGame,
         WaitingForGameStart,
         WaitingForAnswers,
-        WaitingForShowLeaderboard,
+        ShowingPodium,
         WaitingForQuestionStart,
         Idle
     }
