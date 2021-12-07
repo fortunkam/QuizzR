@@ -2,7 +2,7 @@
 @using Blazorise.Charts
 
 <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1 class="h1 text-center">The correct answer@(CorrectAnswers.Length == 1 ? "s were" : " is") @string.Join(",", CorrectAnswers)</h1>
+    <h1 class="h1 text-center">The correct answer@(CorrectAnswers.Length != 1 ? "s were" : " is") @string.Join(",", CorrectAnswers)</h1>
     
     @if (QuestionType == QuestionType.MultiChoice)
     {

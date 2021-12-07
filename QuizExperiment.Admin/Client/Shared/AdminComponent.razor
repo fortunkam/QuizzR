@@ -31,7 +31,12 @@
 
 @if(_state == AdminUserState.WaitingForQuestionStart)
 {
-    <QuestionAnswerChart CorrectAnswers="@_currentQuestion.CorrectAnswers" Options="@_currentQuestion.Options" UserAnswers="@_userCurrentAnswers" OnNextQuestion="@OnNextQuestion" QuestionType="@_currentQuestion.Type" />
+    <QuestionAnswerChart 
+        CorrectAnswers="@_currentQuestion.CorrectAnswers" 
+        Options="@_currentQuestion.Options" 
+        UserAnswers="@_userCurrentAnswers" 
+        OnNextQuestion="@OnNextQuestion" 
+        QuestionType="@_currentQuestion.Type" />
 }
 
 @if(_state == AdminUserState.ShowingPodium)
