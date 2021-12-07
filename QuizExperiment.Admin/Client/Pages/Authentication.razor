@@ -1,0 +1,11 @@
+﻿@page "/authentication/{action}"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+<RemoteAuthenticatorView Action="@Action" />
+
+@code{
+    [Parameter] public string? Action { get; set; }
+
+    // Guide for setup: https://docs.microsoft.com/en-us/aspnet/core/blazor/security/webassembly/standalone-with-azure-active-directory?view=aspnetcore-6.0
+}
+
+

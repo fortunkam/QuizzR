@@ -1,5 +1,15 @@
 ﻿@page "/manage"
+@attribute [Authorize]
 @layout AdminLayout
+
+<AuthorizeView>
+    <Authorized>
+        @*Hello, @context.User.Identity?.Name!*@
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
 
 <AdminComponent />
 @code {
