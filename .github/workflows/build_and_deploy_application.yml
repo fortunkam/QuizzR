@@ -24,4 +24,10 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish
-      run: dotnet publish --no-build --verbosity normal
+      run: dotnet publish QuizExperiment.Admin/Server/QuizExperiment.Admin.Server.csproj -c Release -o website
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: website
+        path: QuizExperiment.Admin/Server/website/**
+        if-no-files-found: error
