@@ -24,9 +24,35 @@ jobs:
       run: dotnet test --no-build
     - name: Publish
       run: dotnet publish QuizExperiment.Admin/Server/QuizExperiment.Admin.Server.csproj -c Release -o website
-    - name: Upload a Build Artifact
+    - name: Upload a Build Artifact (Website)
       uses: actions/upload-artifact@v2.2.2
       with:
         name: website
         path: website/**
         if-no-files-found: error
+    - name: Upload a Build Artifact (Env)
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: env
+        path: Env/**
+        if-no-files-found: error
+  deploy:
+    needs: [build]
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download a Build Artifact (Website)
+      uses: actions/download-artifact@v2.1.0
+      with:
+        # Artifact name
+        name: website
+        # Destination path
+        path: website
+    - name: Download a Build Artifact (Env)
+      uses: actions/download-artifact@v2.1.0
+      with:
+        # Artifact name
+        name: env
+        # Destination path
+        path: Env
