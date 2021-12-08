@@ -28,5 +28,5 @@ jobs:
       uses: actions/upload-artifact@v2.2.2
       with:
         name: website
-        path: QuizExperiment/website/**
+        path: website/**
         if-no-files-found: error
