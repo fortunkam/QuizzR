@@ -8,7 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddSignalR();
+IWebHostEnvironment environment = builder.Environment;
+
+var signalRServiceBuilder = builder.Services.AddSignalR();
+if(!environment.IsDevelopment())
+{
+    signalRServiceBuilder.AddAzureSignalR();
+}
+
 
 builder.Services.AddResponseCompression(opts =>
 {
@@ -33,19 +40,6 @@ else
 }
 
 app.UseHttpsRedirection();
-
-//app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Admin"), first =>
-//{
-//    first.UseBlazorFrameworkFiles("/Admin");
-//    first.UseStaticFiles();
-
-//    first.UseRouting();
-//    first.UseEndpoints(endpoints =>
-//    {
-//        endpoints.MapControllers();
-//        endpoints.MapFallbackToFile("Admin/{*path:nonfile}", "Admin/index.html");
-//    });
-//});
 
 app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/"), second =>
 {

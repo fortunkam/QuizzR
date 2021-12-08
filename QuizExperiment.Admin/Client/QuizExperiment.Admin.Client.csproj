@@ -7,15 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise" Version="0.9.5.2" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.5.2" />
-    <PackageReference Include="Blazorise.Charts" Version="0.9.5.2" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.5.2" />
+    <PackageReference Include="Blazorise" Version="0.9.4.9" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.4.9" />
+    <PackageReference Include="Blazorise.Charts" Version="0.9.4.9" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.4.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.0" />
     <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.0" />
   </ItemGroup>
+	
+    <ItemGroup>
+	    <TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
+    </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\QuizExperiment.Models\QuizExperiment.Models.csproj" />
