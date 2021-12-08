@@ -12,6 +12,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Env", "Env", "{33E368B8-092B-4F3A-A3DB-C35B044981C8}"
 	ProjectSection(SolutionItems) = preProject
 		Env\main.bicep = Env\main.bicep
+		Env\notes.md = Env\notes.md
+		Env\rbac.bicep = Env\rbac.bicep
 	EndProjectSection
 EndProject
 Global
