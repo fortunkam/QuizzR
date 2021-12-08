@@ -4,14 +4,7 @@ var appInsightsName = '${prefix}-appinsights'
 var appPlanName = '${prefix}-appplan'
 var appName = '${prefix}-webapp'
 var logAnalyticsName = '${prefix}loganalytics'
-var signalRName = '${prefix}loganalytics'
-var app_to_signalr_role_assignment = '${guid(webApplication.identity.principalId, signalRAppServerRoleDefinitionId, resourceGroup().id)}'
-
-var signalRAppServerRoleDefinitionId = '/subscriptions/44e1dac0-0651-4835-8781-ee7b6e6f238f/providers/Microsoft.Authorization/roleDefinitions/420fcaa2-552c-430f-98ca-3264be4806c7'
-
-
-
-
+var signalRName = '${prefix}signalr'
 // Log Analytics workspace
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' = {
