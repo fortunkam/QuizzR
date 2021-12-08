@@ -34,7 +34,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.2
       with:
         name: env
-        path: Env/**
+        path: Env/*.bicep
         if-no-files-found: error
   deploy:
     needs: [build]
@@ -56,3 +56,7 @@ jobs:
         name: env
         # Destination path
         path: Env
+    - name: Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
