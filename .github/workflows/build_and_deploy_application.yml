@@ -72,7 +72,7 @@ jobs:
         inlineScript: | 
           az group create -n ${{ env.RESOURCEGROUP }} --location ${{ env.LOCATION }}
           principalId=$(az deployment group create --template-file ./Env/main.bicep -g ${{ env.RESOURCEGROUP }} --query properties.outputs.webApplicationPrincipalId.value -o tsv)
-          az deployment group create --template-file ./Env/rbac.bicep -g ${{ env.RESOURCEGROUP }} --parameters principalId=$principalId
+          # az deployment group create --template-file ./Env/rbac.bicep -g ${{ env.RESOURCEGROUP }} --parameters principalId=$principalId
     - name: Deploy web app
       id: deploywebapp
       uses: azure/webapps-deploy@v2
