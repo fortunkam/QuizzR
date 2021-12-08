@@ -78,7 +78,7 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.APPNAME }}
-        slot-name: staging
+        slot-name: production
         package: website
 
     - name: az cli logout
