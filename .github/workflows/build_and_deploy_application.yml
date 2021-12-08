@@ -41,6 +41,11 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     
+    env:
+      LOCATION: uksouth
+      RESOURCEGROUP: quiz-time
+      APPNAME: mfquiz-webapp
+    
     steps:
     - name: Download a Build Artifact (Website)
       uses: actions/download-artifact@v2.1.0
@@ -60,3 +65,22 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Azure CLI Action
+      uses: Azure/cli@v1
+      with:
+        # Specify the script here
+        inlineScript: | 
+          az group create -n ${{ env.RESOURCEGROUP }} --location ${{ env.LOCATION }}
+          principalId=$(az deployment group create --template-file .\Env\main.bicep -g ${{ env.RESOURCEGROUP }} --query properties.outputs.webApplicationPrincipalId.value -o tsv)
+          az deployment group create --template-file .\Env\rbac.bicep -g ${{ env.RESOURCEGROUP }} --parameters principalId=$principalId
+    - name: Deploy web app
+      id: deploywebapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.APPNAME }}
+        slot-name: staging
+        package: website
+
+    - name: az cli logout
+      run: az logout
+    
