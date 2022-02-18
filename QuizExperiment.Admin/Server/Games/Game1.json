@@ -6,7 +6,7 @@
     {
       "title": "QUESTION 1: What is the number?",
       "type": 1,
-      "imageUrl": "",
+      "imageUrl": "https://imgur.com/CSxd8Xz",
       "timeout": 20,
       "options": [
         "0",
@@ -19,7 +19,7 @@
     {
       "title": "QUESTION 2: What is the next number?",
       "type": 1,
-      "imageUrl": "",
+      "imageUrl": "https://imgur.com/NkMONh3",
       "timeout": 20,
       "options": [
         "0",
@@ -33,7 +33,7 @@
       "title": "QUESTION 3: Type a Number?",
       "type": 0,
       "timeout": 20,
-      "imageUrl": "",
+      "imageUrl": "https://imgur.com/nnQbC03",
       "correctAnswers": [ "42" ]
     }
   ]

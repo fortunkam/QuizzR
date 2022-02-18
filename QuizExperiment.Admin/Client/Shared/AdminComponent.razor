@@ -24,7 +24,11 @@
             <TypeAnswerQuestionDisplay Question="@_currentQuestion.Title" />
             break;
         case QuestionType.MultiChoice:
-            <SingleAnswerMultiSelectQuestionDisplay Question="@_currentQuestion.Title" Options="@_currentQuestion.Options" />
+            <SingleAnswerMultiSelectQuestionDisplay
+                Question="@_currentQuestion.Title" 
+                Options="@_currentQuestion.Options" 
+                QuestionEndTime="@_currentQuestionEndTime"
+                UserAnswerCount="@_userCurrentAnswers.Count" />
             break;
     }
 }
@@ -67,6 +71,8 @@
 
     private Question _currentQuestion = null;
 
+    private DateTime _currentQuestionEndTime;
+
     private void OnQuestionSetSelected(QuestionSet questionSet){
         _questionSet = questionSet;
         _state = AdminUserState.WaitingForGameStart;
@@ -86,6 +92,7 @@
     {
         _currentQuestion = _questionSet.Questions[_currentQuestionIndex];
         _userCurrentAnswers.Clear();
+        _currentQuestionEndTime = DateTime.Now.AddSeconds(_currentQuestion.Timeout);
         _state = AdminUserState.WaitingForAnswers;
 
         _cts = new CancellationTokenSource();

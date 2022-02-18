@@ -1,14 +1,43 @@
 ﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1 class="display-1 text-center">@Question</h1>
-    <h3 class="h3">Pick an option....</h3>
-
-    <div class="flex-fill quiz-button-container align-items-center">
-        @for(var i =0; i< Options.Length;i++)
-        {
-            var answer = Options[i];
-            <button class="btn btn-quiz btn-quiz-@i" >@answer</button>
-        }
-    </div>  
+    <h1 class="display-4 text-center">@Question</h1>
+    <div class="d-flex flex-row">
+        <div style="padding-top: 200px;">
+            <p class="quiz-answer-count">@UserAnswerCount</p>
+        </div>
+        <img class="img-fluid rounded img-quiz" src="https://dummyimage.com/600x400/000/fff" />
+        <div style="padding-top: 200px;">
+            <CountDownTimer EndDate="@QuestionEndTime"  />
+        </div>
+        
+    </div>
+    <table class="table table-bordered" >
+        <tbody>
+            @{
+                var rows = Options.Chunk(2).ToArray();
+                var counter = 0;
+            
+                foreach(var row in rows)
+                {
+                    <tr>
+                        @foreach(var answer in row)
+                        {
+                            <td class="quiz-table-row">
+                                    <div class="d-flex flex-row">
+                                        <div>
+                                            <button class="btn btn-quiz btn-quiz-@counter" ></button>
+                                        </div>
+                                        <div class="quiz-label h2 text-wrap">
+                                            @answer
+                                        </div>
+                                    </div>
+                            </td>
+                            counter++;
+                        }
+                    </tr>
+                }                    
+            }         
+        </tbody>
+    </table>
 </div>
 
 
@@ -19,5 +48,12 @@
 
     [Parameter]
     public string[] Options { get; set; }
+
+    [Parameter]
+    public DateTime QuestionEndTime { get; set; }
+
+    [Parameter]
+    public int UserAnswerCount { get; set; }
+
 
 }

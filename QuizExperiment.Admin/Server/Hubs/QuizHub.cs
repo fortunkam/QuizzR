@@ -39,10 +39,6 @@ namespace QuizExperiment.Admin.Server.Hubs
             await Clients.Client(clientId).SendAsync("AnswerArrived", correctAnswer, currentScore, position, isLastQuestion);
         }
 
-        //public async Task SendUserMessage(string userId, string message)
-        //{
-        //    await Clients.Client(userId).SendAsync("UserMessage", message);
-        //}
 
 
     }

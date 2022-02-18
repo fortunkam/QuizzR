@@ -1,0 +1,117 @@
+﻿ @inherits LayoutComponentBase
+@* Full credit to https://github.com/ebattulga/TestCountDown for this countdown timer*@
+ <div>
+    <style>
+        canvas { display: block; width: 100vw; height: 100vh; }
+        .progress-ring { position: absolute; width: 100px; height: 100px; }
+        .progress-ring__circle { transition: 0.35s stroke-dashoffset; transform-origin: 50% 50%;transform:rotate(-90deg); }
+        .timer { width: 100px; height: 100px; }
+        @@media only screen and (max-width:500px) {
+            .timer{transform:scale(0.7)}
+        }
+    </style>
+    <canvas id="c" style="position:absolute;">
+    </canvas>
+    <div class="timer">
+         <div style="position:relative;height:100px;">
+            <svg class="progress-ring">
+                <circle class="progress-ring__circle"
+                        stroke="#0b5ed7"
+                        stroke-width="4" style="stroke-dashoffset:0"
+                        fill="transparent"
+                        r="@(radius+10)"
+                        cx="50"
+                        cy="50" />
+                <circle class="progress-ring__circle"
+                        stroke="#dc3545"
+                        stroke-width="@(circleBorderWidth)" style="stroke-dasharray:@(circumRef),@(circumRef);stroke-dashoffset:@(strokeOffset)"
+                        fill="transparent"
+                        r="@(radius)"
+                        cx="50"
+                        cy="50" />
+            </svg>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public double strokeOffset { get; set; }
+    public double circumRef { get;set;}
+    int circleBorderWidth=10;
+
+    [Parameter]
+    public DateTime EndDate { get; set; }
+
+    Boolean isRunning;
+    Boolean isStarted { get;set;}
+    public int radius=50;
+
+    protected override void OnInitialized()
+    {
+        SetPercent(100);
+        Start();
+    }
+
+    public double totalseconds;
+
+    async Task Start()
+    {
+        if (!isStarted) {
+            isStarted=true;
+            totalseconds=( EndDate -DateTime.Now).TotalSeconds;
+            isRunning = true;
+            Run();
+        }
+        else
+        {
+            if (isRunning)
+            {
+                isRunning = false;
+            }
+            else
+            {
+                isRunning = true;
+                Run();
+            }
+        }
+    }
+
+    void SetPercent(int percent)
+    {
+        radius = (50 - circleBorderWidth * 2) / 2;
+        circumRef = radius * 2 * Math.PI;
+        strokeOffset = circumRef - (percent / 100d * circumRef);
+        StateHasChanged();
+    }
+
+    async Task Run()
+    {
+        while (isRunning)
+        {
+
+
+            var diff = EndDate - DateTime.Now;
+            var percent =(int)(diff.TotalSeconds /totalseconds *100);
+
+            SetPercent(percent);
+            if (diff.TotalSeconds <= 0)
+            {
+                Stop();
+                SetPercent(0);
+                StateHasChanged();
+                break;
+            }
+
+            await Task.Delay(1000);
+        }
+    }
+
+
+
+    void Stop()
+    {
+        isRunning = false;
+        isStarted=false;
+    }
+}

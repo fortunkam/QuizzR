@@ -5,6 +5,21 @@ var appPlanName = '${prefix}-appplan'
 var appName = '${prefix}-webapp'
 var logAnalyticsName = '${prefix}loganalytics'
 var signalRName = '${prefix}signalr'
+var containerName = 'quizassets'
+param storageAccountName string = '${prefix}store${uniqueString(resourceGroup().id)}'
+
+@allowed([
+  'Premium_LRS'
+  'Premium_ZRS'
+  'Standard_GRS'
+  'Standard_GZRS'
+  'Standard_LRS'
+  'Standard_RAGRS'
+  'Standard_RAGZRS'
+  'Standard_ZRS'
+])
+param storageAccountType string = 'Standard_LRS'
+
 // Log Analytics workspace
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' = {
@@ -103,6 +118,36 @@ resource signalR 'Microsoft.SignalRService/signalR@2021-09-01-preview' = {
       ]
     }
     publicNetworkAccess: 'Enabled'
+  }
+}
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
+  name: storageAccountName
+  location: resourceGroup().location
+  sku: {
+    name: storageAccountType
+  }
+  kind: 'StorageV2'
+  properties: {}
+}
+
+resource blobservices 'Microsoft.Storage/storageAccounts/blobServices@2021-08-01' = {
+  name: 'default'
+  parent: storageAccount
+  properties: {
+    cors: {
+      corsRules: [
+      ]
+    }
+  }
+}
+
+resource storageAssetsContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-06-01' = {
+  name: containerName
+  parent: blobservices
+  properties: {
+    metadata: {}
+    publicAccess: 'Blob'
   }
 }
 
