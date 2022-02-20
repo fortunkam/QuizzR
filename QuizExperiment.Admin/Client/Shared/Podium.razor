@@ -1,22 +1,27 @@
 ﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1 class="h1 text-center">Congratulations to our winner, @(Users[Leaderboard.First().Key])..</h1>
-    <table class="table table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>Name</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var a in Leaderboard)
-        {
-            <tr>
-                <td>@Users[a.Key]</td>
-                <td>@a.Value</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <h1 class="h1 text-center">Congratulations to our winner, @(Users[Leaderboard.OrderByDescending(r=>r.Value).First().Key])..</h1>
+    <p class="award-icon">🏆</p>
+    <div class="mx-auto border border-4 rounded-3" style="width: 350px;">
+        <table class="table table-stripped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th class="text-end">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var a in Leaderboard.OrderByDescending(r=>r.Value).Take(5))
+            {
+                <tr>
+                    <td>@Users[a.Key]</td>
+                    <td class="text-end">@a.Value</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    
+    
 </div>
 
 

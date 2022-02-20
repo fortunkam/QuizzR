@@ -4,7 +4,7 @@
         @for(var i =0; i< PossibleAnswers.Length;i++)
         {
             var answer = PossibleAnswers[i];
-            <button class="btn btn-quiz btn-quiz-@i" @onclick="@( e=> OnAnswerSubmit.InvokeAsync(answer) )" value="@answer" >@answer</button>
+            <button class="btn btn-client-quiz btn-quiz-@i" @onclick="@( e=> OnAnswerSubmit.InvokeAsync(answer) )" value="@answer" ></button>
         }
     </div>  
 </div>

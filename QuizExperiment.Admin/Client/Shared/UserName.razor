@@ -1,9 +1,9 @@
 ﻿
 
 <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1>How would you like to be known?</h1>
+    <h1 class="h1 text-center">How would you like to be known?</h1>
     <div class="mb-3">
-        <input @bind="userName" class="form-control" placeholder="Enter a user name" />
+        <input @bind="userName" class="form-control" placeholder="Enter a user name" maxlength="20" />
     </div>
     <button class="btn btn-primary" @onclick="@(e=> OnUserNameSubmit.InvokeAsync(userName))">Next</button>
 </div>

@@ -2,8 +2,9 @@
 @using QuizExperiment.Models
 @layout AdminLayout
 
-<SingleAnswerMultiSelectQuestionDisplay Question="@_currentQuestion.Title"
-Options="@_currentQuestion.Options" QuestionEndTime="@DateTime.Now.AddSeconds(30)" />
+<SingleAnswerMultiSelectQuestion Question="@_currentQuestion.Title"
+PossibleAnswers="@_currentQuestion.Options" 
+OnAnswerSubmit="@AnswerQuestion" />
 
 @code {
     private Question _currentQuestion = new Question
@@ -17,6 +18,13 @@ Options="@_currentQuestion.Options" QuestionEndTime="@DateTime.Now.AddSeconds(30
             "Option 4"
         },
         ImageUrl = "https://imgur.com/NkMONh3"
+
+
     };
+
+    private async Task AnswerQuestion(string answer){
+        Console.WriteLine($"User answered: {answer}");
+
+    }
 
 }

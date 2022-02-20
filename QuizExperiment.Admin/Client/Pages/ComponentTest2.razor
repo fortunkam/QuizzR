@@ -1,0 +1,28 @@
+﻿@page "/component2"
+@using QuizExperiment.Models
+@layout AdminLayout
+
+<Podium Leaderboard="@leaderboard" Users="@users" />
+
+@code {
+    private Dictionary<string, int> leaderboard = new Dictionary<string, int>()
+    {
+        {"UserId1",12345},
+        {"UserId2",1},
+        {"UserId3",15},
+        {"UserId4",54001},
+        {"UserId5",270},
+        {"UserId6",4701}
+    };
+
+    private Dictionary<string, string> users = new Dictionary<string, string>()
+    {
+        {"UserId1", "Pike"},
+        {"UserId2", "Archer"},
+        {"UserId3","Kirk"},
+        {"UserId4","Picard"},
+        {"UserId5","Janeway"},
+        {"UserId6","Sisko"}
+    };
+
+}

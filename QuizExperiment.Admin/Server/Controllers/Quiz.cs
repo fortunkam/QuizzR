@@ -28,7 +28,7 @@ namespace QuizExperiment.Admin.Server.Controllers
         public string GenerateClientQuizId([FromQuery]string questionSetId)
         {
             Debug.WriteLine($"Generating new Client Quiz Id for QuestionSet: {questionSetId}");
-            var s = string.Join("", Enumerable.Range(1, 8).Select(index => random.Next(0,9).ToString()).ToArray());
+            var s = string.Join("", Enumerable.Range(1, 4).Select(index => random.Next(0,9).ToString()).ToArray());
             return s;
         }
 
