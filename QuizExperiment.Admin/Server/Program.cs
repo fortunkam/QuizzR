@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.ResponseCompression;
 using QuizExperiment.Admin.Server.Hubs;
+using QuizExperiment.Admin.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddSingleton<IQuestionSetService>(r=> 
+    new AzureStorageQuestionSetService(builder.Configuration));
 
 IWebHostEnvironment environment = builder.Environment;
 

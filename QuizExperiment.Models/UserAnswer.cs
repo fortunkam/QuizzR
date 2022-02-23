@@ -8,7 +8,7 @@ namespace QuizExperiment.Models
 {
     public struct UserAnswer
     {
-        public string Answer;
+        public int AnswerIndex;
         public double TimeTaken;
     }
 }

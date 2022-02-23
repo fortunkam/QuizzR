@@ -18,8 +18,11 @@ namespace QuizExperiment.Models
         [JsonPropertyName("description")]
         public string Description { get; set; }
 
+        [JsonPropertyName("userid")]
+        public string UserId { get; set; }
+
         [JsonPropertyName("questions")]
-        public Question[] Questions { get; set; }
+        public List<Question> Questions { get; set; }
     }
 
 
@@ -27,9 +30,6 @@ namespace QuizExperiment.Models
     {
         [JsonPropertyName("title")]
         public string Title { get; set; }
-
-        [JsonPropertyName("type")]
-        public QuestionType Type { get; set; }
 
         [JsonPropertyName("imageUrl")]
         public string ImageUrl { get; set; }
@@ -40,8 +40,8 @@ namespace QuizExperiment.Models
         [JsonPropertyName("options")]
         public string[] Options { get; set; }
 
-        [JsonPropertyName("correctAnswers")]
-        public string[] CorrectAnswers { get; set; }
+        [JsonPropertyName("correctAnswerIndex")]
+        public int CorrectAnswerIndex { get; set; }
     }
 
 }

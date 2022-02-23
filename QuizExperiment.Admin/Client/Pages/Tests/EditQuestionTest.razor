@@ -1,0 +1,37 @@
+@page "/editquestion"
+@using QuizExperiment.Models
+@layout AdminLayout
+
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            
+        </div>
+        <div class="col-10">
+            <EditQuestion Question="_question"  />
+        </div>
+    </div>
+</div>
+<button type="button" class="btn btn-primary" value="Save" onclick="@OnSave">Save</button>
+
+@code {
+    private Question _question = new Question
+    {
+        ImageUrl = "https://dummyimage.com/600x400/b01eb0/000000",
+        Title = "1. This is a sample question?",
+        Options = new[]
+        {
+            "One",
+            "Two",
+            "Three",
+            "Four"
+        },
+        CorrectAnswerIndex = 1,
+        Timeout = 30
+    };
+
+    private void OnSave()
+    {
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(_question));
+    }
+}

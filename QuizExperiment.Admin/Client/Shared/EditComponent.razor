@@ -1,0 +1,119 @@
+﻿@using QuizExperiment.Models
+@using System.Text.Json
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if (_isLoaded)
+{
+    <div class="container">
+        <div class="row bg-dark bg-gradient p-3 mb-4">
+            <div class="col col-auto me-auto px-1">
+                <p class="h2 text-white">Question Set Editor</p>
+            </div>
+            <div class="col col-auto px-1">
+                <button type="button" class="btn btn-primary mb-1" value="Save and Exit" @onclick="SaveAndExit" >Save and Exit</button>
+                <button type="button" class="btn btn-success mb-1" value="Save and Present" @onclick="SaveAndPresent">Save and Present</button>
+                <button type="button" class="btn btn-danger mb-1" value="Discard Changes" @onclick="DiscardChanges">Discard Changes</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <QuestionList Questions="_questions" 
+                OnEditQuestion="OnEditQuestion" 
+                OnDeleteQuestion="OnDeleteQuestion"
+                OnAddQuestion="OnAddQuestion" />
+            </div>
+            <div class="col-10">
+                <EditQuestion Question="_currentQuestion" />
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private bool _isLoaded = false; 
+
+    private QuestionSet _questionSet = new QuestionSet();
+
+    private List<Question> _questions = new List<Question>();
+
+    private Question _currentQuestion = new Question();
+
+    private string userId;
+
+    private void OnEditQuestion(Question question)
+    {
+        _currentQuestion = question;
+    }
+
+    private void OnDeleteQuestion(Question question)
+    {
+        _questions.Remove(question);
+    }
+
+    private void OnAddQuestion()
+    {
+        _currentQuestion = new Question()
+        {
+            Options = new[] {"","","",""},
+            CorrectAnswerIndex = -1
+        };
+
+        _questions.Add(_currentQuestion); 
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var claims = user.Claims.ToArray();
+        userId = claims.First(r => r.Type == "oid").Value;
+
+        var response = await Http.GetAsync($"questionset/get?userId={userId}&id={Id}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error getting the quiz! {errorMessage}");
+            return;
+        }
+
+        _questionSet = await response.Content.ReadFromJsonAsync<QuestionSet>();
+        _questions = _questionSet.Questions;
+        _currentQuestion = _questions[0];
+        _isLoaded = true;
+        return;
+    }
+
+
+    private async Task SaveAndPresent()
+    {
+        await Save();
+        NavigationManager.NavigateTo($"/present/{_questionSet.Id}");
+    }
+
+    private async Task SaveAndExit()
+    {
+        await Save();
+        NavigationManager.NavigateTo($"/manage");
+    }
+
+    private async Task Save()
+    {
+        var response = await Http.PostAsJsonAsync($"questionset/upsert", _questionSet);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error saving the question set! {errorMessage}");
+        }
+    }
+
+    private void DiscardChanges()
+    {
+        NavigationManager.NavigateTo($"/manage");
+    }
+}

@@ -2,7 +2,7 @@
 {
     public enum AdminUserState
     {
-        PickingGame,
+        //PickingGame,
         WaitingForGameStart,
         WaitingForAnswers,
         ShowingPodium,

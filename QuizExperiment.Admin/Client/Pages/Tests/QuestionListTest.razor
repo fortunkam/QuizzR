@@ -1,0 +1,48 @@
+﻿@page "/questionlist"
+@using QuizExperiment.Models
+@layout AdminLayout
+
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            <QuestionList Questions="_questions"  
+                OnEditQuestion="OnQuestionEdit" 
+                OnDeleteQuestion="OnQuestionDelete"
+                OnAddQuestion="OnQuestionAdd"  />
+        </div>
+        <div class="col-10">
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Question> _questions = Enumerable.Range(1, 10)
+        .Select((r,i) => new Question
+        {
+            ImageUrl = i % 2 == 0 ? "https://dummyimage.com/600x400/b01eb0/000000" : "https://dummyimage.com/600x400/005420/000000" ,
+            Title = $"{i}. This is a sample question?",
+            Options = new[]
+            {
+                "One",
+                "Two",
+                "Three",
+                "Four"
+            }
+        }).ToList(); 
+
+    private async Task OnQuestionEdit(Question question)
+    {
+        Console.WriteLine($"Editing: {question.Title}");
+    }
+
+    private async Task OnQuestionDelete(Question question)
+    {
+        Console.WriteLine($"Deleting: {question.Title}");
+    }
+
+    private async Task OnQuestionAdd()
+    {
+        Console.WriteLine($"Adding new question");
+    }
+
+}

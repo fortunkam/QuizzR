@@ -2,65 +2,56 @@
 @using QuizExperiment.Models
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient Http
 
-@if(_state == AdminUserState.PickingGame)
+@if (_isLoaded)
 {
-    <QuestionSetPicker OnQuestionSetSubmit="@OnQuestionSetSelected" />
-}
-
-@if(_state == AdminUserState.WaitingForGameStart)
-{
-    <GameStart Users="@_users" 
-                QuestionSetId="@_questionSet.Id" 
+    @if (_state == AdminUserState.WaitingForGameStart)
+    {
+        <GameStart Users="@_users" 
+                QuestionSetId="@Id" 
                 OnGameStarted="@OnGameStarted"
                 OnGameRegistered="@OnGameRegistered"/>
-}
-
-@if(_state == AdminUserState.WaitingForAnswers)
-{
-    switch(_currentQuestion.Type)
-    {
-        case QuestionType.TypeAnswer:
-            <TypeAnswerQuestionDisplay 
-            Question="@_currentQuestion.Title"
-            QuestionEndTime="@_currentQuestionEndTime"
-            UserAnswerCount="@_userCurrentAnswers.Count"
-            ImageUrl="@_currentQuestion.ImageUrl"
-            />
-            break;
-        case QuestionType.MultiChoice:
-            <SingleAnswerMultiSelectQuestionDisplay
-                Question="@_currentQuestion.Title" 
-                Options="@_currentQuestion.Options" 
-                QuestionEndTime="@_currentQuestionEndTime"
-                UserAnswerCount="@_userCurrentAnswers.Count" 
-                ImageUrl="@_currentQuestion.ImageUrl" />
-            break;
     }
-}
 
-@if(_state == AdminUserState.WaitingForQuestionStart)
-{
-    <QuestionAnswerChart 
-        CorrectAnswers="@_currentQuestion.CorrectAnswers" 
+    @if (_state == AdminUserState.WaitingForAnswers)
+    {
+        <SingleAnswerMultiSelectQuestionDisplay
+        Question="@_currentQuestion.Title" 
+        Options="@_currentQuestion.Options" 
+        QuestionEndTime="@_currentQuestionEndTime"
+        UserAnswerCount="@_userCurrentAnswers.Count" 
+        ImageUrl="@_currentQuestion.ImageUrl" />
+    }
+
+    @if (_state == AdminUserState.WaitingForQuestionStart)
+    {
+        <QuestionAnswerChart 
+        CorrectAnswerIndex="@_currentQuestion.CorrectAnswerIndex" 
         Options="@_currentQuestion.Options" 
         UserAnswers="@_userCurrentAnswers" 
-        OnNextQuestion="@OnNextQuestion" 
-        QuestionType="@_currentQuestion.Type" />
-}
+        OnNextQuestion="@OnNextQuestion"  />
+    }
 
-@if(_state == AdminUserState.ShowingPodium)
-{
-    <Podium Leaderboard="@_orderedLeaderboard"  Users="@_users" />
+    @if (_state == AdminUserState.ShowingPodium)
+    {
+        <Podium Leaderboard="@_orderedLeaderboard"  Users="@_users" />
+    }
 }
 
 
 @code {
-    private AdminUserState _state = AdminUserState.PickingGame;
+    [Parameter]
+    public string Id { get; set; }
+
+    private AdminUserState _state = AdminUserState.WaitingForGameStart;
 
     private HubConnection _hubConnection;
 
     private string _clientQuizId;
+
+    private bool _isLoaded = false;
 
     private QuestionSet _questionSet = null;
 
@@ -78,11 +69,6 @@
     private Question _currentQuestion = null;
 
     private DateTime _currentQuestionEndTime;
-
-    private void OnQuestionSetSelected(QuestionSet questionSet){
-        _questionSet = questionSet;
-        _state = AdminUserState.WaitingForGameStart;
-    }
 
     private async Task OnGameRegistered(string clientQuizId){
         _clientQuizId = clientQuizId;
@@ -102,7 +88,7 @@
         _state = AdminUserState.WaitingForAnswers;
 
         _cts = new CancellationTokenSource();
-        await _hubConnection.SendAsync("SendQuestion", _clientQuizId, _currentQuestion.Title, _currentQuestion.Type, _currentQuestion.Options);
+        await _hubConnection.SendAsync("SendQuestion", _clientQuizId, _currentQuestion.Title, _currentQuestion.Options);
 
         using var tmr = new PeriodicTimer(TimeSpan.FromSeconds(_currentQuestion.Timeout));
         await tmr.WaitForNextTickAsync(_cts.Token);
@@ -114,7 +100,7 @@
 
     private async Task OnNextQuestion()
     {
-        if(_currentQuestionIndex + 1 >= _questionSet.Questions.Length)
+        if(_currentQuestionIndex + 1 >= _questionSet.Questions.Count)
         {
             //Show the final leaderboard
             _state = AdminUserState.ShowingPodium;
@@ -128,6 +114,25 @@
 
     protected override async Task OnInitializedAsync()
     {
+        //Load the requested question set
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var userId = user.Claims.FirstOrDefault(r => r.Type == "oid").Value;
+
+        var response = await Http.GetAsync($"questionset/get?userId={userId}&id={Id}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error getting the quiz! {errorMessage}");
+            return;
+        }
+
+        _questionSet = await response.Content.ReadFromJsonAsync<QuestionSet>();
+
+        // Start the connection to signalR.
+
         _hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
             .Build();
@@ -138,9 +143,9 @@
             StateHasChanged();
         });
 
-        _hubConnection.On<string, string, string, double>("ClientAnswerReceived", async (quizId, clientConnectionId, answer, timeTaken) =>
+        _hubConnection.On<string, string, int, double>("ClientAnswerReceived", async (quizId, clientConnectionId, answerIndex, timeTaken) =>
         {
-            _userCurrentAnswers.Add(clientConnectionId, new UserAnswer { Answer = answer, TimeTaken = timeTaken } );
+            _userCurrentAnswers.Add(clientConnectionId, new UserAnswer { AnswerIndex = answerIndex, TimeTaken = timeTaken } );
             if(_userCurrentAnswers.Count >= _users.Count)
             {
                 await CloseQuestion();
@@ -149,6 +154,10 @@
         });
 
         await _hubConnection.StartAsync();
+
+        _isLoaded = true;
+
+        
     }
 
     private async Task CloseQuestion()
@@ -158,22 +167,22 @@
         var questionMaxMs = (double)(_currentQuestion.Timeout * 1000);
 
         var correctAnswers = _userCurrentAnswers
-            .Where(r => _currentQuestion.CorrectAnswers.Any(c=>r.Value.Answer == c))
+            .Where(r => _currentQuestion.CorrectAnswerIndex == r.Value.AnswerIndex)
             .OrderByDescending(r => r.Value.TimeTaken)
             .Select(r=>new { 
                 UserId = r.Key, 
-                Answer = r.Value.Answer, 
+                AnswerIndex = r.Value.AnswerIndex, 
                 Score = (int)(((questionMaxMs - r.Value.TimeTaken) / questionMaxMs) * 1000), 
                 TimeTaken = r.Value.TimeTaken  })
             .ToArray();
 
         var incorrectAnswers = _userCurrentAnswers
-            .Where(r => !_currentQuestion.CorrectAnswers.Any(c=>r.Value.Answer == c))
-            .Select(r=>new { UserId = r.Key, Answer = r.Value.Answer, Score = 0, TimeTaken = r.Value.TimeTaken  })
+            .Where(r => _currentQuestion.CorrectAnswerIndex != r.Value.AnswerIndex)
+            .Select(r=>new { UserId = r.Key, AnswerIndex = r.Value.AnswerIndex, Score = 0, TimeTaken = r.Value.TimeTaken  })
             .ToArray();
 
         var noAnswer = _users.Where(r => !_userCurrentAnswers.ContainsKey(r.Key))
-                        .Select(r => new { UserId = r.Key, Answer = "", Score = 0, TimeTaken = 0.0 })
+                        .Select(r => new { UserId = r.Key, AnswerIndex = -1, Score = 0, TimeTaken = 0.0 })
                         .ToArray();
 
         var unionAnswers = correctAnswers.Union(incorrectAnswers).ToArray();
@@ -188,7 +197,7 @@
 
         foreach (var c in unionAnswers)
         {
-            await _hubConnection.SendAsync("SendAnswerResult", _clientQuizId, c.UserId, _currentQuestion.CorrectAnswers, _leaderboard[c.UserId], (_orderedLeaderboard.Keys.ToList().IndexOf(c.UserId) + 1), (_currentQuestionIndex + 1 >= _questionSet.Questions.Length));
+            await _hubConnection.SendAsync("SendAnswerResult", _clientQuizId, c.UserId, _currentQuestion.CorrectAnswerIndex, _leaderboard[c.UserId], (_orderedLeaderboard.Keys.ToList().IndexOf(c.UserId) + 1), (_currentQuestionIndex + 1 >= _questionSet.Questions.Count));
         }
 
         _state = AdminUserState.WaitingForQuestionStart;

@@ -1,0 +1,103 @@
+﻿@using QuizExperiment.Models
+@using System.Text.Json
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if (_isLoaded)
+{
+    <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+        <h1 class="h1">Question Manager</h1>
+        <div class="mx-auto border border-4 rounded-3">
+            <table class="table table-stripped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Last Modified</th>
+                        <th>Edit</th>
+                        <th>Present</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in _questionSets)
+                    {
+                        <tr>
+                            <td>@a.Title</td>
+                            <td>@a.LastModified</td>
+                            <td><a href="/edit/@a.Id">✏️</a></td>
+                            <td><a href="/present/@a.Id">▶️</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="mb-3">
+            <input @bind="_title" class="form-control" placeholder="Enter a Title" maxlength="20" />
+        </div>
+        <button @onclick="AddNewQuestionSet">Add new</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public EventCallback<QuestionSet> OnQuestionSetSubmit { get; set; }
+
+    private QuestionSetSummary[] _questionSets = new QuestionSetSummary[] { };
+
+    private string _title;
+
+    private bool _isLoaded = false; 
+
+    private string _userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var claims = user.Claims.ToArray();
+        _userId = claims.First(r => r.Type == "oid").Value;
+
+        var response = await Http.GetAsync($"questionset/list?userId={_userId}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error getting the list of quizzes! {errorMessage}");
+            return;
+        }
+
+        _questionSets = await response.Content.ReadFromJsonAsync<QuestionSetSummary[]>();
+        _isLoaded = true;
+        return;
+    }
+
+    private async Task AddNewQuestionSet()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var qs = new QuestionSet()
+        {
+                Id = Guid.NewGuid().ToString(),
+                UserId = _userId,
+                Description = _title,
+                Title = _title,
+                Questions = new List<Question>()
+        };
+
+        var content = new StringContent(JsonSerializer.Serialize(qs),
+            System.Text.Encoding.UTF8, "application/json");
+        var response = await Http.PostAsync($"questionset/upsert",
+                        content);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error getting the list of quizzes! {errorMessage}");
+            return;
+        }
+
+        NavigationManager.NavigateTo($"/edit/{qs.Id}");
+    }
+
+
+}

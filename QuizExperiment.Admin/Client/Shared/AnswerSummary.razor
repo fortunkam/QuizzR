@@ -1,5 +1,5 @@
 ﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    @if (CorrectAnswer.Any(r=>r == MyAnswer))
+    @if (MyAnswerIndex == CorrectAnswerIndex)
     {
         <h1 class="h1 text-center">Good job!</h1>
         <div class="answer-icon answer-correct">
@@ -28,13 +28,13 @@
 
 @code {
     [Parameter]
-    public string MyAnswer { get; set; }
+    public int MyAnswerIndex { get; set; }
 
     [Parameter]
     public bool IsLastQuestion { get; set; }
 
     [Parameter]
-    public string[] CorrectAnswer { get; set; }
+    public int CorrectAnswerIndex { get; set; }
 
     [Parameter]
     public int CurrentScore { get; set; }

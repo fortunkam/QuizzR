@@ -1,4 +1,4 @@
-﻿@page "/component"
+﻿@page "/singleanswerquestion"
 @using QuizExperiment.Models
 @layout AdminLayout
 
@@ -22,8 +22,8 @@ OnAnswerSubmit="@AnswerQuestion" />
 
     };
 
-    private async Task AnswerQuestion(string answer){
-        Console.WriteLine($"User answered: {answer}");
+    private async Task AnswerQuestion(int answerIndex){
+        Console.WriteLine($"User answered: {answerIndex}");
 
     }
 

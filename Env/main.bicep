@@ -6,6 +6,7 @@ var appName = '${prefix}-webapp'
 var logAnalyticsName = '${prefix}loganalytics'
 var signalRName = '${prefix}signalr'
 var containerName = 'quizassets'
+var questionSetTableName = 'questionsets'
 param storageAccountName string = '${prefix}store${uniqueString(resourceGroup().id)}'
 
 @allowed([
@@ -84,6 +85,8 @@ resource appSettings 'Microsoft.Web/sites/config@2021-02-01' = {
     'ApplicationInsightsAgent_EXTENSION_VERSION': '~3'
     'XDT_MicrosoftApplicationInsights_Mode':'Recommended'
     'Azure:SignalR:ConnectionString':'Endpoint=https://${signalR.properties.hostName};AuthType=aad;Version=1.0;'
+    'Azure:Storage:ConnectionString':'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(storageAccount.id,storageAccount.apiVersion).keys[0].value}'
+    'QuizAssetsContainerName':'quizassets'
   }
 }
 
@@ -142,13 +145,20 @@ resource blobservices 'Microsoft.Storage/storageAccounts/blobServices@2021-08-01
   }
 }
 
-resource storageAssetsContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-06-01' = {
-  name: containerName
-  parent: blobservices
+resource tableservices 'Microsoft.Storage/storageAccounts/tableServices@2021-08-01' = {
+  name: 'default'
+  parent: storageAccount
   properties: {
-    metadata: {}
-    publicAccess: 'Blob'
+    cors: {
+      corsRules: [
+      ]
+    }
   }
+}
+
+resource storageAssetsContainer 'Microsoft.Storage/storageAccounts/tableServices/tables@2021-08-01' = {
+  name: questionSetTableName
+  parent: tableservices
 }
 
 output webApplicationPrincipalId string = webApplication.identity.principalId

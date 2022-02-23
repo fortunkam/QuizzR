@@ -2,12 +2,8 @@
 @using Blazorise.Charts
 
 <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1 class="h1 text-center">The correct answer@(CorrectAnswers.Length != 1 ? "s were" : " is") @string.Join(",", CorrectAnswers)</h1>
-    
-    @if (QuestionType == QuestionType.MultiChoice)
-    {
-        <Chart @ref="barChart" Type="ChartType.Bar" TItem="int" />
-    }
+    <h1 class="h1 text-center">The correct answer is @(Options[CorrectAnswerIndex])</h1>
+     <Chart @ref="barChart" Type="ChartType.Bar" TItem="int" />
     <button class="btn btn-primary" @onclick="@(e=> OnNextQuestion.InvokeAsync())">Next</button>
 </div>
 
@@ -19,13 +15,11 @@
     public EventCallback<string> OnNextQuestion { get; set; }
 
     [Parameter]
-    public string[] CorrectAnswers { get; set; }
+    public int CorrectAnswerIndex { get; set; }
 
     [Parameter]
     public string[] Options { get; set; }
 
-    [Parameter]
-    public QuestionType QuestionType { get; set; }
 
     Chart<int> barChart;
 
@@ -39,28 +33,27 @@
 
     async Task HandleRedraw()
     {
-        if (QuestionType == QuestionType.MultiChoice)
-        {
-            await barChart.Clear();
+        
+        await barChart.Clear();
 
-            await barChart.SetOptions(new ChartOptions()
+        await barChart.SetOptions(new ChartOptions()
+            {
+
+                Scales = new Scales
                 {
-
-                    Scales = new Scales
-                    {
-                        YAxes = new List<Axis> {
-                        new Axis {
-                            Ticks = new AxisTicks
-                            {
-                                BeginAtZero = true
-                            }
+                    YAxes = new List<Axis> {
+                    new Axis {
+                        Ticks = new AxisTicks
+                        {
+                            BeginAtZero = true
                         }
                     }
-                    }
-                });
+                }
+                }
+            });
 
-            await barChart.AddLabelsDatasetsAndUpdate(Options, GetBarChartDataset());
-        }
+        await barChart.AddLabelsDatasetsAndUpdate(Options, GetBarChartDataset());
+        
 
     }
 
@@ -68,14 +61,14 @@
     {
         var Labels = new List<string> { "Red", "Blue", "Yellow", "Green" };
 
-        var countAnswers = UserAnswers.GroupBy(r => r.Value.Answer).Select(r => new
+        var countAnswers = UserAnswers.GroupBy(r => r.Value.AnswerIndex).Select(r => new
         {
-            Answer = r.Key,
+            AnswerIndex = r.Key,
             Count = r.Count()
-        }).ToDictionary(k => k.Answer, v => v.Count);
+        }).ToDictionary(k => k.AnswerIndex, v => v.Count);
 
         //This ensures the order is preserved
-        var data = Options.Select(r => countAnswers.ContainsKey(r) ? countAnswers[r] : 0).ToList();
+        var data = Options.Select((r,i) => countAnswers.ContainsKey(i) ? countAnswers[i] : 0).ToList();
 
         return new BarChartDataset<int>
             {

@@ -12,7 +12,13 @@ namespace QuizExperiment.Models
         [JsonPropertyName("id")]
         public string Id { get; set; }
 
+        [JsonPropertyName("userid")]
+        public string UserId { get; set; }
+
         [JsonPropertyName("title")]
         public string Title { get; set; }
+
+        [JsonPropertyName("lastModified")]
+        public DateTimeOffset LastModified { get; set; }
     }
 }

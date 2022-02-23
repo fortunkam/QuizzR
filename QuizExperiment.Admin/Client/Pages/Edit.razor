@@ -1,0 +1,20 @@
+﻿@page "/edit/{Id}"
+@attribute [Authorize]
+@layout AdminLayout
+
+<AuthorizeView>
+    <Authorized>
+        <EditComponent Id=@Id />
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+}

@@ -1,0 +1,41 @@
+﻿@page "/questionlistitem"
+@using QuizExperiment.Models
+@layout AdminLayout
+
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            <QuestionListItem Question="_question" 
+                OnEditQuestion="OnQuestionEdit" 
+                OnDeleteQuestion="OnQuestionDelete"  />
+        </div>
+        <div class="col-10">
+        </div>
+    </div>
+</div>
+
+@code {
+    private Question _question = new Question
+    {
+        ImageUrl = "https://dummyimage.com/600x400/b01eb0/000000",
+        Title = "1. This is a sample question?",
+        Options = new[]
+        {
+            "One",
+            "Two",
+            "Three",
+            "Four"
+        }
+    };
+
+    private async Task OnQuestionEdit(Question question)
+    {
+        Console.WriteLine($"Editing: {question.Title}");
+    }
+
+    private async Task OnQuestionDelete(Question question)
+    {
+        Console.WriteLine($"Deleting: {question.Title}");
+    }
+
+}

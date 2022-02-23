@@ -1,28 +1,29 @@
 ﻿@page "/gametest"
 @layout AdminLayout
+@attribute [Authorize]
 
-<div class="container">
-  <div class="row">
-    <div class="col">
-      <AdminComponent />
-    </div>
-    <div class="col">
-      <ClientComponent />
-    </div>
-    <div class="col">
-      <ClientComponent />
-    </div>
-  </div>
-@*  <div class="row">
-    <div class="col">
-      <QuestionAnswerChart CorrectAnswers="@(new string[] { "1" })" Options="@(new String[] { "1","2", "3","4"})" />
-    </div>
-    <div class="col">
-    </div>
-    <div class="col">
-    </div>
-  </div>*@
-</div>
+<AuthorizeView>
+    <Authorized>
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <PresentComponent Id="054e6758-db4e-4523-9641-4a27582fe79b" />
+            </div>
+            <div class="col">
+              <ClientComponent />
+            </div>
+            <div class="col">
+              <ClientComponent />
+            </div>
+          </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
+
+
 
 @code {
 

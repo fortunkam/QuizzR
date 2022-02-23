@@ -39,7 +39,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync($"quiz/generateClientQuizId?questionSetId={QuestionSetId}");
+        var response = await Http.GetAsync($"quiz/newid?questionSetId={QuestionSetId}");
         if (!response.IsSuccessStatusCode)
         {
             var errorMessage = response.ReasonPhrase;

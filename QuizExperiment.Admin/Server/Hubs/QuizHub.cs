@@ -24,19 +24,19 @@ namespace QuizExperiment.Admin.Server.Hubs
             await Clients.Groups(clientQuizId).SendAsync("UserJoined", clientQuizId, userName, Context.ConnectionId);
         }
 
-        public async Task SendQuestion(string clientQuizId, string question, QuestionType questionType, string[] possibleAnswers)
+        public async Task SendQuestion(string clientQuizId, string question, string[] possibleAnswers)
         {
-            await Clients.Groups(clientQuizId).SendAsync("QuestionArrived", question, questionType, possibleAnswers);
+            await Clients.Groups(clientQuizId).SendAsync("QuestionArrived", question, possibleAnswers);
         }
 
-        public async Task SubmitAnswer(string clientQuizId, string answer, double timeTaken)
+        public async Task SubmitAnswer(string clientQuizId, int answerIndex, double timeTaken)
         {
-            await Clients.Groups(clientQuizId).SendAsync("ClientAnswerReceived", clientQuizId, Context.ConnectionId, answer, timeTaken);
+            await Clients.Groups(clientQuizId).SendAsync("ClientAnswerReceived", clientQuizId, Context.ConnectionId, answerIndex, timeTaken);
         }
 
-        public async Task SendAnswerResult(string clientQuizId, string clientId, string[] correctAnswer, int currentScore, int position, bool isLastQuestion)
+        public async Task SendAnswerResult(string clientQuizId, string clientId, int correctAnswerIndex, int currentScore, int position, bool isLastQuestion)
         {
-            await Clients.Client(clientId).SendAsync("AnswerArrived", correctAnswer, currentScore, position, isLastQuestion);
+            await Clients.Client(clientId).SendAsync("AnswerArrived", correctAnswerIndex, currentScore, position, isLastQuestion);
         }
 
 

@@ -5,48 +5,42 @@
 @inject HttpClient Http
 @implements IAsyncDisposable
 
-@if (_userState == ClientUserState.Idle)
+@if (_isLoaded)
 {
-    <JoinQuiz OnQuizIdSubmit="@EnterQuizId" />
-}
-
-@if (_userState == ClientUserState.WaitingForUserName)
-{
-    <UserName OnUserNameSubmit="@RegisterUser" />
-}
-
-@if (_userState == ClientUserState.WaitingForStart)
-{
-    <WaitingForQuestions />
-}
-
-
-
-@if (_userState == ClientUserState.WaitingForAnswer)
-{
-
-    @switch(currentQuestionType)
+    @if (_userState == ClientUserState.Idle)
     {
-        case QuestionType.TypeAnswer:
-            <TypeAnswerQuestion OnAnswerSubmit="@AnswerQuestion" Question="@currentQuestion" />
-            break;
-        case QuestionType.MultiChoice:
-            <SingleAnswerMultiSelectQuestion PossibleAnswers="@currentPossibleAnswers"
-                OnAnswerSubmit="@AnswerQuestion" Question="@currentQuestion" />
-            break;
+        <JoinQuiz OnQuizIdSubmit="@EnterQuizId" />
     }
-}
 
-@if (_userState == ClientUserState.WaitForAnswerCheck)
-{
+    @if (_userState == ClientUserState.WaitingForUserName)
+    {
+        <UserName OnUserNameSubmit="@RegisterUser" />
+    }
+
+    @if (_userState == ClientUserState.WaitingForStart)
+    {
+        <WaitingForQuestions />
+    }
+
+
+
+    @if (_userState == ClientUserState.WaitingForAnswer)
+    {
+        <SingleAnswerMultiSelectQuestion PossibleAnswers="@currentPossibleAnswers"
+        OnAnswerSubmit="@AnswerQuestion" Question="@currentQuestion" />
+    }
+
+    @if (_userState == ClientUserState.WaitForAnswerCheck)
+    {
         <WaitingForAnswerCheck />
-}
+    }
 
-@if (_userState == ClientUserState.IdleInGame)
-{
-    <AnswerSummary MyAnswer="@currentAnswer" CorrectAnswer="@correctAnswer" 
+    @if (_userState == ClientUserState.IdleInGame)
+    {
+        <AnswerSummary MyAnswerIndex="@currentAnswerIndex" CorrectAnswerIndex="@correctAnswerIndex" 
         CurrentScore=@_currentScore
         Position=@_position IsLastQuestion="@_isLastQuestion"/>
+    }
 }
 
 
@@ -55,16 +49,17 @@
     private string userName;
 
     private string currentQuestion = "";
-    private QuestionType currentQuestionType = QuestionType.TypeAnswer;
-    private string currentAnswer = "";
+    private int currentAnswerIndex = -1;
     private string[] currentPossibleAnswers = null;
 
-    private string[] correctAnswer = new String[] { };
+    private int correctAnswerIndex = -1;
     private bool wasLastAnswerCorrect = false;
     private bool _isLastQuestion = false;
 
     private int _currentScore;
     private int _position;
+
+    private bool _isLoaded = false;
 
     private DateTime? _questionStartTime;
 
@@ -76,31 +71,32 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
             .Build();
 
-        hubConnection.On<string, QuestionType, string[]>("QuestionArrived", (question, questionType, possibleAnswers) =>
+        hubConnection.On<string, string[]>("QuestionArrived", (question, possibleAnswers) =>
         {
             currentQuestion = question;
-            currentQuestionType = questionType;
             currentPossibleAnswers = possibleAnswers;
-            currentAnswer = "";
-            correctAnswer = new String[] { };
+            currentAnswerIndex = -1;
+            correctAnswerIndex = -1;
             wasLastAnswerCorrect = false;
             _questionStartTime = DateTime.UtcNow;
             _userState = ClientUserState.WaitingForAnswer;
             StateHasChanged();
         });
 
-        hubConnection.On<string[], int,int, bool>("AnswerArrived", (answer, currentScore, position, isLastQuestion) =>
-        {
-            correctAnswer = answer;
-            wasLastAnswerCorrect = (answer.Any(r=>r == currentAnswer));
-            _position = position;
-            _currentScore = currentScore;
-            _isLastQuestion = isLastQuestion;
-            _userState = ClientUserState.IdleInGame; 
-            StateHasChanged();
-        });
+        hubConnection.On<int, int,int, bool>("AnswerArrived", (answer, currentScore, position, isLastQuestion) =>
+         {
+             correctAnswerIndex = answer;
+             wasLastAnswerCorrect = (answer == currentAnswerIndex);
+             _position = position;
+             _currentScore = currentScore;
+             _isLastQuestion = isLastQuestion;
+             _userState = ClientUserState.IdleInGame; 
+             StateHasChanged();
+         });
 
         await hubConnection.StartAsync();
+
+        _isLoaded = true;
     }
 
 
@@ -118,10 +114,10 @@
 
     }
 
-    private async Task AnswerQuestion(string answer){
-        currentAnswer = answer;
+    private async Task AnswerQuestion(int answerIndex){
+        currentAnswerIndex = answerIndex;
         var timeTaken = (DateTime.UtcNow - (_questionStartTime ?? DateTime.MinValue)).TotalMilliseconds;
-        await hubConnection.SendAsync("SubmitAnswer", clientQuizId, currentAnswer, timeTaken);
+        await hubConnection.SendAsync("SubmitAnswer", clientQuizId, currentAnswerIndex, timeTaken);
         _userState = ClientUserState.WaitForAnswerCheck;
 
     }

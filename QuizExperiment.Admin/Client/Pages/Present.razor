@@ -1,17 +1,19 @@
-﻿@page "/manage"
+﻿@page "/present/{Id}"
 @attribute [Authorize]
 @layout AdminLayout
 
 <AuthorizeView>
     <Authorized>
-        @*Hello, @context.User.Identity?.Name!*@
+        <PresentComponent Id=@Id />
     </Authorized>
     <NotAuthorized>
         <RedirectToLogin />
     </NotAuthorized>
 </AuthorizeView>
 
-<AdminComponent />
+
 @code {
+    [Parameter]
+    public string Id { get; set; }
 
 }

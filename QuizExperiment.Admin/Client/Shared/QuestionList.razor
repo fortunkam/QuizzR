@@ -1,0 +1,29 @@
+﻿@using QuizExperiment.Models
+
+<div class="row align-items-center">
+    <button type="button" class="btn btn-primary mb-5" 
+    value="Add New Question" @onclick="@(e=> OnAddQuestion.InvokeAsync())">Add New Question</button>
+    <div class="vh-100 question-list-scroll">
+        <Dropzone Items="Questions">
+            <QuestionListItem Question="context" 
+                OnEditQuestion="OnEditQuestion" 
+                OnDeleteQuestion="OnDeleteQuestion"  />
+        </Dropzone>
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public List<Question> Questions { get; set; }
+
+    [Parameter]
+    public EventCallback<Question> OnEditQuestion { get; set; }
+
+    [Parameter]
+    public EventCallback<Question> OnDeleteQuestion { get; set; }
+
+    [Parameter]
+    public EventCallback OnAddQuestion { get; set; }
+}

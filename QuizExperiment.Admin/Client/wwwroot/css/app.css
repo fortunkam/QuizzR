@@ -153,8 +153,16 @@ a, .btn-link {
 
 .img-quiz {
     max-width: 600px;
+    max-height: 400px;
     margin-top: 50px;
     margin-bottom: 50px;
+}
+
+.img-quiz-editor {
+    max-width: 120px;
+    max-height: 80px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .quiz-label {
@@ -177,5 +185,15 @@ a, .btn-link {
 
 .award-icon {
     font-size:256px;
+}
+
+.question-list-scroll {
+    overflow-x:hidden;
+    overflow-y:scroll
+}
+
+.img-quiz-edit {
+    width: 400px;
+    max-height: 300px;
 }
 
