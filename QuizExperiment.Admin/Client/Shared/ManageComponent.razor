@@ -101,9 +101,20 @@
                 Description = _title,
                 Title = _title,
                 Questions = new List<Question>()
+                {
+                    new Question
+                    {
+                        Title ="",
+                        ImageUrl = "",
+                        Timeout = 30,
+                        Options = new[] {"","","",""},
+                        CorrectAnswerIndex = -1,                        
+                    }
+                }
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(qs),
+        var serializedQuestionSet = JsonSerializer.Serialize(qs);
+        var content = new StringContent(serializedQuestionSet,
             System.Text.Encoding.UTF8, "application/json");
         var response = await Http.PostAsync($"questionset/upsert",
                         content);
