@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Shared\Editor\**" />
+    <Content Remove="Shared\Editor\**" />
+    <EmbeddedResource Remove="Shared\Editor\**" />
+    <None Remove="Shared\Editor\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="blazor-dragdrop" Version="2.4.0" />
+    <PackageReference Include="BlazorApplicationInsights" Version="1.6.0" />
     <PackageReference Include="Blazorise" Version="0.9.4.9" />
     <PackageReference Include="Blazorise.Bootstrap" Version="0.9.4.9" />
     <PackageReference Include="Blazorise.Charts" Version="0.9.4.9" />
@@ -30,10 +38,6 @@
     <Content Update="Pages\Manage.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Shared\Editor\" />
   </ItemGroup>
 
 </Project>
