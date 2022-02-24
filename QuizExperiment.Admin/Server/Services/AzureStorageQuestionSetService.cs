@@ -72,7 +72,7 @@ namespace QuizExperiment.Admin.Server.Services
             };
         }
 
-        public async Task DeleteQuestionSet(string userId, string id)
+        public async Task DeleteQuestionSet(string id, string userId)
         {
             var blobs = _blobContainerClient.GetBlobsAsync(prefix: $"{userId}/{id}").AsPages();
 

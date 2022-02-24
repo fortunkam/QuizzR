@@ -3,46 +3,64 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject IApplicationInsights AppInsights
 
 @if (_isLoaded)
 {
-    <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-        <h1 class="h1">Question Manager</h1>
-        <div class="mx-auto border border-4 rounded-3">
-            <table class="table table-stripped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Title</th>
-                        <th>Last Modified</th>
-                        <th>Edit</th>
-                        <th>Present</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var a in _questionSets)
-                    {
+    <div class="container">
+        <div class="row bg-dark bg-gradient p-3 mb-4">
+            <div class="col col-auto me-auto px-1">
+                <p class="h2 text-white">Question Manager</p>
+            </div>
+            
+        </div>
+        <div class="row my-3 border border-4 rounded-3 p-3 align-items-center">
+            <div class="col-auto">
+                <span>Create a new Quiz</span>
+            </div>
+            <div class="col">
+                <input @bind="_title" class="form-control" placeholder="Enter a Title" maxlength="50" />
+            </div>
+            <div class="col-auto">
+                <button @onclick="AddNewQuestionSet" class="btn btn-primary">Add new</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="mx-auto border border-4 rounded-3">
+                <table class="table table-stripped">
+                    <thead class="thead-dark">
                         <tr>
-                            <td>@a.Title</td>
-                            <td>@a.LastModified</td>
-                            <td><a href="/edit/@a.Id">✏️</a></td>
-                            <td><a href="/present/@a.Id">▶️</a></td>
+                            <th>Title</th>
+                            <th>Last Modified</th>
+                            <th>Edit</th>
+                            <th>Present</th>
+                            <th>Delete</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in _questionSets)
+                        {
+                            <tr>
+                                <td>@a.Title</td>
+                                <td>@a.LastModified</td>
+                                <td><button type="button" class="btn btn-light btn-sm mb-1" value="Edit" @onclick="()=>EditQuestionSet(a.Id)">✏️</button></td>
+                                <td><button type="button" class="btn btn-light btn-sm mb-1" value="Present" @onclick="()=>PresentQuestionSet(a.Id)">▶️</button></td>
+                                <td><button type="button" class="btn btn-light btn-sm mb-1" value="Delete" @onclick="()=>DeleteQuestionSet(a.Id)">🗑️</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="mb-3">
-            <input @bind="_title" class="form-control" placeholder="Enter a Title" maxlength="20" />
-        </div>
-        <button @onclick="AddNewQuestionSet">Add new</button>
     </div>
+
 }
 
 @code {
     [Parameter]
     public EventCallback<QuestionSet> OnQuestionSetSubmit { get; set; }
 
-    private QuestionSetSummary[] _questionSets = new QuestionSetSummary[] { };
+    private List<QuestionSetSummary> _questionSets = new List<QuestionSetSummary>();
 
     private string _title;
 
@@ -66,7 +84,7 @@
             return;
         }
 
-        _questionSets = await response.Content.ReadFromJsonAsync<QuestionSetSummary[]>();
+        _questionSets = await response.Content.ReadFromJsonAsync<List<QuestionSetSummary>>();
         _isLoaded = true;
         return;
     }
@@ -97,6 +115,35 @@
         }
 
         NavigationManager.NavigateTo($"/edit/{qs.Id}");
+    }
+
+    private async Task DeleteQuestionSet(string id)
+    {
+        var response = await Http.DeleteAsync($"questionset/delete?userId={_userId}&id={id}");
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error getting the list of quizzes! {errorMessage}");
+            return;
+        }
+        var indexOfQuestionSetToBeRemoved = _questionSets.IndexOf(_questionSets.First(r=>r.Id == id));
+        _questionSets.RemoveAt(indexOfQuestionSetToBeRemoved);
+
+        await AppInsights.TrackEvent("QuestionSetRemoved", new Dictionary<string, object?>
+        {
+            { "userId", _userId },
+            { "Id", id },
+        });
+    }
+
+    private async Task PresentQuestionSet(string id)
+    {
+        NavigationManager.NavigateTo($"/present/{id}");
+    }
+
+    private void EditQuestionSet(string id)
+    {
+        NavigationManager.NavigateTo($"/edit/{id}");
     }
 
 

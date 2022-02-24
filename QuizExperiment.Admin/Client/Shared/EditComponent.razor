@@ -3,6 +3,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject IApplicationInsights AppInsights
 
 @if (_isLoaded)
 {
@@ -15,6 +16,14 @@
                 <button type="button" class="btn btn-primary mb-1" value="Save and Exit" @onclick="SaveAndExit" >Save and Exit</button>
                 <button type="button" class="btn btn-success mb-1" value="Save and Present" @onclick="SaveAndPresent">Save and Present</button>
                 <button type="button" class="btn btn-danger mb-1" value="Discard Changes" @onclick="DiscardChanges">Discard Changes</button>
+            </div>
+        </div>
+        <div class="row align-items-center mb-4">
+            <div class="col-auto">
+                <span>Question Set Title</span>
+            </div>
+            <div class="col">
+                <input @bind="_questionSet.Title" class="form-control" placeholder="Enter a Title" maxlength="50" />
             </div>
         </div>
         <div class="row">
@@ -43,7 +52,7 @@
 
     private Question _currentQuestion = new Question();
 
-    private string userId;
+    private string _userId;
 
     private void OnEditQuestion(Question question)
     {
@@ -71,9 +80,9 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         var claims = user.Claims.ToArray();
-        userId = claims.First(r => r.Type == "oid").Value;
+        _userId = claims.First(r => r.Type == "oid").Value;
 
-        var response = await Http.GetAsync($"questionset/get?userId={userId}&id={Id}");
+        var response = await Http.GetAsync($"questionset/get?userId={_userId}&id={Id}");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -110,6 +119,12 @@
             var errorMessage = response.ReasonPhrase;
             Console.WriteLine($"There was an error saving the question set! {errorMessage}");
         }
+
+        await AppInsights.TrackEvent("QuestionSetUpserted", new Dictionary<string, object?>
+        {
+            { "userId", _userId },
+            { "Id", _questionSet.Id },
+        });
     }
 
     private void DiscardChanges()
