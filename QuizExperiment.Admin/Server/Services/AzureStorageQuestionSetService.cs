@@ -28,7 +28,7 @@ namespace QuizExperiment.Admin.Server.Services
 
         public async Task<QuestionSetSummary[]> GetQuestionSetsForUser(string userId)
         {
-            var blobs = _blobContainerClient.GetBlobsAsync(prefix: $"{userId}").AsPages();
+            var blobs = _blobContainerClient.GetBlobsAsync(BlobTraits.Metadata,prefix: $"{userId}").AsPages();
 
             var questionSets = new List<QuestionSetSummary>();
 
@@ -36,6 +36,8 @@ namespace QuizExperiment.Admin.Server.Services
             {
                 foreach (BlobItem blobItem in blobPage.Values)
                 {
+                    //var blobClient = _blobContainerClient.GetBlobClient(blobItem.Name);
+                   // var props = await blobClient.GetPropertiesAsync();
                     questionSets.Add(new QuestionSetSummary
                     {
                         Id = blobItem.Metadata["id"],
