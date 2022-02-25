@@ -4,6 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @implements IAsyncDisposable
+@inject IApplicationInsights AppInsights
 
 @if (_isLoaded)
 {
@@ -71,7 +72,7 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
             .Build();
 
-        hubConnection.On<string, string[]>("QuestionArrived", (question, possibleAnswers) =>
+        hubConnection.On<string, string[]>("QuestionArrived", async (question, possibleAnswers) =>
         {
             currentQuestion = question;
             currentPossibleAnswers = possibleAnswers;
@@ -80,10 +81,18 @@
             wasLastAnswerCorrect = false;
             _questionStartTime = DateTime.UtcNow;
             _userState = ClientUserState.WaitingForAnswer;
+            await AppInsights.TrackEvent("ClientQuestionArrived", 
+                new Dictionary<string, object?>
+                {
+                    { "userName", userName },
+                    { "Question", currentQuestion },
+                }
+            );
+
             StateHasChanged();
         });
 
-        hubConnection.On<int, int,int, bool>("AnswerArrived", (answer, currentScore, position, isLastQuestion) =>
+        hubConnection.On<int, int,int, bool>("AnswerArrived", async (answer, currentScore, position, isLastQuestion) =>
          {
              correctAnswerIndex = answer;
              wasLastAnswerCorrect = (answer == currentAnswerIndex);
@@ -91,6 +100,14 @@
              _currentScore = currentScore;
              _isLastQuestion = isLastQuestion;
              _userState = ClientUserState.IdleInGame; 
+             await AppInsights.TrackEvent("ClientAnswerArrived", 
+                new Dictionary<string, object?>
+                {
+                    { "userName", userName },
+                    { "Question", currentQuestion },
+                    { "wasLastAnswerCorrect", wasLastAnswerCorrect },
+                }
+            );
              StateHasChanged();
          });
 
@@ -109,6 +126,13 @@
 
     private async Task RegisterUser(string user){
         userName = user;
+        await AppInsights.TrackEvent("ClientJoinQuizSession", 
+                new Dictionary<string, object?>
+                {
+                    { "userName", userName },
+                    { "clientQuizId", clientQuizId }
+                }
+            );
         await hubConnection.SendAsync("JoinQuizSession", clientQuizId, userName);
         _userState = ClientUserState.WaitingForStart;
 
@@ -117,6 +141,17 @@
     private async Task AnswerQuestion(int answerIndex){
         currentAnswerIndex = answerIndex;
         var timeTaken = (DateTime.UtcNow - (_questionStartTime ?? DateTime.MinValue)).TotalMilliseconds;
+
+        await AppInsights.TrackEvent("ClientSubmitAnswer", 
+                new Dictionary<string, object?>
+                {
+                    { "userName", userName },
+                    { "clientQuizId", clientQuizId },
+                    { "question", currentQuestion },
+                    { "currentAnswerIndex", currentAnswerIndex },
+                    { "timeTaken", timeTaken }
+                }
+            );
         await hubConnection.SendAsync("SubmitAnswer", clientQuizId, currentAnswerIndex, timeTaken);
         _userState = ClientUserState.WaitForAnswerCheck;
 

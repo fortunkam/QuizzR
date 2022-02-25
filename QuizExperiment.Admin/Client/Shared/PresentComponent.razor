@@ -4,6 +4,8 @@
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HttpClient Http
+@inject IApplicationInsights AppInsights
+
 
 @if (_isLoaded)
 {
@@ -72,6 +74,12 @@
 
     private async Task OnGameRegistered(string clientQuizId){
         _clientQuizId = clientQuizId;
+        await AppInsights.TrackEvent("PresentGameRegistered", 
+                new Dictionary<string, object?>
+                {
+                    { "clientQuizId", _clientQuizId }
+                }
+            );
         await _hubConnection.SendAsync("RegisterQuizSession", clientQuizId);
     }
 
@@ -88,6 +96,14 @@
         _state = AdminUserState.WaitingForAnswers;
 
         _cts = new CancellationTokenSource();
+
+        await AppInsights.TrackEvent("PresentSendQuestion", 
+                new Dictionary<string, object?>
+                {
+                    { "clientQuizId", _clientQuizId },
+                    { "question", _currentQuestion.Title }
+                }
+            );
         await _hubConnection.SendAsync("SendQuestion", _clientQuizId, _currentQuestion.Title, _currentQuestion.Options);
 
         using var tmr = new PeriodicTimer(TimeSpan.FromSeconds(_currentQuestion.Timeout));
@@ -137,9 +153,17 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
             .Build();
 
-        _hubConnection.On<string, string, string>("UserJoined", (quizId, userName, connectionId) =>
+        _hubConnection.On<string, string, string>("UserJoined", async (quizId, userName, connectionId) =>
         {
             _users.Add(connectionId, userName);
+            await AppInsights.TrackEvent("PresentUserJoined", 
+                new Dictionary<string, object?>
+                {
+                    { "clientQuizId", _clientQuizId },
+                    { "userName", userName },
+                    { "connectionId", connectionId }
+                }
+            );
             StateHasChanged();
         });
 
@@ -150,6 +174,17 @@
             {
                 await CloseQuestion();
             }
+
+            await AppInsights.TrackEvent("PresentClientAnswerReceived", 
+                new Dictionary<string, object?>
+                {
+                    { "clientQuizId", _clientQuizId },
+                    { "question", _currentQuestion.Title },
+                    { "answerIndex", answerIndex },
+                    { "timeTaken", timeTaken },
+                    { "clientConnectionId", clientConnectionId }
+                }
+            );
             StateHasChanged();
         });
 
@@ -194,6 +229,14 @@
         }
 
         _orderedLeaderboard = _leaderboard.OrderByDescending(r => r.Value).ToDictionary(k=>k.Key, v=>v.Value);
+
+         await AppInsights.TrackEvent("PresentSendAnswerResult", 
+                new Dictionary<string, object?>
+                {
+                    { "clientQuizId", _clientQuizId },
+                    { "question", _currentQuestion.Title }
+                }
+            );
 
         foreach (var c in unionAnswers)
         {
