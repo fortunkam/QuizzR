@@ -197,3 +197,10 @@ a, .btn-link {
     max-height: 300px;
 }
 
+.img-qrcode {
+    max-width: 300px;
+    max-height: 300px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+

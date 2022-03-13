@@ -1,9 +1,12 @@
 ﻿@using QuizExperiment.Models
 @inject HttpClient Http
+@inject IConfiguration Configuration
 
 <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
     <h1 class="h1 text-center">Please join the quiz using the following code</h1>
     <h1 class="display-1">@_clientQuizId</h1>
+    <img class="img-fluid rounded img-qrcode" src="@( Configuration.GetValue<string>("QRCodeImageUrl") )" />
+    <h1 class="h1 text-center">@( Configuration.GetValue<string>("ClientJoinLink") )</h1>
     <button class="btn btn-primary btn-lg" @onclick="@(e=> OnGameStarted.InvokeAsync())">Start</button>
 
     @if (Users.Count > 0)

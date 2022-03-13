@@ -1,0 +1,171 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@using QuizExperiment.Admin.Client.Enums
+@using QuizExperiment.Models
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@implements IAsyncDisposable
+@inject IApplicationInsights AppInsights
+
+@if (_isLoaded)
+{
+    @if (_userState == ClientUserState.Idle)
+    {
+        <JoinQuiz OnQuizIdSubmit="@EnterQuizId" />
+    }
+
+    @if (_userState == ClientUserState.WaitingForUserName)
+    {
+        <UserName OnUserNameSubmit="@RegisterUser" />
+    }
+
+    @if (_userState == ClientUserState.WaitingForStart)
+    {
+        <WaitingForQuestions />
+    }
+
+
+
+    @if (_userState == ClientUserState.WaitingForAnswer)
+    {
+        <SingleAnswerMultiSelectQuestion PossibleAnswers="@currentPossibleAnswers"
+        OnAnswerSubmit="@AnswerQuestion" Question="@currentQuestion" />
+    }
+
+    @if (_userState == ClientUserState.WaitForAnswerCheck)
+    {
+        <WaitingForAnswerCheck />
+    }
+
+    @if (_userState == ClientUserState.IdleInGame)
+    {
+        <AnswerSummary MyAnswerIndex="@currentAnswerIndex" CorrectAnswerIndex="@correctAnswerIndex" 
+        CurrentScore=@_currentScore
+        Position=@_position IsLastQuestion="@_isLastQuestion"/>
+    }
+}
+
+
+@code {
+    private string clientQuizId;
+    private string userName;
+
+    private string currentQuestion = "";
+    private int currentAnswerIndex = -1;
+    private string[] currentPossibleAnswers = null;
+
+    private int correctAnswerIndex = -1;
+    private bool wasLastAnswerCorrect = false;
+    private bool _isLastQuestion = false;
+
+    private int _currentScore;
+    private int _position;
+
+    private bool _isLoaded = false;
+
+    private DateTime? _questionStartTime;
+
+    private HubConnection hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
+            .Build();
+
+        hubConnection.On<string, string[]>("QuestionArrived", async (question, possibleAnswers) =>
+        {
+            currentQuestion = question;
+            currentPossibleAnswers = possibleAnswers;
+            currentAnswerIndex = -1;
+            correctAnswerIndex = -1;
+            wasLastAnswerCorrect = false;
+            _questionStartTime = DateTime.UtcNow;
+            _userState = ClientUserState.WaitingForAnswer;
+            await AppInsights.TrackEvent("ClientQuestionArrived", 
+                new Dictionary<string, object?>
+                {
+                    { "userName", userName },
+                    { "Question", currentQuestion },
+                }
+            );
+
+            StateHasChanged();
+        });
+
+        hubConnection.On<int, int,int, bool>("AnswerArrived", async (answer, currentScore, position, isLastQuestion) =>
+         {
+             correctAnswerIndex = answer;
+             wasLastAnswerCorrect = (answer == currentAnswerIndex);
+             _position = position;
+             _currentScore = currentScore;
+             _isLastQuestion = isLastQuestion;
+             _userState = ClientUserState.IdleInGame; 
+             await AppInsights.TrackEvent("ClientAnswerArrived", 
+                new Dictionary<string, object?>
+                {
+                    { "userName", userName },
+                    { "Question", currentQuestion },
+                    { "wasLastAnswerCorrect", wasLastAnswerCorrect },
+                }
+            );
+             StateHasChanged();
+         });
+
+        await hubConnection.StartAsync();
+
+        _isLoaded = true;
+    }
+
+
+    private ClientUserState _userState = ClientUserState.Idle;
+
+    private async Task EnterQuizId(string quizId){
+        clientQuizId = quizId;
+        _userState = ClientUserState.WaitingForUserName;
+    }
+
+    private async Task RegisterUser(string user){
+        userName = user;
+        await AppInsights.TrackEvent("ClientJoinQuizSession", 
+                new Dictionary<string, object?>
+                {
+                    { "userName", userName },
+                    { "clientQuizId", clientQuizId }
+                }
+            );
+        await hubConnection.SendAsync("JoinQuizSession", clientQuizId, userName);
+        _userState = ClientUserState.WaitingForStart;
+
+    }
+
+    private async Task AnswerQuestion(int answerIndex){
+        currentAnswerIndex = answerIndex;
+        var timeTaken = (DateTime.UtcNow - (_questionStartTime ?? DateTime.MinValue)).TotalMilliseconds;
+
+        await AppInsights.TrackEvent("ClientSubmitAnswer", 
+                new Dictionary<string, object?>
+                {
+                    { "userName", userName },
+                    { "clientQuizId", clientQuizId },
+                    { "question", currentQuestion },
+                    { "currentAnswerIndex", currentAnswerIndex },
+                    { "timeTaken", timeTaken }
+                }
+            );
+        await hubConnection.SendAsync("SubmitAnswer", clientQuizId, currentAnswerIndex, timeTaken);
+        _userState = ClientUserState.WaitForAnswerCheck;
+
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+
+
+
+
+}
