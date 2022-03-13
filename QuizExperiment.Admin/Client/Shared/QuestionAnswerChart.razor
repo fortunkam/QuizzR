@@ -2,7 +2,7 @@
 @using Blazorise.Charts
 
 <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1 class="h1 text-center">The correct answer is @(Options[CorrectAnswerIndex])</h1>
+    <h1 class="h1 text-center">The correct answer is <strong>@(Options[CorrectAnswerIndex])</strong></h1>
      <Chart @ref="barChart" Type="ChartType.Bar" TItem="int" />
     <button class="btn btn-primary" @onclick="@(e=> OnNextQuestion.InvokeAsync())">Next</button>
 </div>
