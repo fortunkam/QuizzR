@@ -18,3 +18,12 @@ The project consists of...
 6. Change the LOCATION, RESOURCEGROUP, APPNAME environment variables in [main.bicep](./Env/main.bicep).
 7. Commit the changes, this should cause the action to run and deploy everything
 8. Create and present new quizzes using <APPNAME>.azurewebsites.net/manage, players can join using <APPNAME>.azurewebsites.net
+
+## How to run a quiz
+
+1. Create a quiz using the `/manage` url.
+2. Once created present it using the the link on the `/manage` page or the "Save and Present" option in the editor.
+3. Share the presenter screen in the online meeting.
+4. Players join using the root (`/`)` url.
+5. Once the required number of players have joined, press "Start" on the presenter screen, each question will be presented.  The question will end either when the timer expires or all the registered players have answered.
+6. Once all questions have been asked the leaderboard will be shown.
