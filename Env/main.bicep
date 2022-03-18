@@ -5,9 +5,15 @@ var appPlanName = '${prefix}-appplan'
 var appName = '${prefix}-webapp'
 var logAnalyticsName = '${prefix}loganalytics'
 var signalRName = '${prefix}signalr'
-var containerName = 'quizassets'
 var questionSetTableName = 'questionsets'
 param storageAccountName string = '${prefix}store${uniqueString(resourceGroup().id)}'
+
+param workbookDisplayName string = 'Quiz Analysis Workbook'
+var workbookType = 'workbook'
+param workbookName string = newGuid()
+param location string = resourceGroup().location
+
+var workbookContent = loadTextContent('workbook.content.json')
 
 @allowed([
   'Premium_LRS'
@@ -25,7 +31,7 @@ param storageAccountType string = 'Standard_LRS'
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' = {
   name: logAnalyticsName
-  location: resourceGroup().location
+  location: location
   properties: {
     sku: {
       name: 'PerGB2018'
@@ -38,7 +44,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: appInsightsName
-  location: resourceGroup().location
+  location: location
   kind: 'web'
   properties: {
     Application_Type: 'web'
@@ -49,7 +55,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
 // App Service Plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2020-12-01' = {
   name: appPlanName
-  location: resourceGroup().location
+  location: location
   sku: {
     name: 'S1'
     tier: 'Standard'
@@ -62,7 +68,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2020-12-01' = {
 //App Service
 resource webApplication 'Microsoft.Web/sites@2018-11-01' = {
   name: appName
-  location: resourceGroup().location
+  location: location
   tags: {
     'hidden-related:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/appServicePlan': 'Resource'
   }
@@ -94,7 +100,7 @@ resource appSettings 'Microsoft.Web/sites/config@2021-02-01' = {
 // Add SignalR Service
 resource signalR 'Microsoft.SignalRService/signalR@2021-09-01-preview' = {
   name: signalRName
-  location: resourceGroup().location
+  location: location
   sku: {
     name: 'Standard_S1'
     tier: 'Standard'
@@ -126,7 +132,7 @@ resource signalR 'Microsoft.SignalRService/signalR@2021-09-01-preview' = {
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   name: storageAccountName
-  location: resourceGroup().location
+  location: location
   sku: {
     name: storageAccountType
   }
@@ -159,6 +165,18 @@ resource tableservices 'Microsoft.Storage/storageAccounts/tableServices@2021-08-
 resource storageAssetsContainer 'Microsoft.Storage/storageAccounts/tableServices/tables@2021-08-01' = {
   name: questionSetTableName
   parent: tableservices
+}
+
+resource funcworkbook 'Microsoft.Insights/workbooks@2021-08-01' = {
+  name: workbookName
+  location: location
+  kind: 'shared'
+  properties: {
+    category: workbookType
+    displayName: workbookDisplayName
+    serializedData: workbookContent
+    sourceId: appInsights.id
+  }
 }
 
 output webApplicationPrincipalId string = webApplication.identity.principalId

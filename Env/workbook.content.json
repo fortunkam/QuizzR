@@ -1,0 +1,227 @@
+{
+    "version": "Notebook/1.0",
+    "items": [
+      {
+        "type": 1,
+        "content": {
+          "json": "# Quiz Analysis"
+        },
+        "name": "text - 0"
+      },
+      {
+        "type": 9,
+        "content": {
+          "version": "KqlParameterItem/1.0",
+          "parameters": [
+            {
+              "id": "ec44e62b-ce16-4c2d-a0ed-87f64b05e1eb",
+              "version": "KqlParameterItem/1.0",
+              "name": "DateRange",
+              "type": 4,
+              "value": {
+                "durationMs": 604800000
+              },
+              "typeSettings": {
+                "selectableValues": [
+                  {
+                    "durationMs": 300000
+                  },
+                  {
+                    "durationMs": 900000
+                  },
+                  {
+                    "durationMs": 1800000
+                  },
+                  {
+                    "durationMs": 3600000
+                  },
+                  {
+                    "durationMs": 14400000
+                  },
+                  {
+                    "durationMs": 43200000
+                  },
+                  {
+                    "durationMs": 86400000
+                  },
+                  {
+                    "durationMs": 172800000
+                  },
+                  {
+                    "durationMs": 259200000
+                  },
+                  {
+                    "durationMs": 604800000
+                  },
+                  {
+                    "durationMs": 1209600000
+                  },
+                  {
+                    "durationMs": 2419200000
+                  },
+                  {
+                    "durationMs": 2592000000
+                  },
+                  {
+                    "durationMs": 5184000000
+                  },
+                  {
+                    "durationMs": 7776000000
+                  }
+                ]
+              },
+              "timeContext": {
+                "durationMs": 86400000
+              }
+            }
+          ],
+          "style": "formHorizontal",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components"
+        },
+        "name": "parameters - 7"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "customEvents\r\n    | where name== 'PresentUserJoined'\r\n    | extend quizId = toint(customDimensions[\"clientQuizId\"])\r\n    | summarize quizDate = max(timestamp) by quizId",
+          "size": 0,
+          "title": "Quiz Runs",
+          "timeContext": {
+            "durationMs": 0
+          },
+          "timeContextFromParameter": "DateRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components"
+        },
+        "name": "query - 6"
+      },
+      {
+        "type": 9,
+        "content": {
+          "version": "KqlParameterItem/1.0",
+          "parameters": [
+            {
+              "id": "47a3b709-35d8-4843-a32f-65aefc66c9b4",
+              "version": "KqlParameterItem/1.0",
+              "name": "quizId",
+              "label": "Quiz Id",
+              "type": 2,
+              "isRequired": true,
+              "query": "customEvents\r\n| extend quizId = toint(customDimensions[\"clientQuizId\"])\r\n| where isnull(quizId) == false\r\n| distinct quizId",
+              "value": "4636",
+              "typeSettings": {
+                "additionalResourceOptions": [],
+                "showDefault": false
+              },
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "DateRange",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components"
+            }
+          ],
+          "style": "formHorizontal",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components"
+        },
+        "name": "Set the Quiz Id"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "customEvents\r\n| extend quizId = toint(customDimensions[\"clientQuizId\"])\r\n| where quizId == {quizId}\r\n| where name == \"ClientJoinQuizSession\"\r\n| extend userName = tostring(customDimensions[\"userName\"])\r\n| project timestamp, userName, session_Id, operation_Id, user_Id",
+          "size": 0,
+          "title": "Clients that attempted to join",
+          "timeContext": {
+            "durationMs": 0
+          },
+          "timeContextFromParameter": "DateRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components"
+        },
+        "name": "Clients that attempted to join"
+      },
+      {
+        "type": 9,
+        "content": {
+          "version": "KqlParameterItem/1.0",
+          "parameters": [
+            {
+              "id": "152be28a-3b46-4ca8-9280-90ec6774bb40",
+              "version": "KqlParameterItem/1.0",
+              "name": "UserName",
+              "type": 2,
+              "query": "customEvents\r\n| extend quizId = toint(customDimensions[\"clientQuizId\"])\r\n| where quizId == {quizId}\r\n| where name == \"ClientJoinQuizSession\"\r\n| extend userName = tostring(customDimensions[\"userName\"])\r\n| project userName",
+              "value": "I’mSpartacus",
+              "typeSettings": {
+                "additionalResourceOptions": [],
+                "showDefault": false
+              },
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "DateRange",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components"
+            }
+          ],
+          "style": "formHorizontal",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components"
+        },
+        "name": "parameters - 3"
+      },
+      {
+        "type": 9,
+        "content": {
+          "version": "KqlParameterItem/1.0",
+          "parameters": [
+            {
+              "id": "ec39b217-703e-47d1-9884-d9dd4a0a3ca4",
+              "version": "KqlParameterItem/1.0",
+              "name": "ConnectionId",
+              "type": 2,
+              "isRequired": true,
+              "query": "customEvents\r\n    | where name== 'PresentUserJoined'\r\n    | extend quizId = toint(customDimensions[\"clientQuizId\"])\r\n    | where quizId == {quizId}\r\n    | extend userName = tostring(customDimensions[\"userName\"])\r\n    | where userName == '{UserName}'\r\n    | extend connectionId = tostring(customDimensions[\"connectionId\"])\r\n    | project connectionId",
+              "value": "iOs4ZJPjB8vR_yH1gI0g-A3238988d1",
+              "typeSettings": {
+                "additionalResourceOptions": [],
+                "showDefault": false
+              },
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "DateRange",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components"
+            }
+          ],
+          "style": "formHorizontal",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components"
+        },
+        "name": "parameters - 5"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "customEvents\r\n| extend userName = tostring(customDimensions[\"userName\"])\r\n| extend connectionId = tostring(customDimensions[\"clientConnectionId\"])\r\n| where connectionId == '{ConnectionId}'\r\n| extend quizId = toint(customDimensions[\"clientQuizId\"])\r\n| where quizId == {quizId}\r\n| union ( customEvents\r\n| extend userName = tostring(customDimensions[\"userName\"])\r\n| where userName == '{UserName}'\r\n| extend quizId = toint(customDimensions[\"clientQuizId\"])\r\n| where quizId == {quizId} )\r\n| order by timestamp asc \r\n| project timestamp, connectionId, name, customDimensions, session_Id, user_Id\r\n\r\n",
+          "size": 0,
+          "title": "Events by user name",
+          "timeContext": {
+            "durationMs": 0
+          },
+          "timeContextFromParameter": "DateRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components"
+        },
+        "name": "Events by user name"
+      }
+    ],
+    "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+  }
