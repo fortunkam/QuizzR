@@ -13,7 +13,7 @@ var workbookType = 'workbook'
 param workbookName string = newGuid()
 param location string = resourceGroup().location
 
-var workbookContent = loadTextContent('workbook.content.json')
+var workbookContent = loadTextContent('workbookcontent.json')
 
 @allowed([
   'Premium_LRS'
