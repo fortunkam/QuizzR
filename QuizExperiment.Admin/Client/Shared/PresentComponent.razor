@@ -72,13 +72,15 @@
 
     private DateTime _currentQuestionEndTime;
 
-    private async Task OnGameRegistered(string clientQuizId){
+
+    private async Task OnGameRegistered(string clientQuizId)
+    {
         _clientQuizId = clientQuizId;
-        await AppInsights.TrackEvent("PresentGameRegistered", 
+        await AppInsights.TrackEvent("PresentGameRegistered",
                 new Dictionary<string, object?>
-                {
-                    { "clientQuizId", _clientQuizId }
-                }
+                    {
+                { "clientQuizId", _clientQuizId }
+                    }
             );
         await _hubConnection.SendAsync("RegisterQuizSession", clientQuizId);
     }
