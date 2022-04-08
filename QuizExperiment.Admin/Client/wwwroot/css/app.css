@@ -204,3 +204,9 @@ a, .btn-link {
     margin-bottom: 20px;
 }
 
+.img-giphyresult {
+    max-width: 100px;
+    max-height: 100px;
+    cursor: pointer;
+}
+

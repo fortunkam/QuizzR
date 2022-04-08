@@ -13,6 +13,9 @@ var workbookType = 'workbook'
 param workbookName string = newGuid()
 param location string = resourceGroup().location
 
+@secure()
+param giphyApiKey string
+
 var workbookContent = loadTextContent('workbookcontent.json')
 
 @allowed([
@@ -93,6 +96,7 @@ resource appSettings 'Microsoft.Web/sites/config@2021-02-01' = {
     'Azure:SignalR:ConnectionString':'Endpoint=https://${signalR.properties.hostName};AuthType=aad;Version=1.0;'
     'Azure:Storage:ConnectionString':'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(storageAccount.id,storageAccount.apiVersion).keys[0].value}'
     'QuizAssetsContainerName':'quizassets'
+    'Giphy:ApiKey': giphyApiKey
   }
 }
 

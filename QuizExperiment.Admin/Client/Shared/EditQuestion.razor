@@ -1,4 +1,8 @@
-@using QuizExperiment.Models
+﻿@using QuizExperiment.Models
+@using System.Text.Json
+@inject HttpClient Http
+
+
 
 <div class="row align-items-center shadow p-3 mb-4 rounded">
     <div class="input-group mb-3">
@@ -15,6 +19,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text">Image Url</span>
                 <input type="text" class="form-control" placeholder="Image Url" @bind-value="@Question.ImageUrl" >
+                <button type="button" class="btn btn-secondary" value="Search" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="@ClearSearch">Search</button>
             </div>
         </div>
 
@@ -90,10 +95,77 @@
     
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Search for a gif</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="row align-items-center">
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Search Term" @bind-value="@_searchTerm" >
+                <button type="button" class="btn btn-secondary" value="Search" @onclick="@SearchGiphy" >Search</button>
+            </div>
+          </div>
+          <div class="row align-items-center">
+              <table class="table">
+                <tbody>
+                    @foreach(var giphyUrlBatch in _giphyResults.Chunk(3))
+                    {
+                        <tr>
+                            @foreach(var giphyUrl in giphyUrlBatch)
+                            {
+                                <td>
+                                    <img src="@giphyUrl" class="img-giphyresult" data-bs-dismiss="modal" @onclick="@(()=>Question.ImageUrl = @giphyUrl)" />
+                                </td>
+                            }
+                        </tr>
+                    }
+                  </tbody>
+              </table>
+          </div>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
 
 @code {
 
     [Parameter]
     public Question Question { get; set; }
+
+    private string _searchTerm;
+
+    private List<string> _giphyResults = new List<string>();
+
+    private async Task SearchGiphy()
+    {
+        _giphyResults.Clear();
+        var response = await Http.GetAsync($"giphy/search?query={_searchTerm}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error getting the list of quizzes! {errorMessage}");
+            return;
+        }
+
+
+        _giphyResults.AddRange(await response.Content.ReadFromJsonAsync<string[]>());
+    }
+
+    private void ClearSearch()
+    {
+        _searchTerm = "";
+        _giphyResults.Clear();
+    }
+
+
+
 
 }
