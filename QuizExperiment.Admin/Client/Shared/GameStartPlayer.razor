@@ -1,0 +1,31 @@
+﻿<div class="card mx-1 text-center player-card">
+        <div class="card-body">
+            <p class="player-icon">@(GetPlayerIcon())</p>
+            <p class="player-name">@PlayerName</p>
+        </div>
+    </div>
+
+@code {
+    [Parameter]
+    public string PlayerName { get; set; }
+    
+    private Random _random = new Random();
+
+    public string GetPlayerIcon()
+    {
+        var val = _random.Next(1, 11);
+        return val switch
+        {
+            1 => "😃",
+            2 => "😁",
+            3 => "😄",
+            4 => "😎",
+            5 => "🤩",
+            6 => "😊",
+            7 => "😆",
+            8 => "😋",
+            9 => "😲",
+            _ => "🥳"
+        };
+    }
+}

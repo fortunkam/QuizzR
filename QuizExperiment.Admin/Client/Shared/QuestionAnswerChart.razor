@@ -33,23 +33,19 @@
 
     async Task HandleRedraw()
     {
-        
+
         await barChart.Clear();
 
         await barChart.SetOptions(new ChartOptions()
             {
 
-                Scales = new Scales
+                Scales = new Blazorise.Charts.ChartScales
                 {
-                    YAxes = new List<Axis> {
-                    new Axis {
-                        Ticks = new AxisTicks
-                        {
-                            BeginAtZero = true
-                        }
+                    Y = new ChartAxis {
+                       BeginAtZero = true,
+                       Ticks = new ChartAxisTicks()
                     }
-                }
-                }
+                }                
             });
 
         await barChart.AddLabelsDatasetsAndUpdate(Options, GetBarChartDataset());

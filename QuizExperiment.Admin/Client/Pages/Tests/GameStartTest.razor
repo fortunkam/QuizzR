@@ -1,0 +1,27 @@
+﻿@page "/test/gamestarttest"
+
+<button @onclick="AddPlayer">Add Player</button>
+
+<div class="d-flex flex-column justify-content-center align-items-center border-top">
+    @if (Users.Count > 0)
+    {
+        <h3 class="h3 mt-4">Current Players (@(Users.Count))</h3>
+        <div class="d-flex flex-wrap mt-4">
+            @foreach (var u in Users)
+            {
+                <Animate Animation="Animations.ZoomIn" Duration="TimeSpan.FromSeconds(1)" >
+                    <GameStartPlayer PlayerName="@u.Value" />
+                </Animate>
+        }
+        </div>
+    }
+</div>
+
+@code {
+    private List<KeyValuePair<string, string>> Users = new List<KeyValuePair<string, string>>();
+    
+    private void AddPlayer()
+    {
+        Users.Add(new KeyValuePair<string, string>("Player " + Users.Count, "Player " + Users.Count));
+    }
+}

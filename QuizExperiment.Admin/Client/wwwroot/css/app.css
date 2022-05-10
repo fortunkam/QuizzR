@@ -210,3 +210,22 @@ a, .btn-link {
     cursor: pointer;
 }
 
+.player-icon {
+    font-size: 64px;
+}
+
+.player-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: -25px;
+}
+
+.player-card {
+    max-width: 10rem;
+    border: none;
+}
+
+.card-body {
+    padding: 0.5rem;
+}
+

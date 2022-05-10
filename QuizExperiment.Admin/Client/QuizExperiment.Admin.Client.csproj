@@ -16,10 +16,12 @@
   <ItemGroup>
     <PackageReference Include="blazor-dragdrop" Version="2.4.0" />
     <PackageReference Include="BlazorApplicationInsights" Version="1.6.0" />
-    <PackageReference Include="Blazorise" Version="0.9.4.9" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.4.9" />
-    <PackageReference Include="Blazorise.Charts" Version="0.9.4.9" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.4.9" />
+    <PackageReference Include="Blazorise" Version="1.0.4" />
+    <PackageReference Include="Blazorise.Animate" Version="1.0.4" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="1.0.4" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.0.4" />
+    <PackageReference Include="Blazorise.Charts" Version="1.0.4" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.0" />

@@ -17,7 +17,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services
       .AddBlazorise(options =>
       {
-          options.ChangeTextOnKeyPress = true;
+          options.Immediate = true;
       })
       .AddBootstrapProviders()
       .AddFontAwesomeIcons();

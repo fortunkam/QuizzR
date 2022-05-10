@@ -39,14 +39,18 @@
     @if (_userState == ClientUserState.IdleInGame)
     {
         <AnswerSummary MyAnswerIndex="@currentAnswerIndex" CorrectAnswerIndex="@correctAnswerIndex" 
-        CurrentScore=@_currentScore
+        CurrentScore=@_currentScore CorrectAnswer="@(currentPossibleAnswers[correctAnswerIndex])"
         Position=@_position IsLastQuestion="@_isLastQuestion"/>
     }
 }
 
 
 @code {
-    private string clientQuizId;
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? clientQuizId { get; set; }
+
     private string userName;
 
     private string currentQuestion = "";
@@ -115,6 +119,11 @@
            });
 
         await hubConnection.StartAsync();
+
+        if (clientQuizId != null)
+        {
+            _userState = ClientUserState.WaitingForUserName;
+        }
 
         _isLoaded = true;
     }

@@ -1,30 +1,32 @@
 ﻿@using QuizExperiment.Models
 @inject HttpClient Http
 @inject IConfiguration Configuration
+@inject NavigationManager MyNavigationManager
 
-<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1 class="h1 text-center">Please join the quiz using the following code</h1>
-    <h1 class="display-1">@_clientQuizId</h1>
-    <img class="img-fluid rounded img-qrcode" src="@( Configuration.GetValue<string>("QRCodeImageUrl") )" />
-    <h1 class="h1 text-center">@( Configuration.GetValue<string>("ClientJoinLink") )</h1>
-    <button class="btn btn-primary btn-lg" @onclick="@(e=> OnGameStarted.InvokeAsync())">Start</button>
 
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <h1 class="h1 text-center">Please scan the QR code below to join the quiz</h1>
+    <img class="img-fluid rounded img-qrcode" src="/quiz/qrcode?clientQuizId=@_clientQuizId" />
+    <h1 class="h1 text-center">or goto to @( Configuration.GetValue<string>("ClientJoinLink") ) and enter the code <strong>@_clientQuizId</strong></h1>
+    
+</div>
+<div class="d-flex flex-column justify-content-center align-items-center border-top">
+    <button class="btn btn-primary btn-lg my-4" @onclick="@(e=> OnGameStarted.InvokeAsync())">Start</button>
+</div>
+<div class="d-flex flex-column justify-content-center align-items-center border-top">
     @if (Users.Count > 0)
     {
-        <h3 class="h3 mt-4">Current Players....</h3>
+        <h3 class="h3 mt-4">Current Players (@(Users.Count))</h3>
         <div class="d-flex flex-wrap mt-4">
             @foreach (var u in Users)
             {
-                <div class="card text-white bg-success mb-3 mx-1" style="max-width: 18rem;">
-                    <div class="card-body">
-                    <h5 class="card-title">@u.Value</h5>
-                </div>
-            </div>
+                <Animate Animation="Animations.ZoomIn" Duration="TimeSpan.FromSeconds(1)" >
+                    <GameStartPlayer PlayerName="@u.Value" />
+                </Animate>
         }
         </div>
     }
 </div>
-
 @code {
     [Parameter]
     public EventCallback OnGameStarted { get; set; }

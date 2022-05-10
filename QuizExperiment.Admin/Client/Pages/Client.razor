@@ -1,5 +1,13 @@
 ﻿@page "/"
 @layout ClientLayout
 
-<ClientComponent />
+<PageTitle>QuizzR - Fun and Games with Microsoft Blazor and SignalR</PageTitle>
+<ClientComponent clientQuizId="@clientQuizId" />
+
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? clientQuizId { get; set; }
+}
 

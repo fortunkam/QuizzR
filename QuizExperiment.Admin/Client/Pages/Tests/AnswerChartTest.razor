@@ -1,0 +1,35 @@
+﻿@page "/test/answerchart"
+@using QuizExperiment.Models
+<QuestionAnswerChart CorrectAnswerIndex="0" OnNextQuestion="@OnNextQuestion" Options="@options" UserAnswers="@userAnswers" />
+
+@code {
+    public void OnNextQuestion()
+    {
+        // Do something
+    }
+
+    private string[] options = new string[] {
+            "Option 1",
+            "Looooooooooong Option 2",
+            "Option 3",
+            "Looooooooooooooooonger Option 4"
+    };
+
+    private Dictionary<string, UserAnswer> userAnswers = new Dictionary<string, UserAnswer> {
+            { "1", new UserAnswer { AnswerIndex = 0} },
+            { "2", new UserAnswer { AnswerIndex = 1 } },
+            { "3", new UserAnswer { AnswerIndex = 0 } },
+            { "4", new UserAnswer { AnswerIndex = 2 } },
+            { "5", new UserAnswer { AnswerIndex = 0 } },
+            { "6", new UserAnswer { AnswerIndex = 2 } },
+            { "7", new UserAnswer { AnswerIndex = 2 } },
+            { "8", new UserAnswer { AnswerIndex = 1} },
+            { "9", new UserAnswer { AnswerIndex = 2 } },
+            { "10", new UserAnswer { AnswerIndex = 1 } },
+            { "11", new UserAnswer { AnswerIndex = 0 } },
+            { "12", new UserAnswer { AnswerIndex = 1 } },
+            { "13", new UserAnswer { AnswerIndex = 0 } },
+            { "14", new UserAnswer { AnswerIndex = 2 } },
+            { "15", new UserAnswer { AnswerIndex = 1 } }
+        };
+}
