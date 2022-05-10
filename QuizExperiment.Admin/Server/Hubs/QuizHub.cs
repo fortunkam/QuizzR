@@ -39,6 +39,11 @@ namespace QuizExperiment.Admin.Server.Hubs
             await Clients.Client(clientId).SendAsync("AnswerArrived", correctAnswerIndex, currentScore, position, isLastQuestion);
         }
 
+        public async Task SendPlayerPosition(string clientQuizId, string clientId,int position, int score)
+        {
+            await Clients.Client(clientId).SendAsync("PlayerPositionArrived", position, score);
+        }
+
 
 
     }

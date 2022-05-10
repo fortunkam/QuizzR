@@ -116,12 +116,24 @@
         StateHasChanged();
     }
 
+    private async Task SendFinalPositions()
+    {
+        for (int i = 0; i < _orderedLeaderboard.Count; i++)
+        {
+            var user = _orderedLeaderboard.ElementAt(i);
+            await _hubConnection.SendAsync("SendPlayerPosition", _clientQuizId, user.Key, i + 1, user.Value);
+            
+        }
+            
+    }
+
     private async Task OnNextQuestion()
     {
         if(_currentQuestionIndex + 1 >= _questionSet.Questions.Count)
         {
             //Show the final leaderboard
             _state = AdminUserState.ShowingPodium;
+            await SendFinalPositions();
         }
         else
         {

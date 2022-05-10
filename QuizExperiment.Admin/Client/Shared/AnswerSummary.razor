@@ -1,4 +1,5 @@
-﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+﻿@using QuizExperiment.Models
+<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
     @if (MyAnswerIndex == CorrectAnswerIndex)
     {
         <h1 class="h1 text-center">Good job!</h1>
@@ -17,7 +18,7 @@
     }
     @if (!IsLastQuestion)
     {
-        <h2 class="h2 text-center">You are currently in @Position@PositionSuffix place with a score of @CurrentScore</h2>
+        <h2 class="h2 text-center">You are currently in @Position@(Position.GetSuffix()) place with a score of @CurrentScore</h2>
         <h3 class="h3 text-center">Another question is on it's way!</h3>
     }
     else
@@ -46,17 +47,4 @@
         [Parameter]
         public int Position { get; set; }
 
-        private string PositionSuffix
-        {
-            get
-            {
-                return Position switch
-                {
-                    1 => "st",
-                    2 => "nd",
-                    3 => "rd",
-                    _ => "th"
-                };
-            }
-        }
 }

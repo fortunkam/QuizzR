@@ -1,0 +1,30 @@
+﻿@page "/test/playerposition"
+<PlayerPosition Position="@Position" Score="@Score" />
+
+@code {
+
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "Position")]
+    public int? QueryPosition { get; set; }
+
+     [Parameter]
+     [SupplyParameterFromQuery(Name = "Score")]
+     public int? QueryScore { get; set; }
+
+     public int Position 
+     {
+         get
+         {
+             return QueryPosition ?? 1;
+         }
+     }
+
+     public int Score 
+    {
+        get
+        {
+            return QueryScore ?? 99999;
+        }
+    }
+
+}

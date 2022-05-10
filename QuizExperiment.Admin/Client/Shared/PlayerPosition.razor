@@ -1,0 +1,28 @@
+﻿@using QuizExperiment.Models
+<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+    <p class="player-icon text-center">@Icon</p>
+    <h2 class="h2 text-center">You came in @Position@(Position.GetSuffix()) place with a score of @Score</h2>
+    <p class="text-center">Thanks for playing.</p>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Position { get; set; }
+
+    [Parameter]
+    public int Score { get; set; }
+
+    private string Icon
+    {
+        get
+        {
+            return Position switch {
+                1 => "🥇",
+                2 => "🥈",
+                3 => "🥉",
+                _ => "☹️"
+            };
+        }
+    }
+}

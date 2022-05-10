@@ -42,6 +42,11 @@
         CurrentScore=@_currentScore CorrectAnswer="@(currentPossibleAnswers[correctAnswerIndex])"
         Position=@_position IsLastQuestion="@_isLastQuestion"/>
     }
+
+    @if (_userState == ClientUserState.FinalPosition)
+    {
+        <PlayerPosition Position="@_position" Score="@_currentScore" />
+    }
 }
 
 
@@ -117,6 +122,14 @@
               );
                StateHasChanged();
            });
+
+        hubConnection.On<int, int>("PlayerPositionArrived", async (position, score) =>
+        {
+            _position = position;
+            _currentScore = score;
+            _userState = ClientUserState.FinalPosition;
+            StateHasChanged();
+        });
 
         await hubConnection.StartAsync();
 

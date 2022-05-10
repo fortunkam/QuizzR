@@ -7,6 +7,7 @@
         WaitingForStart,
         WaitingForAnswer,
         WaitForAnswerCheck,
-        IdleInGame
+        IdleInGame,
+        FinalPosition
     }
 }
