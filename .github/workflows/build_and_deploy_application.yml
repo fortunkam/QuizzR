@@ -43,8 +43,8 @@ jobs:
     
     env:
       LOCATION: uksouth
-      RESOURCEGROUP: quiz-time
-      APPNAME: mfquiz-webapp
+      RESOURCEGROUP: quizzr
+      APPNAME: quizzr
     
     steps:
     - name: Download a Build Artifact (Website)
