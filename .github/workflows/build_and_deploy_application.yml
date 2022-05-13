@@ -44,7 +44,7 @@ jobs:
     env:
       LOCATION: uksouth
       RESOURCEGROUP: quizzr
-      APPNAME: quizzr
+      APPNAME: mf-quizzr
     
     steps:
     - name: Download a Build Artifact (Website)
