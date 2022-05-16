@@ -1,7 +1,11 @@
-name: .NET
+name: Build application and deploy from Main
 
 on:
   push:
+    paths:
+    - 'QuizExperiment.Admin/**'
+    - 'QuizExperiment.Models/**'
+    - '.github/workflows/build_and_deploy_application.yml'
   pull_request:
     branches: [ main ]
 
@@ -30,15 +34,9 @@ jobs:
         name: website
         path: website/**
         if-no-files-found: error
-    - name: Upload a Build Artifact (Env)
-      uses: actions/upload-artifact@v2.2.2
-      with:
-        name: env
-        path: Env/*.*
-        if-no-files-found: error
   deploy:
     needs: [build]
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     
     env:
@@ -46,7 +44,6 @@ jobs:
       RESOURCEGROUP: quizzr
       PREFIX: quizzr
       APPNAME: quizzr-webapp
-    
     steps:
     - name: Download a Build Artifact (Website)
       uses: actions/download-artifact@v2.1.0
@@ -55,25 +52,10 @@ jobs:
         name: website
         # Destination path
         path: website
-    - name: Download a Build Artifact (Env)
-      uses: actions/download-artifact@v2.1.0
-      with:
-        # Artifact name
-        name: env
-        # Destination path
-        path: Env
     - name: Login via Azure CLI
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Azure CLI Action
-      uses: Azure/cli@v1
-      with:
-        # Specify the script here
-        inlineScript: | 
-          az group create -n ${{ env.RESOURCEGROUP }} --location ${{ env.LOCATION }}
-          principalId=$(az deployment group create --template-file ./Env/main.bicep -g ${{ env.RESOURCEGROUP }} --parameters giphyApiKey=${{secrets.GIPHYAPIKEY}} prefix=${{env.PREFIX}} --query properties.outputs.webApplicationPrincipalId.value -o tsv)
-          # az deployment group create --template-file ./Env/rbac.bicep -g ${{ env.RESOURCEGROUP }} --parameters principalId=$principalId
     - name: Deploy web app
       id: deploywebapp
       uses: azure/webapps-deploy@v2
