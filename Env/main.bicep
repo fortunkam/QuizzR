@@ -56,7 +56,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
 }
 
 // App Service Plan
-resource appServicePlan 'Microsoft.Web/serverfarms@2020-12-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: appPlanName
   location: location
   sku: {
@@ -64,12 +64,12 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2020-12-01' = {
     tier: 'Basic'
     capacity: 1
   }
-  kind: 'app'
+  kind: 'linux'
 }
 
 
 //App Service
-resource webApplication 'Microsoft.Web/sites@2018-11-01' = {
+resource webApplication 'Microsoft.Web/sites@2021-03-01' = {
   name: appName
   location: location
   tags: {
@@ -78,6 +78,7 @@ resource webApplication 'Microsoft.Web/sites@2018-11-01' = {
   properties: {
     serverFarmId: appServicePlan.id
   }
+  kind: 'app,linux'
   identity: {
     type: 'SystemAssigned'
   }
@@ -85,7 +86,7 @@ resource webApplication 'Microsoft.Web/sites@2018-11-01' = {
 
 
 
-resource appSettings 'Microsoft.Web/sites/config@2021-02-01' = {
+resource appSettings 'Microsoft.Web/sites/config@2021-03-01' = {
   name: 'appsettings'
   parent: webApplication
   properties: {
@@ -93,10 +94,10 @@ resource appSettings 'Microsoft.Web/sites/config@2021-02-01' = {
     'APPLICATIONINSIGHTS_CONNECTION_STRING' : 'InstrumentationKey=${appInsights.properties.InstrumentationKey};IngestionEndpoint=https://uksouth-1.in.applicationinsights.azure.com/'
     'ApplicationInsightsAgent_EXTENSION_VERSION': '~3'
     'XDT_MicrosoftApplicationInsights_Mode':'Recommended'
-    'Azure:SignalR:ConnectionString':'Endpoint=https://${signalR.properties.hostName};AuthType=aad;Version=1.0;'
-    'Azure:Storage:ConnectionString':'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(storageAccount.id,storageAccount.apiVersion).keys[0].value}'
+    'Azure__SignalR__ConnectionString':'Endpoint=https://${signalR.properties.hostName};AuthType=aad;Version=1.0;'
+    'Azure__Storage__ConnectionString':'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(storageAccount.id,storageAccount.apiVersion).keys[0].value}'
     'QuizAssetsContainerName':'quizassets'
-    'Giphy:ApiKey': giphyApiKey
+    'Giphy__ApiKey': giphyApiKey
   }
 }
 
