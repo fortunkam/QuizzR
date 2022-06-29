@@ -14,7 +14,7 @@ param workbookName string = '5ebb021f-9af7-4d88-8a01-4e1e1ab81402'
 param location string = resourceGroup().location
 
 @description('The Runtime stack of current web app')
-param linuxFxVersion string = 'DOTNETCORE|6.0'
+param linuxFxVersion string = 'DOTNET|6.0'
 
 @secure()
 param giphyApiKey string
