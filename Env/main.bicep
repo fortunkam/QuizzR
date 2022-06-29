@@ -83,8 +83,6 @@ resource webApplication 'Microsoft.Web/sites@2021-03-01' = {
     serverFarmId: appServicePlan.id
     siteConfig: {
       linuxFxVersion: linuxFxVersion
-      minTlsVersion: '1.2'
-      ftpsState: 'FtpsOnly'
     }
   }
   identity: {
