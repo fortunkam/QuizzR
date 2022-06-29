@@ -1,7 +1,7 @@
 param prefix string = 'mfquiz'
 
 var appInsightsName = '${prefix}-appinsights'
-var appPlanName = '${prefix}-appplan'
+var appPlanName = '${prefix}-linux-appplan'
 var appName = '${prefix}-webapp'
 var logAnalyticsName = '${prefix}loganalytics'
 var signalRName = '${prefix}signalr'
