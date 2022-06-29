@@ -8,6 +8,8 @@ on:
     - '.github/workflows/build_and_deploy_application.yml'
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    
 
 jobs:
   build:
