@@ -17,19 +17,40 @@
                 </svg>
                 <span class="ms-4 fs-4">QuizzR</span>
             </a>
+            <a class="navbar-brand ms-4" href="#">
+                <span class="fs-6">Logout</span>
+            </a>
         </div>
     </nav>
     <!--Page Title bar -->
-    <nav class="navbar navbar-dark" style="background-color:#2F2D2D; margin-top:69px">
+    <nav class="navbar navbar-dark" style="background-color: #585555; margin-top: 69px">
         <div class="container-fluid">
             <span class="ms-4 fs-4 text-light" style="padding-left:70px;">Some title</span>
+            <div class="d-flex flex-row align-items-center justify-content-end">
+                <div class="mx-2">
+                    <button class="btn btn-outline-danger text-light" style="min-width:80px;">Cancel</button>
+                </div>
+                <div class="mx-2">
+                    <button class="btn btn-outline-primary text-light" style="min-width:80px;">Save</button>
+                </div>
+                <div class="mx-2">
+                    <button class="btn btn-outline-warning text-light" style="min-width:80px;">Present</button>
+                </div>
+            </div>
         </div>
     </nav>
 
     <!--Page sub-Title bar -->
-    <nav class="navbar navbar-dark" style="background-color:#585555;">
+    <nav class="navbar navbar-dark" style="background-color: #979696;">
         <div class="container-fluid">
-            <span class="ms-4 fs-5 text-light" style="padding-left:70px;">Some sub title</span>
+            <div class="d-flex flex-row align-items-center w-50"  style="padding-left:93px;">
+                <div class="pe-3">
+                    <span class="fs-5 text-light">Quiz Name</span>
+                </div>
+                <div class="flex-fill">
+                    <input type="text" class="form-control" placeholder="quiz name" />
+                </div>
+            </div>
         </div>
     </nav>
 </body>
