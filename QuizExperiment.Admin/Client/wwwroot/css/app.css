@@ -20,6 +20,13 @@ nav.title-bar {
     color:black;
 }
 
+    .btn-primary-action:hover {
+        min-width: 80px;
+        background-color: #3CDB4E;
+        border-color: #3CDB4E;
+        color: black;
+    }
+
 .input-text-field {
     border-color: black;
     border-width: 1.5px;
@@ -80,4 +87,50 @@ nav.title-bar {
     animation-iteration-count: infinite;
 }
 
+.quiz-page {
+    background-color: #585555;
+    color: white;
+}
 
+.quiz-button-container {
+    margin-top: 100px;
+    width: 500px
+}
+
+.btn-client-quiz {
+    position:relative;
+    width: 200px;
+    height: 200px;
+    border-radius:100px;
+    font-size: 64pt;
+    font-weight:bolder;
+}
+
+.btn-quiz-0 {
+    background-color: #ECDB33;
+    left: 150px;
+}
+
+.btn-quiz-1 {
+    background-color: #1F75FE;
+    top: 150px;
+    left:-200px;
+}
+
+.btn-quiz-2 {
+    background-color: #D04242;
+    top:-50px;
+    left: 300px;
+}
+
+.btn-quiz-3 {
+    background-color: #3CDB4E;
+    top: 100px;
+    left: -50px;
+}
+
+.btn-client-quiz > span {
+    position:relative;
+    align-items: center;
+    top: -3px
+}
