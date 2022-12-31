@@ -1,10 +1,15 @@
-﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1>Join our quiz</h1>
-    <div class="mb-3">
-        <input @bind="clientQuizId" class="form-control" placeholder="Enter the quiz id" />
-    </div>
-    <button class="btn btn-primary" @onclick="@(e=> OnQuizIdSubmit.InvokeAsync(clientQuizId))">Next</button>
-</div>
+﻿ <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+     <div class="my-3 fs-2 fw-bold">Join our quiz!</div>
+     <div class="my-3 fs-4">Enter the quiz code below</div>
+     <div class="my-3">
+        <input class="form-control text-center fs-5 input-text-field" 
+        @bind="clientQuizId" placeholder="Enter the quiz id" />
+     </div>
+    <button class="btn btn-success my-3 btn-primary-action" 
+        @onclick="@(e=> OnQuizIdSubmit.InvokeAsync(clientQuizId))">
+         Next
+     </button>
+ </div>
 
 @code {
     private string clientQuizId;

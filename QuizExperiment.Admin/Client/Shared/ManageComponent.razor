@@ -7,52 +7,54 @@
 
 @if (_isLoaded)
 {
-    <div class="container">
-        <div class="row bg-dark bg-gradient p-3 mb-4">
-            <div class="col col-auto me-auto px-1">
-                <p class="h2 text-white">Question Manager</p>
-            </div>
-            
-        </div>
-        <div class="row my-3 border border-4 rounded-3 p-3 align-items-center">
-            <div class="col-auto">
-                <span>Create a new Quiz</span>
-            </div>
-            <div class="col">
-                <input @bind="_title" class="form-control" placeholder="Enter a Title" maxlength="50" />
-            </div>
-            <div class="col-auto">
-                <button @onclick="AddNewQuestionSet" class="btn btn-primary">Add new</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="mx-auto border border-4 rounded-3">
-                <table class="table table-stripped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Title</th>
-                            <th>Last Modified</th>
-                            <th>Edit</th>
-                            <th>Present</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var a in _questionSets)
-                        {
-                            <tr>
-                                <td>@a.Title</td>
-                                <td>@a.LastModified</td>
-                                <td><button type="button" class="btn btn-light btn-sm mb-1" value="Edit" @onclick="()=>EditQuestionSet(a.Id)">✏️</button></td>
-                                <td><button type="button" class="btn btn-light btn-sm mb-1" value="Present" @onclick="()=>PresentQuestionSet(a.Id)">▶️</button></td>
-                                <td><button type="button" class="btn btn-light btn-sm mb-1" value="Delete" @onclick="()=>DeleteQuestionSet(a.Id)">🗑️</button></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <QuizExperiment.Admin.Client.Shared.Components.TitleBar Name="Quiz Manager" />
+    <div class="page">
+        <main>
+            <article class="content px-4">
+                <div class="container">
+                    <div class="row my-3 border border-4 rounded-3 p-3 align-items-center">
+                        <div class="col-auto">
+                            <span>Create a new Quiz</span>
+                        </div>
+                        <div class="col">
+                            <input @bind="_title" class="form-control" placeholder="Enter a Title" maxlength="50" />
+                        </div>
+                        <div class="col-auto">
+                            <button @onclick="AddNewQuestionSet" class="btn btn-primary">Add new</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto border border-4 rounded-3">
+                            <table class="table table-stripped">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Last Modified</th>
+                                        <th>Edit</th>
+                                        <th>Present</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var a in _questionSets)
+                                    {
+                                        <tr>
+                                            <td>@a.Title</td>
+                                            <td>@a.LastModified</td>
+                                            <td><button type="button" class="btn btn-light btn-sm mb-1" value="Edit" @onclick="()=>EditQuestionSet(a.Id)">✏️</button></td>
+                                            <td><button type="button" class="btn btn-light btn-sm mb-1" value="Present" @onclick="()=>PresentQuestionSet(a.Id)">▶️</button></td>
+                                            <td><button type="button" class="btn btn-light btn-sm mb-1" value="Delete" @onclick="()=>DeleteQuestionSet(a.Id)">🗑️</button></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </main>
     </div>
+   
 
 }
 

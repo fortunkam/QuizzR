@@ -1,14 +1,7 @@
 ﻿@inherits LayoutComponentBase
+
+<QuizExperiment.Admin.Client.Shared.Components.NavBar ShowLogin="false" />
 <div class="page">
-    <header>
-        <AuthorizeView>
-            <Authorized>
-                Whay are you logged in, @context.User.Identity?.Name!
-            </Authorized>
-            <NotAuthorized>
-            </NotAuthorized>
-        </AuthorizeView>
-    </header>
     <main>
         <article class="content px-4">
             @Body

@@ -1,17 +1,9 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:29952",
-      "sslPort": 44344
-    }
-  },
   "profiles": {
     "QuizExperiment.Admin": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "https://localhost:7134/questionlist",
+      "launchUrl": "https://localhost:7134/stylingtests.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -26,6 +18,14 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:29952",
+      "sslPort": 44344
     }
   }
 }
