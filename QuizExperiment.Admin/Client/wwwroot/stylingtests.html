@@ -5,6 +5,7 @@
 <head>
     <title>stylingtests</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="css/open-iconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
 </head>
 <body style="">
@@ -121,9 +122,116 @@
 
     <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
         <div class="my-3 fs-2 fw-bold">Correct!</div>
-
+        <div class="answer-icon answer-correct">
+            <span class="oi oi-check" title="icon name" aria-hidden="true"></span>
+        </div>
         <div class="my-3 fs-4">You are in 1st place with 50 points</div>
         <div class="my-3 fs-4">Another question is on its way!</div>
     </div>
+
+    <hr />
+
+    <!-- Quiz Answer (Client) - Wrong -->
+
+    <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+        <div class="my-3 fs-2 fw-bold">Better luck next time!</div>
+        <div class="my-3 fs-4">The correct answer was ANSWER</div>
+        <div class="answer-icon answer-wrong">
+            <span class="oi oi-x" title="icon name" aria-hidden="true"></span>
+        </div>
+        <div class="my-3 fs-4">You are in 1st place with 50 points</div>
+        <div class="my-3 fs-4">Another question is on its way!</div>
+    </div>
+
+    <hr />
+
+    <!-- Client Position - End -->
+
+    <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+        <div class="my-3 fs-2 fw-bold">Well done!</div>
+        <div class="my-3 fs-4">You came position XX with a score of XXXX</div>
+        <div class="player-position-icon-container">
+            <p class="player-icon text-center">🥇</p>
+        </div>
+        <div class="my-3 fs-4">Thanks for playing</div>
+    </div>
+
+    <hr />
+
+    <!-- Admin Start Game -->
+
+    <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+        <div class="my-3 fs-2 fw-bold">Scan the QR code to join the quiz</div>
+        <img class="img-fluid rounded img-qrcode" src="https://via.placeholder.com/300" />
+        <div class="my-3 fs-4">Or visit <a href="https://quizzr.co.uk">quizzr.co.uk</a> and enter the code</div>
+        <div class="my-3 fs-2 fw-bold">XXXX</div>
+        <button class="btn btn-success my-3 btn-primary-action">
+            Start Quiz >
+        </button>
+        <div class="d-flex flex-column justify-content-center align-items-center min-vw-100 player-icon-container">
+            <div class="fs-5">Current players (XX)</div>
+            <div class="d-flex flex-wrap mt-1">
+                <div class="card mx-1 text-center player-card">
+                    <div class="card-body">
+                        <p class="player-icon">😃</p>
+                        <p class="player-name">XXXX</p>
+                    </div>
+                </div>
+                <div class="card mx-1 text-center player-card">
+                    <div class="card-body">
+                        <p class="player-icon">😃</p>
+                        <p class="player-name">XXXX</p>
+                    </div>
+                </div>
+                <div class="card mx-1 text-center player-card">
+                    <div class="card-body">
+                        <p class="player-icon">😃</p>
+                        <p class="player-name">XXXX</p>
+                    </div>
+                </div>
+                <div class="card mx-1 text-center player-card">
+                    <div class="card-body">
+                        <p class="player-icon">😃</p>
+                        <p class="player-name">XXXX</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <!-- Admin Start Game -->
+
+    <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+        <div class="question-progress-container">
+            <div class="question-player-count">
+                <div class="fs-4">PLAYERS ANSWERED</div>
+                <div class="fs-4">XXX</div>
+            </div>
+            <img src="https://via.placeholder.com/100x100" />
+        </div>
+        <div class="my-3 fs-4">Question XX</div>
+        <div class="my-3 fs-1 fw-bold">What is the the question?</div>
+        <img class="img-fluid rounded img-quiz" src="https://via.placeholder.com/600x400" />
+        <div class="quiz-admin-button-container">
+            <button class="btn btn-admin-quiz btn-quiz-question-0" value="Y">
+                <div class="quiz-question-text">What is the unladed velocity of a sparrow?</div>
+            </button>
+            <button class="btn btn-admin-quiz btn-quiz-question-1" value="X">
+                <div class="quiz-question-text">What is the unladed velocity of a sparrow?</div>
+            </button>
+            <button class="btn btn-admin-quiz btn-quiz-question-2" value="B">
+                <div class="quiz-question-text">What is the unladed velocity of a sparrow?</div>
+            </button>
+            <button class="btn btn-admin-quiz btn-quiz-question-3" value="A">
+                <div class="quiz-question-text">What is the unladed velocity of a sparrow?</div>
+            </button>
+        </div>
+
+    </div>
+
+    <hr />
+
 </body>
 </html>

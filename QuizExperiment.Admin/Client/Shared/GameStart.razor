@@ -3,28 +3,27 @@
 @inject IConfiguration Configuration
 @inject NavigationManager MyNavigationManager
 
-
-<div class="d-flex flex-column justify-content-center align-items-center">
-    <h1 class="h1 text-center">Please scan the QR code below to join the quiz</h1>
+<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+    <div class="my-3 fs-2 fw-bold">Scan the QR code to join the quiz</div>
     <img class="img-fluid rounded img-qrcode" src="/quiz/qrcode?clientQuizId=@_clientQuizId" />
-    <h1 class="h1 text-center">or goto to <strong>@( Configuration.GetValue<string>("ClientJoinLink") )</strong> and enter the code <strong>@_clientQuizId</strong></h1>
-    
-</div>
-<div class="d-flex flex-column justify-content-center align-items-center border-top">
-    <button class="btn btn-primary btn-lg my-4" @onclick="@(e=> OnGameStarted.InvokeAsync())">Start</button>
-</div>
-<div class="d-flex flex-column justify-content-center align-items-center border-top">
+    <div class="my-3 fs-4">Or visit <a href="@( Configuration.GetValue<string>("ClientJoinLink") )">@(Configuration.GetValue<string>("ClientJoinLink"))</a> and enter the code</div>
+    <div class="my-3 fs-2 fw-bold">@_clientQuizId</div>
+    <button class="btn btn-success my-3 btn-primary-action" @onclick="@(e=> OnGameStarted.InvokeAsync())">
+        Start Quiz >
+    </button>
     @if (Users.Count > 0)
     {
-        <h3 class="h3 mt-4">Current Players (@(Users.Count))</h3>
-        <div class="d-flex flex-wrap mt-4">
-            @foreach (var u in Users)
-            {
-                <Animate Animation="Animations.ZoomIn" Duration="TimeSpan.FromSeconds(1)" >
-                    <GameStartPlayer PlayerName="@u.Value" />
-                </Animate>
-        }
-        </div>
+        <div class="d-flex flex-column justify-content-center align-items-center min-vw-100 player-icon-container">
+            <div class="fs-5">Current players (@(Users.Count))</div>
+            <div class="d-flex flex-wrap mt-1">
+                @foreach (var u in Users)
+                {
+                    <Animate Animation="Animations.ZoomIn" Duration="TimeSpan.FromSeconds(1)" >
+                        <GameStartPlayer PlayerName="@u.Value" />
+                    </Animate>
+                }
+            </div>
+    </div>
     }
 </div>
 @code {

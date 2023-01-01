@@ -1,31 +1,30 @@
 ﻿@using QuizExperiment.Models
-<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+    
     @if (MyAnswerIndex == CorrectAnswerIndex)
     {
-        <h1 class="h1 text-center">Good job!</h1>
+        <div class="my-3 fs-2 fw-bold">Correct!</div>
         <div class="answer-icon answer-correct">
             <span class="oi oi-check" title="icon name" aria-hidden="true"></span>
         </div>
-        
     }
     else
     {
-        <h1 class="h1 text-center">Better luck next time</h1>
-        <p class="text-center">The correct answer was <strong>@CorrectAnswer</strong></p>
+        <div class="my-3 fs-2 fw-bold">Better luck next time!</div>
+        <div class="my-3 fs-4">The correct answer was @CorrectAnswer</div>
         <div class="answer-icon answer-wrong">
             <span class="oi oi-x" title="icon name" aria-hidden="true"></span>
-        </div>  
+        </div>
     }
     @if (!IsLastQuestion)
     {
-        <h2 class="h2 text-center">You are currently in @Position@(Position.GetSuffix()) place with a score of @CurrentScore</h2>
-        <h3 class="h3 text-center">Another question is on it's way!</h3>
+        <div class="my-3 fs-4">You are in @Position@(Position.GetSuffix()) place with @CurrentScore points</div>
+        <div class="my-3 fs-4">Another question is on its way!</div>
     }
     else
     {
-        <h2 class="h2 text-center">That was the last question, check the presenters screen to see how you did!</h2>
+        <div class="my-3 fs-4">That was the last question, check the presenters screen to see how you did!</div>
     }
-
 </div>
 
 @code {
