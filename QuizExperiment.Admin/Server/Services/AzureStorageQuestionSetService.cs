@@ -44,7 +44,6 @@ namespace QuizExperiment.Admin.Server.Services
                         UserId = blobItem.Metadata["userid"],
                         Title = blobItem.Metadata["title"],
                         LastModified = blobItem.Properties.LastModified ?? DateTime.MinValue,
-
                     });
                 }
             }

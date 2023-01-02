@@ -363,3 +363,75 @@ nav.title-bar {
 .answer-chart-item-bar-3 {
     background-color: #3CDB4E;
 }
+
+.quiz-manage-controls-container {
+    padding: 20px 40px;
+}
+
+.quiz-manage-items-container {
+    width: 80%;
+    overflow-y:auto;
+}
+
+.quiz-manage-item-container {
+    background-color: black;
+    width: 300px;
+    height: 300px;
+    color: white;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+.quiz-manage-item-present {
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
+    border-radius: 40px;
+    border-color: #ECDB33;
+    border-width: 10px;
+    border-style:solid;
+    background-color:black;
+    color:white;
+}
+
+.quiz-manage-item-present-triangle {
+    width: 0;
+    height: 0;
+    border-color: inherit;
+    border-left-width: 30px;
+    border-left-style: solid;
+    border-top-width: 15px;
+    border-top-style: solid;
+    border-top-color: transparent;
+    border-bottom-width: 15px;
+    border-bottom-style: solid;
+    border-bottom-color: transparent;
+    margin-left: 12px;
+    color: inherit;
+}
+
+.quiz-manage-item-title {
+}
+
+.quiz-manage-item-questions {
+}
+
+.quiz-manage-item-edit {
+    font-size: 32px;
+    background-color: black;
+}
+
+.quiz-manage-item-delete {
+    font-size: 32px;
+    background-color: black;
+}
+
+.quiz-manage-item-controls {
+    margin:20px;
+}
+
+.quiz-manage-item-details {
+    margin-left: 20px;
+    margin-top:60px;
+}
