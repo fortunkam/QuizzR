@@ -7,35 +7,55 @@
 
 @if (_isLoaded)
 {
-    <div class="container">
-        <div class="row bg-dark bg-gradient p-3 mb-4">
-            <div class="col col-auto me-auto px-1">
-                <p class="h2 text-white">Question Set Editor</p>
-            </div>
-            <div class="col col-auto px-1">
-                <button type="button" class="btn btn-primary mb-1" value="Save and Exit" @onclick="SaveAndExit" >Save and Exit</button>
-                <button type="button" class="btn btn-success mb-1" value="Save and Present" @onclick="SaveAndPresent">Save and Present</button>
-                <button type="button" class="btn btn-danger mb-1" value="Discard Changes" @onclick="DiscardChanges">Discard Changes</button>
+     <!--Page Title bar -->
+     <nav class="navbar navbar-dark" style="background-color: #585555; margin-top: 69px">
+         <div class="container-fluid">
+             <span class="ms-4 fs-4 text-light" style="padding-left:70px;">Quiz Editor</span>
+             <div class="d-flex flex-row align-items-center justify-content-end">
+                 <div class="mx-2">
+                     <button class="btn btn-outline-danger text-light title-bar-button" @onclick="DiscardChanges">Cancel</button>
+                 </div>
+                 <div class="mx-2">
+                    <button class="btn btn-outline-primary text-light title-bar-button" @onclick="SaveAndExit">Save</button>
+                 </div>
+                 <div class="mx-2">
+                    <button class="btn btn-outline-warning text-light title-bar-button" @onclick="SaveAndPresent">Present</button>
+                 </div>
+             </div>
+         </div>
+     </nav>
+    <!--Quiz Title bar -->
+    <nav class="navbar navbar-dark" style="background-color: #979696;">
+        <div class="container-fluid">
+            <div class="d-flex flex-row align-items-center w-50" style="padding-left:93px;">
+                <div class="pe-3">
+                    <span class="fs-5 text-light">Quiz Name</span>
+                </div>
+                <div class="flex-fill">
+                    <input @bind="_questionSet.Title" type="text" class="form-control" placeholder="Quiz name" required="required" />
+                </div>
             </div>
         </div>
-        <div class="row align-items-center mb-4">
-            <div class="col-auto">
-                <span>Question Set Title</span>
+    </nav>
+
+    <div class="d-flex flex-column justify-content-center quiz-edit-question">
+        <div class="d-flex flex-row quiz-edit-question-list-panel flex-fill">
+            <div class="flex-grow-1 ">
+                @if(_currentQuestion == null)
+                {
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="my-3 fs-4 fw-bold">Click the "+ NEW QUESTION" button to begin building your quiz</div>
+                    </div>
+                }
+                else
+                {
+                    <EditQuestion Question="_currentQuestion" />
+                }
             </div>
-            <div class="col">
-                <input @bind="_questionSet.Title" class="form-control" placeholder="Enter a Title" maxlength="50" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-2">
-                <QuestionList Questions="_questions" 
-                OnEditQuestion="OnEditQuestion" 
-                OnDeleteQuestion="OnDeleteQuestion"
-                OnAddQuestion="OnAddQuestion" />
-            </div>
-            <div class="col-10">
-                <EditQuestion Question="_currentQuestion" />
-            </div>
+            <QuestionList Questions="_questions"
+                      OnEditQuestion="OnEditQuestion"
+                      OnDeleteQuestion="OnDeleteQuestion"
+                      OnAddQuestion="OnAddQuestion" />
         </div>
     </div>
 }
@@ -95,8 +115,14 @@
         }
 
         _questionSet = await response.Content.ReadFromJsonAsync<QuestionSet>();
+        if (_questionSet.Questions == null)
+        {
+            _questionSet.Questions = new List<Question>();
+        }
+        
         _questions = _questionSet.Questions;
-        _currentQuestion = _questions[0];
+        _currentQuestion = _questions.Count > 0 ? _questions[0] : null;
+        
         _isLoaded = true;
         return;
     }
@@ -116,6 +142,7 @@
 
     private async Task Save()
     {
+        
         var response = await Http.PostAsJsonAsync($"questionset/upsert", _questionSet);
         if (!response.IsSuccessStatusCode)
         {

@@ -2,97 +2,105 @@
 @using System.Text.Json
 @inject HttpClient Http
 
+<!-- Question Editor -->
+<div class="quiz-edit-question-editor d-flex flex-column justify-content-start">
+    <input type="text" class="form-control quiz-edit-question-input-text" @bind-value="Question.Title"
+           placeholder="Quiz Question" required="required" />
+    <div class="d-flex flex-row quiz-edit-question-panel">
+        <div class="d-flex flex-column flex-grow-1 justify-content-start quiz-edit-question-details-panel">
+            <div class="my-2">Enter the image URL:</div>
+            <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-image-url"
+                   placeholder="Image URL" required="required" @bind-value="@Question.ImageUrl" />
+            <div class="my-2">Or search for an image</div>
+            <button class="btn btn-success btn-primary-action btn-giphy-search" 
+                data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="@ClearSearch">
+                GIPHY SEARCH
+            </button>
 
-
-<div class="row align-items-center shadow p-3 mb-4 rounded">
-    <div class="input-group mb-3">
-        <span class="input-group-text">Title</span>
-        <input type="text" class="form-control" placeholder="Title" @bind-value="Question.Title" >
-    </div>
-    <div class="input-group mb-3">
-        <span class="input-group-text">Timeout</span>
-        <input type="number" class="form-control" placeholder="Timeout" 
-         min="5" max="60" @bind-value="Question.Timeout">
-    </div>
-    <div class="d-flex flex-row mb-3">
-        <div class="flex-fill">
-            <div class="input-group mb-3">
-                <span class="input-group-text">Image Url</span>
-                <input type="text" class="form-control" placeholder="Image Url" @bind-value="@Question.ImageUrl" >
-                <button type="button" class="btn btn-secondary" value="Search" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="@ClearSearch">Search</button>
+            <div class="d-flex flex-row quiz-edit-question-input-timeout-container">
+                <div class="quiz-edit-question-input-timeout-label"><span>Timeout</span></div>
+                <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-timeout"
+                       placeholder="Timeout (seconds)" required="required" @bind-value="Question.Timeout" />
             </div>
         </div>
-
-        <div>
-            <img class="img-fluid rounded img-quiz-edit" src="@Question.ImageUrl" />
+        <div class="d-flex flex-column">
+            <img class="img-fluid rounded quiz-edit-question-editor-image" src="@Question.ImageUrl" />
         </div>
     </div>
-    <table class="table">
-        <thead>
-            <th>Answer</th>
-            <th>Is Correct?</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" 
-                            placeholder="Answer 1" @bind-value="Question.Options[0]" >
-                    </div>
-                </td>
-                <td>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="flexCheckChecked0" 
-                            name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 0)"
-                            onchange="@(() => {Question.CorrectAnswerIndex = 0;})">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="Answer 2" @bind-value="@Question.Options[1]" >
-                    </div>
-                </td>
-                <td>
-                    <div class="form-check">
+    <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
+        <table class="table table-bordered quiz-edit-question-answers-table">
+            <thead>
+            <th colspan="2">ANSWER</th>
+            <th>CORRECT?</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="quiz-edit-question-answers-table-icon">
+                        <button class="btn btn-edit-answer btn-edit-answer-0" value="Y">
+                            <span>Y</span>
+                        </button>
+                    </td>
+                    <td class="quiz-edit-question-answers-table-answer">
+                        <input type="text" class="form-control quiz-edit-question-input-answer"
+                               placeholder="" required="required" @bind-value="Question.Options[0]" />
+                    </td>
+                    <td class="quiz-edit-question-answers-table-correct">
+                        <input class="form-check-input" type="radio" id="flexCheckChecked1"
+                               name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 0)"
+                               onchange="@(() => {Question.CorrectAnswerIndex = 0;})">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="quiz-edit-question-answers-table-icon">
+                        <button class="btn btn-edit-answer btn-edit-answer-1" value="X">
+                            <span>X</span>
+                        </button>
+                    </td>
+                    <td class="quiz-edit-question-answers-table-answer">
+                        <input type="text" class="form-control quiz-edit-question-input-answer"
+                               placeholder="" required="required" @bind-value="Question.Options[1]" />
+                    </td>
+                    <td class="quiz-edit-question-answers-table-correct">
+                        <input class="form-check-input" type="radio" id="flexCheckChecked1"
+                               name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 1)"
+                               onchange="@(() => {Question.CorrectAnswerIndex = 1;})">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="quiz-edit-question-answers-table-icon">
+                        <button class="btn btn-edit-answer btn-edit-answer-2" value="B">
+                            <span>B</span>
+                        </button>
+                    </td>
+                    <td class="quiz-edit-question-answers-table-answer">
+                        <input type="text" class="form-control quiz-edit-question-input-answer"
+                               placeholder="" required="required" @bind-value="Question.Options[2]" />
+                    </td>
+                    <td class="quiz-edit-question-answers-table-correct">
                         <input class="form-check-input" type="radio" id="flexCheckChecked1" 
-                            name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 1)"
-                            onchange="@(() => {Question.CorrectAnswerIndex = 1;})">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="Answer 3" @bind-value="@Question.Options[2]" >
-                    </div>
-                </td>
-                <td>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="flexCheckChecked2" 
-                            name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 2)"
+                        name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 2)"
                             onchange="@(() => {Question.CorrectAnswerIndex = 2;})">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="Answer 4" @bind-value="@Question.Options[3]" >
-                    </div>
-                </td>
-                <td>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="flexCheckChecked1" 
-                            name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 3)"
-                            onchange="@(() => {Question.CorrectAnswerIndex = 3;})">
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    
+                    </td>
+                </tr>
+                <tr>
+                    <td class="quiz-edit-question-answers-table-icon">
+                        <button class="btn btn-edit-answer btn-edit-answer-3" value="A">
+                            <span>A</span>
+                        </button>
+                    </td>
+                    <td class="quiz-edit-question-answers-table-answer">
+                        <input type="text" class="form-control quiz-edit-question-input-answer"
+                               placeholder="" required="required" @bind-value="Question.Options[3]" />
+                    </td>
+                    <td class="quiz-edit-question-answers-table-correct">
+                        <input class="form-check-input" type="radio" id="flexCheckChecked1"
+                               name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 3)"
+                               onchange="@(() => {Question.CorrectAnswerIndex = 3;})">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Modal -->
@@ -106,7 +114,7 @@
       <div class="modal-body">
           <div class="row align-items-center">
               <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Search Term" @bind-value="@_searchTerm" >
+                        <input type="text" class="form-control" placeholder="Search Term" @bind-value="@_searchTerm" @onkeydown="@CheckForEnter">
                 <button type="button" class="btn btn-secondary" value="Search" @onclick="@SearchGiphy" >Search</button>
             </div>
           </div>
@@ -142,6 +150,14 @@
     private string _searchTerm;
 
     private List<string> _giphyResults = new List<string>();
+
+    private async Task CheckForEnter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            await SearchGiphy();
+        }
+    }
 
     private async Task SearchGiphy()
     {

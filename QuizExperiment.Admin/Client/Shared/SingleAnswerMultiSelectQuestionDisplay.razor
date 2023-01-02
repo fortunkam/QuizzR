@@ -1,43 +1,29 @@
-﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1 class="display-4 text-center">@Question</h1>
-    <div class="d-flex flex-row">
-        <div style="padding-top: 200px;">
-            <p class="quiz-answer-count">@UserAnswerCount</p>
+﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+    <div class="question-progress-container">
+        <div class="question-player-count">
+            <div class="fs-4">PLAYERS ANSWERED</div>
+            <div class="fs-4">@UserAnswerCount</div>
         </div>
-        <img class="img-fluid rounded img-quiz" src="@ImageUrl" />
-        <div style="padding-top: 200px;">
-            <CountDownTimer EndDate="@QuestionEndTime"  />
-        </div>
-        
+        <CountDownTimer EndDate="@QuestionEndTime" />
     </div>
-    <table class="table table-bordered" >
-        <tbody>
-            @{
-                var rows = Options.Chunk(2).ToArray();
-                var counter = 0;
-            
-                foreach(var row in rows)
-                {
-                    <tr>
-                        @foreach(var answer in row)
-                        {
-                            <td class="quiz-table-row">
-                                    <div class="d-flex flex-row">
-                                        <div>
-                                            <button class="btn btn-quiz btn-quiz-@counter" ></button>
-                                        </div>
-                                        <div class="quiz-label h2 text-wrap">
-                                            @answer
-                                        </div>
-                                    </div>
-                            </td>
-                            counter++;
-                        }
-                    </tr>
-                }                    
-            }         
-        </tbody>
-    </table>
+    <div class="my-3 fs-1 fw-bold">@Question</div>
+    <img class="img-fluid rounded img-quiz" src="@ImageUrl" />
+    <div class="quiz-admin-button-container">
+        @for (var i = 0; i < Options.Length; i++)
+        {
+            var answer = Options[i];
+            var index = i;
+            <button class="btn btn-admin-quiz btn-quiz-question-@index" value="@index">
+                <span>@(index.GetButtonNameFromIndex())</span>
+                <div class="quiz-question-text d-flex justify-content-center">
+                    <div class="align-self-center">@answer</div>
+                </div>
+            </button>
+
+
+        }
+    </div>
+
 </div>
 
 
@@ -57,6 +43,8 @@
 
     [Parameter]
     public string ImageUrl { get; set; }
+
+
 
 
 }

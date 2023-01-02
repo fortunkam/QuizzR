@@ -1,26 +1,33 @@
-﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1 class="h1 text-center">Congratulations to our winner, @(Users[Leaderboard.OrderByDescending(r=>r.Value).First().Key])..</h1>
+﻿<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+    <div class="my-3 fs-4">Congratulations to our winner,</div>
+    <div class="my-3 fs-1 fw-bold">@(Users[Leaderboard.OrderByDescending(r => r.Value).First().Key])</div>
     <p class="award-icon">🏆</p>
-    <div class="mx-auto border border-4 rounded-3" style="width: 350px;">
-        <table class="table table-stripped">
-            <thead class="thead-dark">
+    <div class="mx-auto">
+        <table class="table table-podium">
+            <thead class="thead">
                 <tr>
+                    <th>Place</th>
                     <th>Name</th>
                     <th class="text-end">Score</th>
                 </tr>
             </thead>
             <tbody>
-            @foreach (var a in Leaderboard.OrderByDescending(r=>r.Value).Take(5))
-            {
-                <tr>
-                    <td>@Users[a.Key]</td>
-                    <td class="text-end">@a.Value</td>
-                </tr>
-            }
+                @{
+                    var counter = 1;
+                }
+                 @foreach (var a in Leaderboard.OrderByDescending(r=>r.Value).Take(5))
+                 {
+                     <tr>
+                        <td>@counter@(counter.GetSuffix())</td>
+                         <td>@Users[a.Key]</td>
+                         <td class="text-end">@a.Value</td>
+                     </tr>
+                     counter++;
+                 }
+                 
             </tbody>
         </table>
     </div>
-    
     
 </div>
 

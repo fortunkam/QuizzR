@@ -1,4 +1,5 @@
-﻿@using QuizExperiment.Models
+﻿@using Blazorise
+@using QuizExperiment.Models
 @using System.Text.Json
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HttpClient Http
@@ -7,53 +8,64 @@
 
 @if (_isLoaded)
 {
-    <div class="container">
-        <div class="row bg-dark bg-gradient p-3 mb-4">
-            <div class="col col-auto me-auto px-1">
-                <p class="h2 text-white">Question Manager</p>
-            </div>
-            
-        </div>
-        <div class="row my-3 border border-4 rounded-3 p-3 align-items-center">
-            <div class="col-auto">
-                <span>Create a new Quiz</span>
-            </div>
-            <div class="col">
-                <input @bind="_title" class="form-control" placeholder="Enter a Title" maxlength="50" />
-            </div>
-            <div class="col-auto">
-                <button @onclick="AddNewQuestionSet" class="btn btn-primary">Add new</button>
+    <QuizExperiment.Admin.Client.Shared.Components.TitleBar Name="Quiz Manager" />
+
+    <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+        <div class="d-flex min-vw-100 quiz-manage-controls-container">
+            <div class="quiz-manage-search-container flex-grow-1"></div>
+            <div class="quiz-manage-create-new-container">
+                <button class="btn btn-success my-3 btn-primary-action" @onclick="AddNewQuestionSet">
+                    CREATE NEW QUIZ >
+                </button>
             </div>
         </div>
-        <div class="row">
-            <div class="mx-auto border border-4 rounded-3">
-                <table class="table table-stripped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Title</th>
-                            <th>Last Modified</th>
-                            <th>Edit</th>
-                            <th>Present</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var a in _questionSets)
+
+        <div class="d-flex flex-grow-1 quiz-manage-items-container flex-wrap align-items-start">
+            @foreach (var a in _questionSets)
+            {
+                <div class="d-flex flex-column quiz-manage-item-container ">
+                    <div class="d-flex quiz-manage-item-controls">
+                        <div class="flex-grow-1">
+                            <button class="quiz-manage-item-present" title="Present this quiz" @onclick="()=>PresentQuestionSet(a.Id)">
+                                <div class="quiz-manage-item-present-triangle"></div>
+                            </button>
+                        </div>
+                        <button class="quiz-manage-item-edit" title="edit" @onclick="()=>EditQuestionSet(a.Id)">
+                            ✏️
+                        </button>
+                        <button class="quiz-manage-item-delete" title="delete" @onclick="()=>DeleteQuestionSet(a.Id)">
+                            🗑️
+                        </button>
+                    </div>
+
+                    <div class="flex-grow-1 quiz-manage-item-details">
+                        <div class="quiz-manage-item-title fs-3 fw-bold">@a.Title</div>
+                        @if (a.QuestionCount.HasValue)
                         {
-                            <tr>
-                                <td>@a.Title</td>
-                                <td>@a.LastModified</td>
-                                <td><button type="button" class="btn btn-light btn-sm mb-1" value="Edit" @onclick="()=>EditQuestionSet(a.Id)">✏️</button></td>
-                                <td><button type="button" class="btn btn-light btn-sm mb-1" value="Present" @onclick="()=>PresentQuestionSet(a.Id)">▶️</button></td>
-                                <td><button type="button" class="btn btn-light btn-sm mb-1" value="Delete" @onclick="()=>DeleteQuestionSet(a.Id)">🗑️</button></td>
-                            </tr>
+                            <div class="quiz-manage-item-questions fs-5">@a.QuestionCount Questions</div>
                         }
-                    </tbody>
-                </table>
-            </div>
+                        <div class="quiz-manage-item-last-modified fs-5">Last modified: @a.LastModified.ToString("yyyy/MM/dd")</div>
+                    </div>
+
+                </div>
+            }
+
         </div>
     </div>
-
+    <Blazorise.Modal @ref="confirmDelete">
+        <Blazorise.ModalContent Centered>
+             <Blazorise.ModalHeader>
+                <Blazorise.ModalTitle>Confirm Delete?</Blazorise.ModalTitle>
+             </Blazorise.ModalHeader>
+            <Blazorise.ModalBody>
+                Are you sure you want to delete this quiz?
+            </Blazorise.ModalBody>
+            <Blazorise.ModalFooter>
+                <Blazorise.Button Color="Color.Secondary" Clicked="@DoCloseModal">Cancel</Blazorise.Button>
+                <Blazorise.Button Color="Color.Primary"  Clicked="@DoDeleteQuestionSet">OK</Blazorise.Button>
+            </Blazorise.ModalFooter>
+        </Blazorise.ModalContent>
+    </Blazorise.Modal>
 }
 
 @code {
@@ -84,7 +96,7 @@
             return;
         }
 
-        _questionSets = await response.Content.ReadFromJsonAsync<List<QuestionSetSummary>>();
+        _questionSets = (await response.Content.ReadFromJsonAsync<List<QuestionSetSummary>>()).OrderByDescending(r=>r.LastModified).ToList();
         _isLoaded = true;
         return;
     }
@@ -98,18 +110,10 @@
         {
                 Id = Guid.NewGuid().ToString(),
                 UserId = _userId,
-                Description = _title,
-                Title = _title,
+                Description = "",
+                Title = "",
                 Questions = new List<Question>()
                 {
-                    new Question
-                    {
-                        Title ="",
-                        ImageUrl = "",
-                        Timeout = 30,
-                        Options = new[] {"","","",""},
-                        CorrectAnswerIndex = -1,                        
-                    }
                 }
         };
 
@@ -128,8 +132,25 @@
         NavigationManager.NavigateTo($"/edit/{qs.Id}");
     }
 
+    private string quizToDelete = "";
+    private Blazorise.Modal confirmDelete;
+
     private async Task DeleteQuestionSet(string id)
     {
+        quizToDelete = id;
+        await confirmDelete.Show();
+    }
+
+    private async Task DoCloseModal()
+    {
+        quizToDelete = "";
+        await confirmDelete.Hide();
+    }
+
+    private async Task DoDeleteQuestionSet()
+    {
+        await confirmDelete.Hide();
+        var id = quizToDelete;
         var response = await Http.DeleteAsync($"questionset/delete?userId={_userId}&id={id}");
         if (!response.IsSuccessStatusCode)
         {
@@ -137,7 +158,7 @@
             Console.WriteLine($"There was an error getting the list of quizzes! {errorMessage}");
             return;
         }
-        var indexOfQuestionSetToBeRemoved = _questionSets.IndexOf(_questionSets.First(r=>r.Id == id));
+        var indexOfQuestionSetToBeRemoved = _questionSets.IndexOf(_questionSets.First(r => r.Id == id));
         _questionSets.RemoveAt(indexOfQuestionSetToBeRemoved);
 
         await AppInsights.TrackEvent("QuestionSetRemoved", new Dictionary<string, object?>
@@ -145,6 +166,7 @@
             { "userId", _userId },
             { "Id", id },
         });
+        quizToDelete = "";
     }
 
     private async Task PresentQuestionSet(string id)
