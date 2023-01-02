@@ -435,3 +435,54 @@ nav.title-bar {
     margin-left: 20px;
     margin-top:60px;
 }
+
+.quiz-edit-question {
+    height: calc(100vh - 178px)
+}
+
+.quiz-edit-question-list-container {
+    width: 300px;
+    background-color: black;
+    color: white;
+    height: calc(100vh - 178px);
+}
+
+.quiz-edit-question-list {
+    width: 260px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    overflow-x: hidden;
+    overflow-y: scroll
+}
+
+.quiz-edit-question-item{
+    background-color: white;
+    color: black;
+    width: 230px;
+    height:180px;
+    margin-top:30px;
+    padding-bottom:10px
+}
+.quiz-edit-question-item-title {
+    margin-top: 10px;
+    margin-left: 2px;
+    margin-right: 2px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-wrap:normal;
+}
+.quiz-edit-question-item-img {
+    width: 100px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.quiz-edit-question-item-edit{
+    background-color:white;
+    border:none;
+}
+
+.quiz-edit-question-item-delete {
+    background-color: white;
+    border: none;
+}
