@@ -14,8 +14,13 @@
             var answer = Options[i];
             var index = i;
             <button class="btn btn-admin-quiz btn-quiz-question-@index" value="@index">
-                <div class="quiz-question-text">@answer</div>
+                <span>@(index.GetButtonNameFromIndex())</span>
+                <div class="quiz-question-text d-flex justify-content-center">
+                    <div class="align-self-center">@answer</div>
+                </div>
             </button>
+
+
         }
     </div>
 

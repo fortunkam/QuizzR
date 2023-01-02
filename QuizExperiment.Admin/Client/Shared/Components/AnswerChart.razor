@@ -1,0 +1,53 @@
+﻿<table class="answer-chart-table">
+    <tr>
+        @for (int i = 0; i < _correctedValues.Length; i++)
+        {
+            <td>
+                <div class="answer-chart-item-container d-flex flex-column" style="height:@(BarMaxHeight)px">
+                    <span class="answer-chart-item-value mt-auto">@_correctedValues[i]</span>
+                    <div class="answer-chart-item-bar answer-chart-item-bar-@i" style="height:@_heights[i]px">&nbsp;</div>
+                </div>
+            </td>
+        }
+    </tr>
+    <tr>
+        @for (int i = 0; i < _correctedValues.Length; i++)
+        {
+            <td class="answer-chart-label-container">
+                <button class="btn btn-correct-answer btn-answer-@i" value="@i.GetButtonNameFromIndex()"><span>@i.GetButtonNameFromIndex()</span></button>
+            </td>
+        }
+    </tr>
+    
+</table>
+
+@code {
+
+    [Parameter]
+    public Dictionary<int,int> Values { get; set;  }
+
+
+    private int _segmentHeight = 20;
+    private int BarMaxHeight = 300;
+    private int[] _heights;
+
+    private int[] _correctedValues;
+
+    protected override void OnParametersSet()
+    {
+        //ensure there are the right 4 values
+        _correctedValues = new int[4];
+
+        //Assume max height of 300px
+        _segmentHeight = BarMaxHeight / Values.Select(r=>r.Value).Max();
+
+        _heights = new int[_correctedValues.Length];
+
+        for (int i = 0; i < _correctedValues.Length; i++)
+        {
+            _correctedValues[i] = Values.ContainsKey(i) ? Values[i] : 0;
+            _heights[i] = _correctedValues[i] * _segmentHeight;
+        }
+        base.OnParametersSet();
+    }
+}

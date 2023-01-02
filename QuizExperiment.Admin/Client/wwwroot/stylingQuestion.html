@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+
+<!-- https://www.figma.com/file/08wkqvrk4u5yiTVahK69K5/QuizzR-UI-Design?node-id=0%3A1&t=ZNtsbXYhsK2lQ5Eo-0 -->
+<html>
+<head>
+    <title>stylingtests</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="css/open-iconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+</head>
+<body style="">
+    <!--Site Nav bar-->
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand ms-4" href="#">
+                <svg width="40" height="40" class="clear">
+                    <circle cx="20" cy="7" r="7" stroke="white" stroke-width="0" fill="#ECDB33" />
+                    <circle cx="20" cy="33" r="7" stroke="white" stroke-width="0" fill="#3CDB4E" />
+                    <circle cx="7" cy="20" r="7" stroke="white" stroke-width="0" fill="#1F75FE" />
+                    <circle cx="33" cy="20" r="7" stroke="white" stroke-width="0" fill="#D04242" />
+                </svg>
+                <span class="ms-4 fs-4">QuizzR</span>
+            </a>
+            <a class="navbar-brand ms-4" href="#">
+                <span class="fs-6">Logout</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Single Answer Question Game -->
+
+    <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+        <div class="question-progress-container">
+            <div class="question-player-count">
+                <div class="fs-4">PLAYERS ANSWERED</div>
+                <div class="fs-4">XXX</div>
+            </div>
+            <img src="https://via.placeholder.com/100x100" />
+        </div>
+        <div class="my-3 fs-4">Question XX</div>
+        <div class="my-3 fs-1 fw-bold">What is the the question?</div>
+        <img class="img-fluid rounded img-quiz" src="https://via.placeholder.com/600x400" />
+        <div class="quiz-admin-button-container">
+            <button class="btn btn-admin-quiz btn-quiz-question-0" value="Y">
+                <span>Y</span>
+                <div class="quiz-question-text d-flex justify-content-center">
+                    <div class="align-self-center">What is the unladed velocity of a sparrow?</div>
+                </div>
+            </button>
+            <button class="btn btn-admin-quiz btn-quiz-question-1" value="X">
+                <span>X</span>
+                <div class="quiz-question-text d-flex justify-content-center">
+                    <div class="align-self-center">0</div>
+                </div>
+            </button>
+            <button class="btn btn-admin-quiz btn-quiz-question-2" value="B">
+                <span>B</span>
+                <div class="quiz-question-text d-flex justify-content-center">
+                    <div class="align-self-center">What is the unladed velocity of a sparrow? This should overflow pretty please and then some from the darkest backwater of the planet to where the falling angel meets the rising ape.</div>
+                </div>
+            </button>
+            <button class="btn btn-admin-quiz btn-quiz-question-3" value="A">
+                <span>A</span>
+                <div class="quiz-question-text d-flex justify-content-center">
+                    <div class="align-self-center">What is the unladed velocity of a sparrow?</div>
+                </div>
+            </button>
+        </div>
+
+    </div>
+
+
+
+</body>
+</html>

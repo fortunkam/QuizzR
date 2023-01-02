@@ -9,7 +9,7 @@
     <div class="my-3 fs-4">Or visit <a href="@( Configuration.GetValue<string>("ClientJoinLink") )">@(Configuration.GetValue<string>("ClientJoinLink"))</a> and enter the code</div>
     <div class="my-3 fs-2 fw-bold">@_clientQuizId</div>
     <button class="btn btn-success my-3 btn-primary-action" @onclick="@(e=> OnGameStarted.InvokeAsync())">
-        Start Quiz >
+        START QUIZ >
     </button>
     @if (Users.Count > 0)
     {

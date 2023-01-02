@@ -228,8 +228,10 @@ nav.title-bar {
 .btn-admin-quiz > span:first-child {
     position: relative;
     align-items: center;
-    top: 20px;
-    left: -160px
+    color: white;
+    font-size:32pt;
+    top: 10px;
+    left: -200px
 }
 
 .img-quiz {
@@ -245,12 +247,16 @@ nav.title-bar {
 }
 
 .quiz-question-text {
-   position:relative;
-   font-size: 24pt;
-   text-align:center;
-   width: 460px;
-   left: 10px;
-   top: 0px;
+    position: relative;
+    font-size: 24pt;
+    text-align: center;
+    width: 370px;
+    left: 60px;
+    top: -125px;
+    height: 180px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
 }
 
 .question-progress-container{
@@ -264,4 +270,96 @@ nav.title-bar {
 
 .question-player-count {
     margin-bottom: 50px;
+}
+
+.award-icon {
+    font-size: 128px;
+}
+
+.table-podium {
+    background-color: white;
+    width: 400px;
+}
+
+.table-podium td {
+    padding:10px 15px;
+}
+
+.table-podium th {
+    padding: 10px 15px;
+}
+
+.next-question-fixed-container {
+    position: fixed;
+    top: 100px;
+    right: 30px;
+    float: right;
+    width: 120px;
+    text-align: center;
+}
+
+.btn-correct-answer {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    font-size: 32pt;
+    font-weight: bolder;
+}
+
+
+.btn-answer-0 {
+    background-color: #ECDB33;
+}
+
+.btn-answer-1 {
+    background-color: #1F75FE;
+}
+
+.btn-answer-2 {
+    background-color: #D04242;
+}
+.btn-answer-3 {
+    background-color: #3CDB4E;
+}
+
+.answer-chart-table {
+    width:500px;
+    margin-top:50px;
+}
+
+.answer-chart-item-container {
+    align-items: center;
+    padding: 12px;
+}
+
+.answer-chart-label-container {
+    align-items: center;
+    padding: 12px;
+}
+
+.answer-chart-item-value {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.answer-chart-item-bar {
+    width: 100px;
+    display:block;
+}
+
+.answer-chart-item-bar-0 {
+    background-color: #ECDB33;
+}
+
+.answer-chart-item-bar-1 {
+    background-color: #1F75FE;
+}
+
+.answer-chart-item-bar-2 {
+    background-color: #D04242;
+}
+
+.answer-chart-item-bar-3 {
+    background-color: #3CDB4E;
 }

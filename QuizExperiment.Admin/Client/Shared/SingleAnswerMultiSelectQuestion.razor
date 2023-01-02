@@ -5,7 +5,7 @@
          {
              var answer = PossibleAnswers[i];
              var index = i;
-            <button class="btn btn-client-quiz btn-quiz-@i" @onclick="@( e=> OnAnswerSubmit.InvokeAsync(index) )" value="@index"><span>@(buttonNames[index])</span></button>
+            <button class="btn btn-client-quiz btn-quiz-@i" @onclick="@( e=> OnAnswerSubmit.InvokeAsync(index) )" value="@index"><span>@(index.GetButtonNameFromIndex())</span></button>
          }
 
     </div>
@@ -24,13 +24,4 @@
     [Parameter]
     public EventCallback<int> OnAnswerSubmit { get; set; }
 
-    private Dictionary<int, string> buttonNames = new Dictionary<int, string>();
-
-    public SingleAnswerMultiSelectQuestion()
-    {
-        buttonNames.Add(0, "Y");
-        buttonNames.Add(1, "X");
-        buttonNames.Add(2, "B");
-        buttonNames.Add(3, "A");
-    }
 }
