@@ -1,16 +1,20 @@
 ﻿@using QuizExperiment.Models
 
-<div class="shadow p-1 mb-4 rounded">
-    <div class="d-flex flex-column justify-content-center align-items-center p-2" >
-        <p class="text-center" style="text-overflow:ellipsis">@Question.Title</p>
-        <div class="d-flex flex-row align-items-center">
-            <img class="img-fluid rounded img-quiz-editor" src="@Question.ImageUrl" />   
-            <div class="d-flex flex-column align-items-center px-1">
-                <button type="button" class="btn btn-primary btn-sm mb-1" value="Edit" @onclick="@(e=> OnEditQuestion.InvokeAsync(Question))">✏️</button>
-                <button type="button" class="btn btn-danger btn-sm mb-1" value="Delete" @onclick="@(e=> OnDeleteQuestion.InvokeAsync(Question))">🗑️</button>
-            </div>
+<!-- Question Item -->
+<div class="quiz-edit-question-item d-flex flex-column align-items-center">
+    <div class="quiz-edit-question-item-title fw-bold">@QuestionIndex) @Question.Title</div>
+
+    <img class="img-fluid rounded quiz-edit-question-item-img" src="@Question.ImageUrl" />
+
+    <div class="d-flex quiz-edit-question-item-controls align-items-center">
+        <button class="quiz-edit-question-item-edit" title="edit" @onclick="@(e=> OnEditQuestion.InvokeAsync(Question))">
+            ✏️
+        </button>
+        <div class="flex-grow-1">
         </div>
-        
+        <button class="quiz-edit-question-item-delete" title="delete" @onclick="@(e=> OnDeleteQuestion.InvokeAsync(Question))">
+            🗑️
+        </button>
     </div>
 </div>
 
@@ -18,6 +22,9 @@
 
     [Parameter]
     public Question Question { get; set; }
+
+    [Parameter]
+    public int QuestionIndex { get; set; }
 
     [Parameter]
     public EventCallback<Question> OnEditQuestion { get; set; }

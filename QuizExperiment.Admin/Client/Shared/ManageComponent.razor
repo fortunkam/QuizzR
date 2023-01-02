@@ -40,7 +40,10 @@
 
                     <div class="flex-grow-1 quiz-manage-item-details">
                         <div class="quiz-manage-item-title fs-3 fw-bold">@a.Title</div>
-@*                        <div class="quiz-manage-item-questions fs-5">@a.QuestionCount</div>*@
+                        @if (a.QuestionCount.HasValue)
+                        {
+                            <div class="quiz-manage-item-questions fs-5">@a.QuestionCount Questions</div>
+                        }
                         <div class="quiz-manage-item-last-modified fs-5">Last modified: @a.LastModified.ToString("yyyy/MM/dd")</div>
                     </div>
 

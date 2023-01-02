@@ -44,6 +44,7 @@ namespace QuizExperiment.Admin.Server.Services
                         UserId = blobItem.Metadata["userid"],
                         Title = blobItem.Metadata["title"],
                         LastModified = blobItem.Properties.LastModified ?? DateTime.MinValue,
+                        QuestionCount = blobItem.Metadata.ContainsKey("questioncount") ? int.Parse(blobItem.Metadata["questioncount"]) : null
                     });
                 }
             }
@@ -58,9 +59,11 @@ namespace QuizExperiment.Admin.Server.Services
 
             await blobClient.UploadAsync(new BinaryData(questionSet), overwrite: true);
             await blobClient.SetMetadataAsync(new Dictionary<string, string>{
-                { "id", questionSet.Id },
-                { "userid", questionSet.UserId },
-                { "title",questionSet.Title} }
+                    { "id", questionSet.Id },
+                    { "userid", questionSet.UserId },
+                    { "title",questionSet.Title},
+                    { "questioncount",questionSet.Questions.Count.ToString() }
+                }
             );
 
             return new QuestionSetSummary()

@@ -21,5 +21,8 @@ namespace QuizExperiment.Models
         [JsonPropertyName("lastModified")]
         public DateTimeOffset LastModified { get; set; }
 
+        [JsonPropertyName("questionCount")]
+        public int? QuestionCount { get; set; }
+
     }
 }

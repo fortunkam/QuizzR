@@ -53,7 +53,7 @@
                     <span class="fs-5 text-light">Quiz Name</span>
                 </div>
                 <div class="flex-fill">
-                    <input type="text" class="form-control" placeholder="quiz name" style="border-radius: 0;" required="required" />
+                    <input type="text" class="form-control" placeholder="Quiz name" style="border-radius: 0;" required="required" />
                 </div>
             </div>
         </div>
@@ -63,8 +63,100 @@
 
     <div class="d-flex flex-column justify-content-center quiz-edit-question">
         <div class="d-flex flex-row quiz-edit-question-list-panel flex-fill">
-            <div class="flex-grow-1">
-                This is the question editor
+            <div class="flex-grow-1 ">
+                <!-- Question Editor -->
+                <div class="quiz-edit-question-editor d-flex flex-column justify-content-start">
+                    <input type="text" class="form-control quiz-edit-question-input-text"
+                           placeholder="Quiz Question" required="required" />
+                    <div class="d-flex flex-row quiz-edit-question-panel">
+                        <div class="d-flex flex-column flex-grow-1 justify-content-start quiz-edit-question-details-panel">
+                            <div class="my-2">Enter the image URL:</div>
+                            <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-image-url"
+                                   placeholder="Image URL" required="required" />
+                            <div class="my-2">Or search for an image</div>
+                            <button class="btn btn-success btn-primary-action btn-giphy-search">
+                                GIPHY SEARCH
+                            </button>
+
+                            <div class="d-flex flex-row quiz-edit-question-input-timeout-container">
+                                <div class="quiz-edit-question-input-timeout-label"><span>Timeout</span></div>
+                                <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-timeout"
+                                       placeholder="Timeout (seconds)" required="required" />
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <img class="img-fluid rounded quiz-edit-question-editor-image" src="https://via.placeholder.com/600x400" />
+                        </div>
+                    </div>
+                    <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
+                        <table class="table table-bordered quiz-edit-question-answers-table">
+                            <thead>
+                                <th colspan="2">ANSWER</th>
+                                <th>CORRECT?</th>
+                            </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="quiz-edit-question-answers-table-icon">
+                                            <button class="btn btn-edit-answer btn-edit-answer-0" value="Y">
+                                                <span>Y</span>
+                                            </button>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-answer">
+                                            <input type="text" class="form-control quiz-edit-question-input-answer"
+                                                   placeholder="" required="required" />
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-correct">
+                                            <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="quiz-edit-question-answers-table-icon">
+                                            <button class="btn btn-edit-answer btn-edit-answer-1" value="X">
+                                                <span>X</span>
+                                            </button>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-answer">
+                                            <input type="text" class="form-control quiz-edit-question-input-answer"
+                                                   placeholder="" required="required" />
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-correct">
+                                            <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="quiz-edit-question-answers-table-icon">
+                                            <button class="btn btn-edit-answer btn-edit-answer-2" value="B">
+                                                <span>B</span>
+                                            </button>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-answer">
+                                            <input type="text" class="form-control quiz-edit-question-input-answer"
+                                                   placeholder="" required="required" />
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-correct">
+                                            <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="quiz-edit-question-answers-table-icon">
+                                            <button class="btn btn-edit-answer btn-edit-answer-3" value="A">
+                                                <span>A</span>
+                                            </button>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-answer">
+                                            <input type="text" class="form-control quiz-edit-question-input-answer"
+                                                   placeholder="" required="required" />
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-correct">
+                                            <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
             </div>
             <div class="quiz-edit-question-list-container d-flex flex-column align-items-center">
                 <div class="quiz-edit-question-add-container">

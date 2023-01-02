@@ -2,6 +2,10 @@
     background-color:#FFFFFF;
 }
 
+input[type="text"] {
+    border-radius: 0;
+}
+
 .title-bar-name {
     padding-left: 70px;
     padding-top: 5px;
@@ -473,6 +477,7 @@ nav.title-bar {
 }
 .quiz-edit-question-item-img {
     width: 100px;
+    height: 80px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
@@ -485,4 +490,114 @@ nav.title-bar {
 .quiz-edit-question-item-delete {
     background-color: white;
     border: none;
+}
+
+.quiz-edit-question-input-text {
+    border-radius: 0;
+}
+
+.quiz-edit-question-editor {
+    margin: 30px;
+}
+
+.quiz-edit-question-editor-image{
+    width: 500px;
+    height:380px;
+    margin-left:20px;
+}
+
+.quiz-edit-question-panel {
+    margin-top: 30px;
+}
+
+.quiz-edit-question-details-panel {
+    margin-top: 10px;
+}
+
+.btn-giphy-search {
+    width: 140px;
+}
+
+.quiz-edit-question-input-timeout-container{
+   margin-top:170px;
+}
+
+.quiz-edit-question-input-timeout-label {
+    width: 180px;
+    background-color: #585555;
+    color: white;
+    height:40px;
+    text-align:center;
+    line-height:40px;
+}
+
+
+.quiz-edit-question-input-timeout {
+    border-radius: 0;
+    width: 180px;
+}
+
+.quiz-edit-question-answers-table-container{
+    margin-top:40px;
+}
+
+.quiz-edit-question-answers-table > thead {
+    background-color: #585555;
+    color: white;
+}
+
+.quiz-edit-question-answers-table > thead > tr > th:first-child {
+    padding-left:15px;
+}
+
+.quiz-edit-question-answers-table-icon {
+    width: 60px;
+    border-right-style: hidden;
+}
+
+.quiz-edit-question-answers-table-correct {
+    width: 60px;
+    text-align: center;
+    vertical-align:middle;
+}
+
+.btn-edit-answer {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    font-size: 16pt;
+    font-weight: bolder;
+}
+
+
+.btn-edit-answer-0 {
+    background-color: #ECDB33;
+}
+
+.btn-edit-answer-1 {
+    background-color: #1F75FE;
+}
+
+.btn-edit-answer-2 {
+    background-color: #D04242;
+}
+
+.btn-edit-answer-3 {
+    background-color: #3CDB4E;
+}
+
+.quiz-edit-question-input-answer {
+    border-radius: 0;
+    height:50px
+}
+
+.title-bar-button {
+    min-width: 80px;
+}
+
+.img-giphyresult {
+    max-width: 100px;
+    max-height: 100px;
+    cursor: pointer;
 }
