@@ -6,22 +6,24 @@
         </div>
         <CountDownTimer EndDate="@QuestionEndTime" />
     </div>
-    <div class="my-3 fs-1 fw-bold">@Question</div>
-    <img class="img-fluid rounded img-quiz" src="@ImageUrl" />
-    <div class="quiz-admin-button-container">
-        @for (var i = 0; i < Options.Length; i++)
-        {
-            var answer = Options[i];
-            var index = i;
-            <button class="btn btn-admin-quiz btn-quiz-question-@index" value="@index">
-                <span>@(index.GetButtonNameFromIndex())</span>
-                <div class="quiz-question-text d-flex justify-content-center">
-                    <div class="align-self-center">@answer</div>
-                </div>
-            </button>
+    <div class="question-container">
+        <div class="my-3 fs-1 fw-bold">@Question</div>
+        <img class="img-fluid rounded img-quiz" src="@ImageUrl" />
+        <div class="quiz-admin-button-container">
+            @for (var i = 0; i < Options.Length; i++)
+            {
+                var answer = Options[i];
+                var index = i;
+                <button class="btn btn-admin-quiz btn-quiz-question-@index" value="@index">
+                    <span>@(index.GetButtonNameFromIndex())</span>
+                    <div class="quiz-question-text d-flex justify-content-center">
+                        <div class="align-self-center">@answer</div>
+                    </div>
+                </button>
 
 
-        }
+            }
+        </div>
     </div>
 
 </div>
