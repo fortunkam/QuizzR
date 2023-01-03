@@ -272,7 +272,12 @@ nav.title-bar {
     max-height: 300px;
     margin-top: 10px;
     margin-bottom: 0px;
-    margin-left:48px;
+    margin-left:10px;
+}
+
+.quiz-admin-question-title{
+    margin: 0px 100px;
+    text-align:center;
 }
 
 .quiz-admin-button-container {
