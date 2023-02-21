@@ -13,10 +13,10 @@
              <span class="ms-4 fs-4 text-light" style="padding-left:70px;">Quiz Editor</span>
              <div class="d-flex flex-row align-items-center justify-content-end">
                  <div class="mx-2">
-                     <button class="btn btn-outline-danger text-light title-bar-button" @onclick="DiscardChanges">Cancel</button>
+                     <button class="btn btn-outline-danger text-light title-bar-button" @onclick="SaveAndClose">Close</button>
                  </div>
                  <div class="mx-2">
-                    <button class="btn btn-outline-primary text-light title-bar-button" @onclick="SaveAndExit">Save</button>
+                    <button class="btn btn-outline-primary text-light title-bar-button" @onclick="SaveAndContinue">Save</button>
                  </div>
                  <div class="mx-2">
                     <button class="btn btn-outline-warning text-light title-bar-button" @onclick="SaveAndPresent">Present</button>
@@ -134,10 +134,9 @@
         NavigationManager.NavigateTo($"/present/{_questionSet.Id}");
     }
 
-    private async Task SaveAndExit()
+    private async Task SaveAndContinue()
     {
         await Save();
-        NavigationManager.NavigateTo($"/manage");
     }
 
     private async Task Save()
@@ -157,8 +156,9 @@
         });
     }
 
-    private void DiscardChanges()
+    private async Task SaveAndClose()
     {
+        await Save();
         NavigationManager.NavigateTo($"/manage");
     }
 }

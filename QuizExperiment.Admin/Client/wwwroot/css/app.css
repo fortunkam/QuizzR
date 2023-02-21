@@ -512,7 +512,8 @@ nav.title-bar {
     margin-right: 2px;
     text-overflow: ellipsis;
     overflow: hidden;
-    word-wrap:normal;
+    word-wrap: normal;
+    text-align: center;
 }
 .quiz-edit-question-item-img {
     width: 100px;
