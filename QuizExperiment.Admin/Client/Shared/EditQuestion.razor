@@ -113,30 +113,32 @@
       </div>
       <div class="modal-body">
           <div class="row align-items-center">
-              <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Search Term" @bind-value="@_searchTerm" @onkeydown="@CheckForEnter">
-                <button type="button" class="btn btn-secondary" value="Search" @onclick="@SearchGiphy" >Search</button>
+              <div class="input-group mb-3 mt-3">
+                <input type="text" class="form-control" placeholder="Search Term"
+                               @bind-value="@_searchTerm" @onkeydown="@Enter" />
+                        <button type="button" class="btn btn-primary-action" value="Search" @onclick="@SearchGiphy">Search</button>
             </div>
           </div>
-          <div class="row align-items-center">
-              <table class="table">
-                <tbody>
-                    @foreach(var giphyUrlBatch in _giphyResults.Chunk(3))
-                    {
-                        <tr>
-                            @foreach(var giphyUrl in giphyUrlBatch)
-                            {
-                                <td>
-                                    <img src="@giphyUrl" class="img-giphyresult" data-bs-dismiss="modal" @onclick="@(()=>Question.ImageUrl = @giphyUrl)" />
-                                </td>
-                            }
-                        </tr>
-                    }
-                  </tbody>
-              </table>
-          </div>
-      </div>
-      <div class="modal-footer">
+        @if (_giphyResults.Count > 0)
+        {
+            <div class="row align-items-center">
+                        <table class="table table-borderless giphy-result-table">
+                    <tbody>
+                        @foreach (var giphyUrlBatch in _giphyResults.Chunk(4))
+                        {
+                            <tr>
+                                @foreach (var giphyUrl in giphyUrlBatch)
+                                {
+                                    <td>
+                                        <img src="@giphyUrl" class="img-giphyresult" data-bs-dismiss="modal" @onclick="@(()=>Question.ImageUrl = @giphyUrl)" />
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
       </div>
     </div>
   </div>
@@ -151,11 +153,13 @@
 
     private List<string> _giphyResults = new List<string>();
 
-    private async Task CheckForEnter(KeyboardEventArgs e)
+    public void Enter(KeyboardEventArgs e)
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
-            await SearchGiphy();
+            System.Diagnostics.Debug.WriteLine("Enter");
+            Console.WriteLine("Enter");
+            Task.Run(async () => await SearchGiphy());
         }
     }
 
@@ -173,6 +177,7 @@
 
 
         _giphyResults.AddRange(await response.Content.ReadFromJsonAsync<string[]>());
+        InvokeAsync(StateHasChanged);
     }
 
     private void ClearSearch()

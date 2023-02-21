@@ -3,7 +3,7 @@
     <div class="my-3 fs-4">Enter your username below</div>
     <div class="my-3">
         <input class="form-control text-center fs-5 input-text-field"
-               @bind="userName" placeholder="Username" maxlength="20" />
+               @bind="userName" placeholder="Username" maxlength="20" @onkeydown="@Enter" />
     </div>
     <button class="btn btn-success my-3 btn-primary-action"
             @onclick="@(e=> OnUserNameSubmit.InvokeAsync(userName))">
@@ -15,4 +15,12 @@
     private string userName;
     [Parameter]
     public EventCallback<string> OnUserNameSubmit { get; set; }
+
+    public void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            OnUserNameSubmit.InvokeAsync(userName);
+        }
+    }
 }
