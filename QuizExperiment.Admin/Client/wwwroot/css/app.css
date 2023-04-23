@@ -512,13 +512,15 @@ nav.title-bar {
     overflow-y: scroll
 }
 
-.quiz-edit-question-item{
+.quiz-edit-question-item {
     background-color: white;
     color: black;
     width: 230px;
-    height:180px;
-    margin-top:30px;
-    padding-bottom:10px
+    height: 180px;
+    margin-top: 30px;
+    padding-bottom: 10px;
+    position: relative;
+}
 }
 .quiz-edit-question-item-title {
     margin-top: 10px;
@@ -556,8 +558,10 @@ nav.title-bar {
     text-align: center;
     font-weight: bold;
     font-size: 1.2em;
-    margin-left: -230px;
-    margin-top: -10px;
+    margin-left: 50px;
+    margin-top: -15px;
+    top:0;
+    left:0;
     display:none;
 }
 
@@ -567,7 +571,7 @@ nav.title-bar {
 
 .quiz-edit-question-item-validation-failed {
     border-color: #dc3545;
-    border-width:2px;
+    border-width:3px;
     border-style:solid;
 }
 
