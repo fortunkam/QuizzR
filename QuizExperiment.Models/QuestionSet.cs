@@ -42,6 +42,22 @@ namespace QuizExperiment.Models
 
         [JsonPropertyName("correctAnswerIndex")]
         public int CorrectAnswerIndex { get; set; }
+
+        [JsonIgnore]
+        public bool IsValid
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(Title) &&
+                    !string.IsNullOrWhiteSpace(ImageUrl) &&
+                    Options != null &&
+                    Options.Length == 4 &&
+                    Options.All(o => !string.IsNullOrWhiteSpace(o)) &&
+                    CorrectAnswerIndex >= 0 &&
+                    CorrectAnswerIndex < 4;
+            }
+        }
+
     }
 
 }

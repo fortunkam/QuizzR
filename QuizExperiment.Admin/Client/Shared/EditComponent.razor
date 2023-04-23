@@ -4,6 +4,7 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject IApplicationInsights AppInsights
+@inject IToastService toastService
 
 @if (_isLoaded)
 {
@@ -37,6 +38,21 @@
             </div>
         </div>
     </nav>
+
+    if (!AreAllQuestionsValid)
+    {
+        <!-- Question Set Validation Message -->
+        <nav class="navbar navbar-danger navbar-question-validation">
+            <div class="container-fluid">
+                <div class="d-flex flex-row align-items-center w-50" style="padding-left:93px;">
+                    <div class="flex-fill">
+                        <span class="fs-5 text-light">Make sure all questions have a correct answer, title, image and timeout!</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    }
+   
 
     <div class="d-flex flex-column justify-content-center quiz-edit-question">
         <div class="d-flex flex-row quiz-edit-question-list-panel flex-fill">
@@ -76,6 +92,7 @@
 
     private void OnEditQuestion(Question question)
     {
+
         _currentQuestion = question;
     }
 
@@ -96,6 +113,14 @@
         };
 
         _questions.Add(_currentQuestion); 
+    }
+
+    public bool AreAllQuestionsValid
+    {
+        get
+        {
+            return _questions.All(r => r.IsValid);
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -119,23 +144,39 @@
         {
             _questionSet.Questions = new List<Question>();
         }
-        
+
         _questions = _questionSet.Questions;
         _currentQuestion = _questions.Count > 0 ? _questions[0] : null;
-        
+
         _isLoaded = true;
         return;
+    }
+
+    private void ShowValidationAlertMessage()
+    {
+        string message = "Unable to save, One or more questions have validation errors!";
+        toastService.ShowError(message);
     }
 
 
     private async Task SaveAndPresent()
     {
+        if (!AreAllQuestionsValid)
+        {
+            ShowValidationAlertMessage();
+            return;
+        }
         await Save();
         NavigationManager.NavigateTo($"/present/{_questionSet.Id}");
     }
 
     private async Task SaveAndContinue()
     {
+        if (!AreAllQuestionsValid)
+        {
+            ShowValidationAlertMessage();
+            return;
+        }
         await Save();
     }
 
@@ -158,6 +199,11 @@
 
     private async Task SaveAndClose()
     {
+        if (!AreAllQuestionsValid)
+        {
+            ShowValidationAlertMessage();
+            return;
+        }
         await Save();
         NavigationManager.NavigateTo($"/manage");
     }

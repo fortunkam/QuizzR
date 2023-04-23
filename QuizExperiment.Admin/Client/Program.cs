@@ -1,4 +1,5 @@
 using BlazorApplicationInsights;
+using Blazored.Toast;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -48,5 +49,7 @@ builder.Services.AddBlazorApplicationInsights(async applicationInsights =>
     await applicationInsights.AddTelemetryInitializer(telemetryItem);
     await applicationInsights.TrackPageView();
 });
+
+builder.Services.AddBlazoredToast();
 
 await builder.Build().RunAsync();

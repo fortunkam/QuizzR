@@ -1,7 +1,10 @@
 ﻿@using QuizExperiment.Models
 
 <!-- Question Item -->
-<div class="quiz-edit-question-item d-flex flex-column align-items-center">
+<div class="quiz-edit-question-item d-flex flex-column align-items-center @(Question.IsValid ? "" : "quiz-edit-question-item-validation-failed")">
+    <div class="quiz-edit-question-item-validation-icon">
+        !
+    </div>
     <div class="quiz-edit-question-item-title fw-bold">@QuestionIndex) @Question.Title</div>
 
     <img class="img-fluid rounded quiz-edit-question-item-img" src="@Question.ImageUrl" />

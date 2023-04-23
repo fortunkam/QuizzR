@@ -45,6 +45,7 @@ namespace QuizExperiment.Admin.Server.Services
                         Title = blobItem.Metadata["title"],
                         LastModified = blobItem.Properties.LastModified ?? DateTime.MinValue,
                         QuestionCount = blobItem.Metadata.ContainsKey("questioncount") ? int.Parse(blobItem.Metadata["questioncount"]) : null
+
                     });
                 }
             }

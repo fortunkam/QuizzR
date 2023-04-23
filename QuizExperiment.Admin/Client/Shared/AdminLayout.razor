@@ -1,3 +1,9 @@
 ﻿@inherits LayoutComponentBase
+@using Blazored.Toast.Configuration
+
 <QuizExperiment.Admin.Client.Shared.Components.NavBar ShowLogin="true" />
+<BlazoredToasts 
+    Position="ToastPosition.BottomRight"
+    IconType="IconType.FontAwesome"
+    ErrorIcon="fa fa-bug" />
 @Body

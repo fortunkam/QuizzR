@@ -16,6 +16,7 @@
   <ItemGroup>
     <PackageReference Include="blazor-dragdrop" Version="2.4.0" />
     <PackageReference Include="BlazorApplicationInsights" Version="2.1.0" />
+    <PackageReference Include="Blazored.Toast" Version="4.1.0" />
     <PackageReference Include="Blazorise" Version="1.0.6" />
     <PackageReference Include="Blazorise.Animate" Version="1.0.6" />
     <PackageReference Include="Blazorise.Bootstrap" Version="1.0.6" />
