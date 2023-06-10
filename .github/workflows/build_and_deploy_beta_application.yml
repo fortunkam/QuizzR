@@ -1,15 +1,12 @@
-name: Build application and deploy from Main
+name: Build application and deploy to Beta
 
 on:
   push:
     paths:
     - 'QuizExperiment.Admin/**'
     - 'QuizExperiment.Models/**'
-    - '.github/workflows/build_and_deploy_application.yml'
-    branches:
-    - main 
-  pull_request:
-    branches: [ main ]
+    - '.github/workflows/build_and_deploy_beta_application.yml'
+    branches: [ feature/* ]
   workflow_dispatch:
     
 
@@ -47,7 +44,7 @@ jobs:
       LOCATION: uksouth
       RESOURCEGROUP: quizzr
       PREFIX: quizzr
-      APPNAME: quizzr-webapp
+      APPNAME: quizzr-webapp-beta
     steps:
     - name: Download a Build Artifact (Website)
       uses: actions/download-artifact@v2.1.0

@@ -3,6 +3,7 @@ param prefix string = 'mfquiz'
 var appInsightsName = '${prefix}-appinsights'
 var appPlanName = '${prefix}-linux-appplan'
 var appName = '${prefix}-webapp'
+var betaAppName = '${prefix}-webapp-beta'
 var logAnalyticsName = '${prefix}loganalytics'
 var signalRName = '${prefix}signalr'
 var questionSetTableName = 'questionsets'
@@ -95,11 +96,45 @@ resource webApplication 'Microsoft.Web/sites@2021-03-01' = {
   }
 }
 
+//App Service (Beta)
+resource webApplicationBeta 'Microsoft.Web/sites@2021-03-01' = {
+  name: betaAppName
+  location: location
+  tags: {
+    'hidden-related:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/appServicePlan': 'Resource'
+  }
+  properties: {
+    httpsOnly: true
+    serverFarmId: appServicePlan.id
+    siteConfig: {
+      linuxFxVersion: linuxFxVersion
+    }
+  }
+  identity: {
+    type: 'SystemAssigned'
+  }
+}
+
 
 
 resource appSettings 'Microsoft.Web/sites/config@2021-03-01' = {
   name: 'appsettings'
   parent: webApplication
+  properties: {
+    'APPINSIGHTS_INSTRUMENTATIONKEY': appInsights.properties.InstrumentationKey
+    'APPLICATIONINSIGHTS_CONNECTION_STRING' : 'InstrumentationKey=${appInsights.properties.InstrumentationKey};IngestionEndpoint=https://uksouth-1.in.applicationinsights.azure.com/'
+    'ApplicationInsightsAgent_EXTENSION_VERSION': '~3'
+    'XDT_MicrosoftApplicationInsights_Mode':'Recommended'
+    'Azure__SignalR__ConnectionString':'Endpoint=https://${signalR.properties.hostName};AuthType=aad;Version=1.0;'
+    'Azure__Storage__ConnectionString':'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(storageAccount.id,storageAccount.apiVersion).keys[0].value}'
+    'QuizAssetsContainerName':'quizassets'
+    'Giphy__ApiKey': giphyApiKey
+  }
+}
+
+resource appSettingsBeta 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: 'appsettings'
+  parent: webApplicationBeta
   properties: {
     'APPINSIGHTS_INSTRUMENTATIONKEY': appInsights.properties.InstrumentationKey
     'APPLICATIONINSIGHTS_CONNECTION_STRING' : 'InstrumentationKey=${appInsights.properties.InstrumentationKey};IngestionEndpoint=https://uksouth-1.in.applicationinsights.azure.com/'
