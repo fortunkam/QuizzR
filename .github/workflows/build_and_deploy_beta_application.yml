@@ -37,7 +37,6 @@ jobs:
         if-no-files-found: error
   deploy:
     needs: [build]
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     
     env:
