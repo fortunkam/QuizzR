@@ -85,6 +85,10 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         var claims = user.Claims.ToArray();
+        foreach(var c in claims)
+        {
+            Console.WriteLine($"{c.Type} = {c.Value}");
+        }
         _userId = claims.First(r => r.Type == "oid").Value;
 
         var response = await Http.GetAsync($"questionset/list?userId={_userId}");
