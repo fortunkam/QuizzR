@@ -8,6 +8,10 @@ on:
     - '.github/workflows/build_and_deploy_beta_application.yml'
     branches: [ feature/* ]
   workflow_dispatch:
+
+permissions:
+    id-token: write
+    contents: read
     
 
 jobs:
