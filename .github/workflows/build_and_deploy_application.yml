@@ -42,10 +42,10 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      LOCATION: uksouth
-      RESOURCEGROUP: quizzr
-      PREFIX: quizzr
-      APPNAME: quizzr-webapp
+      LOCATION: canadacentral
+      RESOURCEGROUP: yvr-quizzr
+      PREFIX: jpquiz
+      APPNAME: jpquiz-webapp
     steps:
     - name: Download a Build Artifact (Website)
       uses: actions/download-artifact@v2.1.0
