@@ -27,7 +27,7 @@ jobs:
     env:
       LOCATION: canadacentral
       RESOURCEGROUP: yvr-quizzr
-      PREFIX: jpquiz
+      PREFIX: jp-quiz
     steps:
     - name: Download a Build Artifact (Env)
       uses: actions/download-artifact@v2.1.0
