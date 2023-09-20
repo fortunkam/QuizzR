@@ -1,5 +1,5 @@
 # QuizzR
-
+lets go
 The following repo is an online quiz platform.  It is written using dotnet with Blazor Webassembly on the front end and SignalR on the backend.
 
 For instructions on how to deploy this to your own environment see the [deploy.md](./deploy.md) file.
