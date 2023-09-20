@@ -25,9 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      LOCATION: uksouth
-      RESOURCEGROUP: quizzr
-      PREFIX: quizzr
+      LOCATION: canadacentral
+      RESOURCEGROUP: yvr-quizzr
+      PREFIX: jpquiz
     steps:
     - name: Download a Build Artifact (Env)
       uses: actions/download-artifact@v2.1.0
