@@ -16,8 +16,9 @@ The project consists of...
 4. Change the prefix assigned to the resource in [main.bicep](./Env/main.bicep).
 5. Update the QRCodeImageUrl and ClientJoinLink in [appsettings.json](./QuizExperiment.Admin/Client/wwwroot/appsettings.json), this is the url to the client application, to generate the QR code I used https://www.the-qrcode-generator.com/
 6. Change the LOCATION, RESOURCEGROUP, APPNAME environment variables in [main.bicep](./Env/main.bicep).
-7. Commit the changes, this should cause the action to run and deploy everything
-8. Create and present new quizzes using <APPNAME>.azurewebsites.net/manage, players can join using <APPNAME>.azurewebsites.net
+7. Update the `ConnectionString` property in the [Server/appsettings.json](./QuizExperiment.Admin/Server/appsettings.json#L11) with your prefix to reference your SignalR resource that will be deployed.
+8. Commit the changes, this should cause the action to run and deploy everything
+9. Create and present new quizzes using <APPNAME>.azurewebsites.net/manage, players can join using <APPNAME>.azurewebsites.net
 
 ## How to run a quiz
 
