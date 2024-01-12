@@ -5,6 +5,11 @@ on:
     paths:
     - 'Env/**'
     - '.github/workflows/build_and_deploy_infrastructure.yml'
+  workflow_dispatch: 
+
+permissions:
+    id-token: write
+    contents: read
 
 jobs:
   build:
@@ -21,9 +26,8 @@ jobs:
         if-no-files-found: error
   deploy:
     needs: [build]
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
-    
+    environment: production
     env:
       LOCATION: uksouth
       RESOURCEGROUP: quizzr
@@ -39,7 +43,9 @@ jobs:
     - name: Login via Azure CLI
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: Azure CLI Action
       uses: Azure/cli@v1
       with:

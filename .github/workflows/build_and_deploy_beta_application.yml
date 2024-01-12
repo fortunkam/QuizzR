@@ -1,15 +1,12 @@
-name: Build application and deploy from Main
+name: Build application and deploy to Beta
 
 on:
   push:
     paths:
     - 'QuizExperiment.Admin/**'
     - 'QuizExperiment.Models/**'
-    - '.github/workflows/build_and_deploy_application.yml'
-    branches:
-    - main 
-  pull_request:
-    branches: [ main ]
+    - '.github/workflows/build_and_deploy_beta_application.yml'
+    branches: [ feature/* ]
   workflow_dispatch:
 
 permissions:
@@ -44,14 +41,13 @@ jobs:
         if-no-files-found: error
   deploy:
     needs: [build]
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     environment: production
     env:
       LOCATION: uksouth
       RESOURCEGROUP: quizzr
       PREFIX: quizzr
-      APPNAME: quizzr-webapp
+      APPNAME: quizzr-webapp-beta
     steps:
     - name: Download a Build Artifact (Website)
       uses: actions/download-artifact@v2.1.0
@@ -63,9 +59,9 @@ jobs:
     - name: Login via Azure CLI
       uses: azure/login@v1
       with:
-         client-id: ${{ secrets.AZURE_CLIENT_ID }}
-         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: Deploy web app
       id: deploywebapp
       uses: azure/webapps-deploy@v2

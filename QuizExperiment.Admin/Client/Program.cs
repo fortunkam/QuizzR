@@ -30,7 +30,7 @@ builder.Services.AddSingleton(new HttpClient
 
 builder.Services.AddMsalAuthentication(options =>
 {
-    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
+    builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
 });
 
 builder.Services.AddBlazorApplicationInsights(async applicationInsights =>
