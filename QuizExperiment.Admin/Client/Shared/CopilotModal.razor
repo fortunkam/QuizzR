@@ -146,6 +146,7 @@
     {
         _isLoading = true;
         _question = null;
+        InvokeAsync(StateHasChanged);
 
         var response = await Http.GetAsync($"copilot/suggestquestion?subject={System.Web.HttpUtility.UrlEncode(_subject)}");
 
