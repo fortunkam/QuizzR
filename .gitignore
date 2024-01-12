@@ -351,3 +351,5 @@ MigrationBackup/
 QuizExperiment.Admin/Server/appsettings.Development.json
 
 __azurite_db_*.json
+
+test.http

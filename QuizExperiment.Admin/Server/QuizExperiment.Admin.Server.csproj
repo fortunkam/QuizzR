@@ -12,6 +12,8 @@
     <PackageReference Include="GiphyDotNet" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.8" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.18.1" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.0.1" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.0.1" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
   </ItemGroup>
 

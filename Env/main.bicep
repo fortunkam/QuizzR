@@ -20,6 +20,15 @@ param linuxFxVersion string = 'DOTNETCORE|6.0'
 @secure()
 param giphyApiKey string
 
+@secure()
+param openAIDeploymentName string
+
+@secure()
+param openAIEndpoint string
+
+@secure()
+param openAIKey string
+
 var workbookContent = loadTextContent('workbookcontent.json')
 
 @allowed([
@@ -129,6 +138,9 @@ resource appSettings 'Microsoft.Web/sites/config@2021-03-01' = {
     'Azure__Storage__ConnectionString':'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(storageAccount.id,storageAccount.apiVersion).keys[0].value}'
     'QuizAssetsContainerName':'quizassets'
     'Giphy__ApiKey': giphyApiKey
+    'OpenAI__Endpoint': openAIEndpoint
+    'OpenAI__Key': openAIKey
+    'OpenAI__DeploymentName': openAIDeploymentName
   }
 }
 
@@ -144,6 +156,9 @@ resource appSettingsBeta 'Microsoft.Web/sites/config@2021-03-01' = {
     'Azure__Storage__ConnectionString':'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(storageAccount.id,storageAccount.apiVersion).keys[0].value}'
     'QuizAssetsContainerName':'quizassets'
     'Giphy__ApiKey': giphyApiKey
+    'OpenAI__Endpoint': openAIEndpoint
+    'OpenAI__Key': openAIKey
+    'OpenAI__DeploymentName': openAIDeploymentName
   }
 }
 

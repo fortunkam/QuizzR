@@ -52,7 +52,7 @@ jobs:
         # Specify the script here
         inlineScript: | 
           az group create -n ${{ env.RESOURCEGROUP }} --location ${{ env.LOCATION }}
-          principalId=$(az deployment group create --template-file ./Env/main.bicep -g ${{ env.RESOURCEGROUP }} --parameters giphyApiKey=${{secrets.GIPHYAPIKEY}} prefix=${{env.PREFIX}} --query properties.outputs.webApplicationPrincipalId.value -o tsv)
+          principalId=$(az deployment group create --template-file ./Env/main.bicep -g ${{ env.RESOURCEGROUP }} --parameters giphyApiKey=${{secrets.GIPHYAPIKEY}} --parameters openAIDeploymentName=${{secrets.OPENAI_DEPLOYMENT_NAME}} --parameters openAIKey=${{secrets.OPENAI_KEY}} --parameters openAIEndpoint=${{secrets.OPENAI_ENDPOINT}} prefix=${{env.PREFIX}} --query properties.outputs.webApplicationPrincipalId.value -o tsv)
           # az deployment group create --template-file ./Env/rbac.bicep -g ${{ env.RESOURCEGROUP }} --parameters principalId=$principalId
     - name: az cli logout
       run: az logout

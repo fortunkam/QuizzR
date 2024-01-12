@@ -64,6 +64,19 @@ nav.title-bar {
         color: black;
     }
 
+.btn-copilot {
+    background-color: #84DC04;
+    border-color: #84DC04;
+    color: black;
+    padding: 3px;
+}
+
+    .btn-copilot:hover {
+        background-color: #3CDB4E;
+        border-color: #3CDB4E;
+        color: black;
+    }
+
 .input-text-field {
     border-color: black;
     border-width: 1.5px;
@@ -691,6 +704,8 @@ nav.title-bar {
     width: auto;
     margin: 1.75rem 1.75rem;
     max-width: unset;
+    border: solid 2px black;
+    
 }
 
 .modal-header { 
@@ -701,4 +716,33 @@ nav.title-bar {
 .giphy-result-table td {
     text-align: center;
 }
+
+.quiz-edit-copilot-container {
+    background-color: white;
+    min-height:100px;
+}
+
+.modal-body {
+    padding: 2rem 2rem;
+}
+
+.copilot-results-data-container {
+    margin: 1rem 0;
+    padding: 2rem;
+}
+
+.copilot-results-container {
+    background-color: #CCCCCC;
+    margin: 1rem 0;
+    padding: 2rem;
+}
+
+.copilot-option-text {
+    margin: revert;
+}
+
+.loading-animation {
+    width: auto;
+}
+
 
