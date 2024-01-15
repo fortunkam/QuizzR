@@ -1,0 +1,16 @@
+Create a multiple choice question with four possible answers 
+on the subject of "{{$subject}}".
+Return the zero-based index of the correct answer.
+The question should return json in the following format
+---
+{
+	"title": "Quiz Question?",
+	"options": [
+		"Answer 1",
+		"Answer 2",
+		"Answer 3",
+		"Answer 4"
+	],
+	"correctAnswerIndex": 2
+}
+Do not include the ```json identifier in your response.

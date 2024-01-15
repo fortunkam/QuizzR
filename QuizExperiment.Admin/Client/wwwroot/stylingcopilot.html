@@ -173,14 +173,14 @@
                     <button class="btn btn-success my-3 btn-primary-action">
                         + NEW QUESTION
                     </button>
-                    <button class="btn btn-success btn-copilot" style="padding:3px">
+                    <button class="btn btn-success btn-copilot" style="padding:3px" data-bs-toggle="modal" data-bs-target="#copilotModal">
                         <img src="images/copilot.png" style="height:30px;" />
                     </button>
 
                 </div>
                 <div class="quiz-edit-question-count fs-5">XX questions</div>
                 <div class="d-flex flex-column quiz-edit-question-list flex-grow-1 flex-fill">
-                    
+
                     <!-- Question Item -->
                     <div class="quiz-edit-question-item d-flex flex-column align-items-center">
                         <div class="quiz-edit-question-item-validation-icon">
@@ -221,6 +221,107 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="modal fade show" id="copilotModal" tabindex="-1" aria-labelledby="copilotModalLabel" style="display:block">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="copilotModalLabel">Use Quizpilot for question suggestions</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body copilot-modal-body">
+                            <div class="row align-items-center">
+                                <h6 id="copilotModalLabel">Generate a question based on a subject</h6>
+                                <div class="input-group mb-3 mt-3">
+
+                                    <input type="text" class="form-control" placeholder="Subject" />
+                                    <button type="button" class="btn btn-primary-action" value="Generate">Generate</button>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row d-flex flex-row justify-content-center">
+                                <div class="my-3 loading-animation">
+                                    <span class="loading-animation-item loading-animation-item-1"></span>
+                                    <span class="loading-animation-item loading-animation-item-2"></span>
+                                    <span class="loading-animation-item loading-animation-item-3"></span>
+                                </div>
+                            </div>
+
+                                <div class="row align-items-center copilot-results-container">
+                                    <div class="copilot-results-data-container">
+                                        <div class="row"><p class="fw-bolder">Title: This is a very long question about lots of interesting things</p></div>
+                                        <table class="table table-bordered quiz-edit-question-answers-table">
+                                            <thead>
+                                            <th colspan="2">ANSWER</th>
+                                            <th>CORRECT?</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="quiz-edit-question-answers-table-icon">
+                                                        <button class="btn btn-edit-answer btn-edit-answer-0" value="Y">
+                                                            <span>Y</span>
+                                                        </button>
+                                                    </td>
+                                                    <td class="quiz-edit-question-answers-table-answer">
+                                                        <p class="copilot-option-text">This is Option 1</p>
+                                                    </td>
+                                                    <td class="quiz-edit-question-answers-table-correct">
+                                                        <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="quiz-edit-question-answers-table-icon">
+                                                        <button class="btn btn-edit-answer btn-edit-answer-1" value="X">
+                                                            <span>X</span>
+                                                        </button>
+                                                    </td>
+                                                    <td class="quiz-edit-question-answers-table-answer">
+                                                        <p class="copilot-option-text">This is Option 2</p>
+                                                    </td>
+                                                    <td class="quiz-edit-question-answers-table-correct">
+                                                        <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="quiz-edit-question-answers-table-icon">
+                                                        <button class="btn btn-edit-answer btn-edit-answer-2" value="B">
+                                                            <span>B</span>
+                                                        </button>
+                                                    </td>
+                                                    <td class="quiz-edit-question-answers-table-answer">
+                                                        <p class="copilot-option-text">This is Option 3</p>
+                                                    </td>
+                                                    <td class="quiz-edit-question-answers-table-correct">
+                                                        <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="quiz-edit-question-answers-table-icon">
+                                                        <button class="btn btn-edit-answer btn-edit-answer-3" value="A">
+                                                            <span>A</span>
+                                                        </button>
+                                                    </td>
+                                                    <td class="quiz-edit-question-answers-table-answer">
+                                                        <p class="copilot-option-text">This is Option 4</p>
+                                                    </td>
+                                                    <td class="quiz-edit-question-answers-table-correct">
+                                                        <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <hr />
+                                        <button type="button" class="btn btn-primary-action" value="Accept">Accept</button>
+                                        <button type="button" class="btn btn-secondary" value="Cancel">Cancel</button>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>

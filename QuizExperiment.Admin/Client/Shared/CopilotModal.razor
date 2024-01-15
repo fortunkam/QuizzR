@@ -1,0 +1,170 @@
+﻿@inject HttpClient Http
+
+<!-- Modal -->
+<div class="modal fade" id="copilotModal" tabindex="-1" aria-labelledby="copilotModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="copilotModalLabel">Experimental: Use Quizpilot for suggestions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="@ClearSuggestion"></button>
+            </div>
+            <div class="modal-body copilot-modal-body">
+                <div class="row align-items-center">
+                    <h6 id="copilotModalLabel">Generate a question based on a subject</h6>
+                    <div class="input-group mb-3 mt-3">
+
+                        <input type="text" class="form-control" placeholder="Subject" @bind-value="@_subject" @onkeydown="@Enter" />
+                        <button type="button" class="btn btn-primary-action" value="Generate" @onclick="@SuggestBySubject" >Generate</button>
+                    </div>
+                </div>
+                <hr />
+                @if (_isLoading)
+                {
+                    <div class="row d-flex flex-row justify-content-center">
+                        <div class="my-3 loading-animation">
+                            <span class="loading-animation-item loading-animation-item-1"></span>
+                            <span class="loading-animation-item loading-animation-item-2"></span>
+                            <span class="loading-animation-item loading-animation-item-3"></span>
+                        </div>
+                    </div>
+                }
+
+                @if (_question != null)
+                {
+                    <div class="row align-items-center copilot-results-container">
+                        <div class="copilot-results-data-container">
+                            <div class="row"><p class="fw-bolder">Question: @_question.Title</p></div>
+                            <table class="table table-bordered quiz-edit-question-answers-table">
+                                <thead>
+                                    <th colspan="2">ANSWER</th>
+                                    <th>CORRECT?</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="quiz-edit-question-answers-table-icon">
+                                            <button class="btn btn-edit-answer btn-edit-answer-0" value="Y">
+                                                <span>Y</span>
+                                            </button>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-answer">
+                                            <p class="copilot-option-text">@_question.Options[0]</p>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-correct">
+                                            <input class="form-check-input" type="radio" id="flexCheckChecked1"
+                                               name="flexCheckChecked" checked="@(_question.CorrectAnswerIndex == 0)"
+                                               onchange="@(() => {_question.CorrectAnswerIndex = 0;})">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="quiz-edit-question-answers-table-icon">
+                                            <button class="btn btn-edit-answer btn-edit-answer-1" value="X">
+                                                <span>X</span>
+                                            </button>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-answer">
+                                            <p class="copilot-option-text">@_question.Options[1]</p>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-correct">
+                                           <input class="form-check-input" type="radio" id="flexCheckChecked1"
+   name="flexCheckChecked" checked="@(_question.CorrectAnswerIndex == 1)"
+   onchange="@(() => {_question.CorrectAnswerIndex = 1;})">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="quiz-edit-question-answers-table-icon">
+                                            <button class="btn btn-edit-answer btn-edit-answer-2" value="B">
+                                                <span>B</span>
+                                            </button>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-answer">
+                                            <p class="copilot-option-text">@_question.Options[2]</p>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-correct">
+                                            <input class="form-check-input" type="radio" id="flexCheckChecked1"
+   name="flexCheckChecked" checked="@(_question.CorrectAnswerIndex == 2)"
+   onchange="@(() => {_question.CorrectAnswerIndex = 2;})">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="quiz-edit-question-answers-table-icon">
+                                            <button class="btn btn-edit-answer btn-edit-answer-3" value="A">
+                                                <span>A</span>
+                                            </button>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-answer">
+                                            <p class="copilot-option-text">@_question.Options[3]</p>
+                                        </td>
+                                        <td class="quiz-edit-question-answers-table-correct">
+                                            <input class="form-check-input" type="radio" id="flexCheckChecked1"
+   name="flexCheckChecked" checked="@(_question.CorrectAnswerIndex == 3)"
+   onchange="@(() => {_question.CorrectAnswerIndex = 3;})">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <hr />
+                            <button type="button" class="btn btn-primary-action" value="Accept" @onclick="@FireAddNewQuestion" data-bs-dismiss="modal">Accept</button>
+                            <button type="button" class="btn btn-secondary" value="Cancel" data-bs-dismiss="modal" @onclick="@ClearSuggestion">Cancel</button>
+                        </div>
+
+
+
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private Question _question = null;
+
+    private string _subject;
+    private bool _isLoading = false;
+
+    [Parameter]
+    public EventCallback<Question> AddNewQuestion { get; set; }
+
+    public void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            System.Diagnostics.Debug.WriteLine("Enter");
+            Console.WriteLine("Enter");
+            Task.Run(async () => await SuggestBySubject());
+        }
+    }
+
+    private async Task FireAddNewQuestion()
+    {
+        await AddNewQuestion.InvokeAsync(_question);
+        ClearSuggestion();
+    }
+
+    private async Task SuggestBySubject()
+    {
+        _isLoading = true;
+        _question = null;
+        InvokeAsync(StateHasChanged);
+
+        var response = await Http.GetAsync($"copilot/suggestquestion?subject={System.Web.HttpUtility.UrlEncode(_subject)}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error generating a question! {errorMessage}");
+            return;
+        }
+        _isLoading = false;
+
+        _question = await response.Content.ReadFromJsonAsync<Question>();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void ClearSuggestion()
+    {
+        _subject = "";
+        _question = null;
+    }
+}

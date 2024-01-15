@@ -7,17 +7,35 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Prompts\quiz_subject\skprompt.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Prompts\quiz_subject\skprompt.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Data.Tables" Version="12.6.1" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.13.1" />
     <PackageReference Include="GiphyDotNet" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.8" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.18.1" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.0.1" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.0.1" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\QuizExperiment.Models\QuizExperiment.Models.csproj" />
     <ProjectReference Include="..\Client\QuizExperiment.Admin.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Prompts\quiz_subject\config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 

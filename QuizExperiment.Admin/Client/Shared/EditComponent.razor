@@ -71,7 +71,8 @@
             <QuestionList Questions="_questions"
                       OnEditQuestion="OnEditQuestion"
                       OnDeleteQuestion="OnDeleteQuestion"
-                      OnAddQuestion="OnAddQuestion" />
+                      OnAddQuestion="OnAddQuestion"
+                      OnAddGeneratedQuestion="OnAddGeneratedQuestion"/>
         </div>
     </div>
 }
@@ -113,6 +114,12 @@
         };
 
         _questions.Add(_currentQuestion); 
+    }
+
+    private void OnAddGeneratedQuestion(Question question)
+    {
+        _questions.Add(question); 
+        _currentQuestion = question;
     }
 
     public bool AreAllQuestionsValid

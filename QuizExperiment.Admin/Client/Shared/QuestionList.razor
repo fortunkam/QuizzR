@@ -5,6 +5,9 @@
         <button class="btn btn-success my-3 btn-primary-action" @onclick="@(e=> OnAddQuestion.InvokeAsync())">
             + NEW QUESTION
         </button>
+        <button class="btn btn-success btn-copilot" style="padding:3px" data-bs-toggle="modal" data-bs-target="#copilotModal">
+            <img src="images/copilot.png" style="height:30px;" />
+        </button>
     </div>
     <div class="quiz-edit-question-count fs-5">@(Questions.Count) question@(GetQuestionCountSuffix())</div>
     <div class="d-flex flex-column quiz-edit-question-list flex-grow-1 flex-fill">
@@ -18,6 +21,8 @@
         }
     </div>
 </div>
+
+<CopilotModal AddNewQuestion="OnAddGeneratedQuestion" />
 
 
 @code {
@@ -33,6 +38,9 @@
 
     [Parameter]
     public EventCallback OnAddQuestion { get; set; }
+
+    [Parameter]
+    public EventCallback<Question> OnAddGeneratedQuestion { get;set; }
 
     private string GetQuestionCountSuffix()
     {

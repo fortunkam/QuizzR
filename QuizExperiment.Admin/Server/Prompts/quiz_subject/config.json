@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "type": "chat",
+  "description": "Creates a quiz question based on a subject",
+  "execution_settings": {
+    "default": {
+      "max_tokens": 1000,
+      "temperature": 1.0
+    }
+  },
+  "input_variables": [
+    {
+      "name": "subject",
+      "description": "The user's subject.",
+      "required": true
+    }
+  ]
+}
