@@ -745,4 +745,15 @@ nav.title-bar {
     width: auto;
 }
 
+.invalid-feedback-quiz {
+    display:initial;
+}
 
+.quiz-present-audio-container {
+    position: fixed;
+    top: calc(100vh - 80px);
+}
+
+.quiz-present-audio-description {
+    font-size: x-small;
+}
