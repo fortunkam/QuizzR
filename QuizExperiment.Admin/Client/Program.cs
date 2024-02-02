@@ -36,6 +36,10 @@ builder.Services.AddMsalAuthentication(options =>
 builder.Services.AddBlazorApplicationInsights(async applicationInsights =>
 {
     var key = builder.Configuration["AppInsightsInstrumentationKey"];
+    if(key == null)
+    {
+        throw new InvalidOperationException("Application Insights Instrumentation Key not found in configuration");
+    }
     await applicationInsights.SetInstrumentationKey(key);
     var telemetryItem = new TelemetryItem()
     {

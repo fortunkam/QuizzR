@@ -29,7 +29,7 @@
                     </div>
                 }
 
-                @if (_question != null)
+                @if (_question is not null)
                 {
                     <div class="row align-items-center copilot-results-container">
                         <div class="copilot-results-data-container">
@@ -47,7 +47,7 @@
                                             </button>
                                         </td>
                                         <td class="quiz-edit-question-answers-table-answer">
-                                            <p class="copilot-option-text">@_question.Options[0]</p>
+                                            <p class="copilot-option-text">@_question.Options?[0]</p>
                                         </td>
                                         <td class="quiz-edit-question-answers-table-correct">
                                             <input class="form-check-input" type="radio" id="flexCheckChecked1"
@@ -62,7 +62,7 @@
                                             </button>
                                         </td>
                                         <td class="quiz-edit-question-answers-table-answer">
-                                            <p class="copilot-option-text">@_question.Options[1]</p>
+                                            <p class="copilot-option-text">@_question.Options?[1]</p>
                                         </td>
                                         <td class="quiz-edit-question-answers-table-correct">
                                            <input class="form-check-input" type="radio" id="flexCheckChecked1"
@@ -77,7 +77,7 @@
                                             </button>
                                         </td>
                                         <td class="quiz-edit-question-answers-table-answer">
-                                            <p class="copilot-option-text">@_question.Options[2]</p>
+                                            <p class="copilot-option-text">@_question.Options?[2]</p>
                                         </td>
                                         <td class="quiz-edit-question-answers-table-correct">
                                             <input class="form-check-input" type="radio" id="flexCheckChecked1"
@@ -92,7 +92,7 @@
                                             </button>
                                         </td>
                                         <td class="quiz-edit-question-answers-table-answer">
-                                            <p class="copilot-option-text">@_question.Options[3]</p>
+                                            <p class="copilot-option-text">@_question.Options?[3]</p>
                                         </td>
                                         <td class="quiz-edit-question-answers-table-correct">
                                             <input class="form-check-input" type="radio" id="flexCheckChecked1"
@@ -118,9 +118,9 @@
 
 
 @code {
-    private Question _question = null;
+    private Question? _question = null;
 
-    private string _subject;
+    private string? _subject;
     private bool _isLoading = false;
 
     [Parameter]
@@ -146,7 +146,7 @@
     {
         _isLoading = true;
         _question = null;
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
 
         var response = await Http.GetAsync($"copilot/suggestquestion?subject={System.Web.HttpUtility.UrlEncode(_subject)}");
 
@@ -159,7 +159,7 @@
         _isLoading = false;
 
         _question = await response.Content.ReadFromJsonAsync<Question>();
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private void ClearSuggestion()

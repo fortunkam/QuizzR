@@ -8,88 +8,91 @@
 
 @if (_isLoaded)
 {
-     <!--Page Title bar -->
-     <nav class="navbar navbar-dark" style="background-color: #585555; margin-top: 69px">
-         <div class="container-fluid">
-             <span class="ms-4 fs-4 text-light" style="padding-left:70px;">Quiz Editor</span>
-             <div class="d-flex flex-row align-items-center justify-content-end">
-                 <div class="mx-2">
-                     <button class="btn btn-outline-danger text-light title-bar-button" @onclick="SaveAndClose">Close</button>
-                 </div>
-                 <div class="mx-2">
-                    <button class="btn btn-outline-primary text-light title-bar-button" @onclick="SaveAndContinue">Save</button>
-                 </div>
-                 <div class="mx-2">
-                    <button class="btn btn-outline-warning text-light title-bar-button" @onclick="SaveAndPresent">Present</button>
+    if(_questionSet is not null)
+    {
+         <!--Page Title bar -->
+         <nav class="navbar navbar-dark" style="background-color: #585555; margin-top: 69px">
+             <div class="container-fluid">
+                 <span class="ms-4 fs-4 text-light" style="padding-left:70px;">Quiz Editor</span>
+                 <div class="d-flex flex-row align-items-center justify-content-end">
+                     <div class="mx-2">
+                         <button class="btn btn-outline-danger text-light title-bar-button" @onclick="SaveAndClose">Close</button>
+                     </div>
+                     <div class="mx-2">
+                        <button class="btn btn-outline-primary text-light title-bar-button" @onclick="SaveAndContinue">Save</button>
+                     </div>
+                     <div class="mx-2">
+                        <button class="btn btn-outline-warning text-light title-bar-button" @onclick="SaveAndPresent">Present</button>
+                     </div>
                  </div>
              </div>
-         </div>
-     </nav>
-    <!--Quiz Title bar -->
-    <nav class="navbar navbar-dark" style="background-color: #979696;">
-        <div class="container-fluid">
-            <div class="d-flex flex-row align-items-center w-50" style="padding-left:93px;">
-                <div class="pe-3">
-                    <span class="fs-5 text-light">Quiz Name</span>
-                </div>
-                <div class="flex-fill">
-                    <input @bind="_questionSet.Title" type="text" class="form-control" placeholder="Quiz name" required="required" />
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    if (!AreAllQuestionsValid)
-    {
-        <!-- Question Set Validation Message -->
-        <nav class="navbar navbar-danger navbar-question-validation">
+         </nav>
+        <!--Quiz Title bar -->
+        <nav class="navbar navbar-dark" style="background-color: #979696;">
             <div class="container-fluid">
                 <div class="d-flex flex-row align-items-center w-50" style="padding-left:93px;">
+                    <div class="pe-3">
+                        <span class="fs-5 text-light">Quiz Name</span>
+                    </div>
                     <div class="flex-fill">
-                        <span class="fs-5 text-light">Make sure all questions have a correct answer, title, image and timeout!</span>
+                        <input @bind="@_questionSet.Title" type="text" class="form-control" placeholder="Quiz name" required="required" />
                     </div>
                 </div>
             </div>
         </nav>
-    }
+
+        if (!AreAllQuestionsValid)
+        {
+            <!-- Question Set Validation Message -->
+            <nav class="navbar navbar-danger navbar-question-validation">
+                <div class="container-fluid">
+                    <div class="d-flex flex-row align-items-center w-50" style="padding-left:93px;">
+                        <div class="flex-fill">
+                            <span class="fs-5 text-light">Make sure all questions have a correct answer, title, image and timeout!</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        }
    
 
-    <div class="d-flex flex-column justify-content-center quiz-edit-question">
-        <div class="d-flex flex-row quiz-edit-question-list-panel flex-fill">
-            <div class="flex-grow-1 ">
-                @if(_currentQuestion == null)
-                {
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="my-3 fs-4 fw-bold">Click the "+ NEW QUESTION" button to begin building your quiz</div>
-                    </div>
-                }
-                else
-                {
-                    <EditQuestion Question="_currentQuestion" />
-                }
+        <div class="d-flex flex-column justify-content-center quiz-edit-question">
+            <div class="d-flex flex-row quiz-edit-question-list-panel flex-fill">
+                <div class="flex-grow-1 ">
+                    @if(_currentQuestion == null)
+                    {
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="my-3 fs-4 fw-bold">Click the "+ NEW QUESTION" button to begin building your quiz</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <EditQuestion Question="_currentQuestion" />
+                    }
+                </div>
+                <QuestionList Questions="_questions"
+                          OnEditQuestion="OnEditQuestion"
+                          OnDeleteQuestion="OnDeleteQuestion"
+                          OnAddQuestion="OnAddQuestion"
+                          OnAddGeneratedQuestion="OnAddGeneratedQuestion"/>
             </div>
-            <QuestionList Questions="_questions"
-                      OnEditQuestion="OnEditQuestion"
-                      OnDeleteQuestion="OnDeleteQuestion"
-                      OnAddQuestion="OnAddQuestion"
-                      OnAddGeneratedQuestion="OnAddGeneratedQuestion"/>
         </div>
-    </div>
+    }
 }
 
 @code {
     [Parameter]
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
     private bool _isLoaded = false; 
 
-    private QuestionSet _questionSet = new QuestionSet();
+    private QuestionSet? _questionSet = new QuestionSet();
 
     private List<Question> _questions = new List<Question>();
 
-    private Question _currentQuestion = new Question();
+    private Question? _currentQuestion = new Question();
 
-    private string _userId;
+    private string? _userId;
 
     private void OnEditQuestion(Question question)
     {
@@ -147,13 +150,20 @@
         }
 
         _questionSet = await response.Content.ReadFromJsonAsync<QuestionSet>();
+        if(_questionSet is null)
+        {
+            throw new NullReferenceException($"EditComponent: QuestionSet (UserID: {_userId}, Id: {Id}) returned from API is null!");
+        }
+
         if (_questionSet.Questions == null)
         {
             _questionSet.Questions = new List<Question>();
         }
 
         _questions = _questionSet.Questions;
-        _currentQuestion = _questions.Count > 0 ? _questions[0] : null;
+        _currentQuestion = _questions.Count > 0
+                            ? _questions[0] 
+                            : null;
 
         _isLoaded = true;
         return;
@@ -174,7 +184,7 @@
             return;
         }
         await Save();
-        NavigationManager.NavigateTo($"/present/{_questionSet.Id}");
+        NavigationManager.NavigateTo($"/present/{_questionSet?.Id}");
     }
 
     private async Task SaveAndContinue()
@@ -200,7 +210,7 @@
         await AppInsights.TrackEvent("QuestionSetUpserted", new Dictionary<string, object?>
         {
             { "userId", _userId },
-            { "Id", _questionSet.Id },
+            { "Id", _questionSet?.Id },
         });
     }
 

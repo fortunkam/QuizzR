@@ -44,7 +44,7 @@
                         {
                             <div class="quiz-manage-item-questions fs-5">@a.QuestionCount Questions</div>
                         }
-                        <div class="quiz-manage-item-last-modified fs-5">Last modified: @a.LastModified.ToString("yyyy/MM/dd")</div>
+                        <div class="quiz-manage-item-last-modified fs-5">Last modified: @a.LastModified?.ToString("yyyy/MM/dd")</div>
                     </div>
 
                 </div>
@@ -74,11 +74,9 @@
 
     private List<QuestionSetSummary> _questionSets = new List<QuestionSetSummary>();
 
-    private string _title;
-
     private bool _isLoaded = false; 
 
-    private string _userId;
+    private string? _userId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,7 +94,9 @@
             return;
         }
 
-        _questionSets = (await response.Content.ReadFromJsonAsync<List<QuestionSetSummary>>()).OrderByDescending(r=>r.LastModified).ToList();
+        var questionSetSummary = await response.Content.ReadFromJsonAsync<List<QuestionSetSummary>>() ?? new List<QuestionSetSummary>();
+
+        _questionSets = questionSetSummary.OrderByDescending(r=>r.LastModified).ToList();
         _isLoaded = true;
         return;
     }
@@ -133,23 +133,37 @@
     }
 
     private string quizToDelete = "";
-    private Blazorise.Modal confirmDelete;
+    private Blazorise.Modal? confirmDelete;
 
-    private async Task DeleteQuestionSet(string id)
+    private async Task DeleteQuestionSet(string? id)
     {
+        if(string.IsNullOrWhiteSpace(id))
+        {
+            throw new NullReferenceException("ManageComponent: DeleteQuestionSet: Id is null or empty");
+        }
         quizToDelete = id;
-        await confirmDelete.Show();
+        if (confirmDelete != null)
+        {
+            await confirmDelete.Show();
+        }
     }
 
     private async Task DoCloseModal()
     {
         quizToDelete = "";
-        await confirmDelete.Hide();
+        if (confirmDelete != null)
+        {
+            await confirmDelete.Hide();
+        }
     }
 
     private async Task DoDeleteQuestionSet()
     {
-        await confirmDelete.Hide();
+        if (confirmDelete != null)
+        {
+            await confirmDelete.Hide();
+        }
+
         var id = quizToDelete;
         var response = await Http.DeleteAsync($"questionset/delete?userId={_userId}&id={id}");
         if (!response.IsSuccessStatusCode)
@@ -169,13 +183,21 @@
         quizToDelete = "";
     }
 
-    private async Task PresentQuestionSet(string id)
+    private void PresentQuestionSet(string? id)
     {
+        if(string.IsNullOrWhiteSpace(id))
+        {
+            throw new NullReferenceException("ManageComponent: PresentQuestionSet: Id is null or empty");
+        }
         NavigationManager.NavigateTo($"/present/{id}");
     }
 
-    private void EditQuestionSet(string id)
+    private void EditQuestionSet(string? id)
     {
+        if(string.IsNullOrWhiteSpace(id))
+        {
+            throw new NullReferenceException("ManageComponent: EditQuestionSet: Id is null or empty");
+        }
         NavigationManager.NavigateTo($"/edit/{id}");
     }
 

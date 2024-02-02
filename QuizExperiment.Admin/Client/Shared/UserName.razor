@@ -19,7 +19,7 @@
 </div>
 
 @code {
-    private string userName;
+    private string? userName;
     private bool showValidation = false;
     [Parameter]
     public EventCallback<string> OnUserNameSubmit { get; set; }
@@ -39,7 +39,6 @@
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
-            
             Submit();
         }
     }

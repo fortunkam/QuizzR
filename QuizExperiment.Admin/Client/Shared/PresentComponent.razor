@@ -9,37 +9,48 @@
 
 @if (_isLoaded)
 {
-    @if (_state == AdminUserState.WaitingForGameStart)
-    {
-        <GameStart Users="@_users" 
-                QuestionSetId="@Id" 
-                OnGameStarted="@OnGameStarted"
-                OnGameRegistered="@OnGameRegistered"/>
-    }
+    
+        @if (_state == AdminUserState.WaitingForGameStart)
+        {
+            <GameStart Users
+            ="@_users" 
+            QuestionSetId="@Id" 
+            OnGameStarted="@OnGameStarted"
+            OnGameRegistered="@OnGameRegistered"/>
+        }
 
-    @if (_state == AdminUserState.WaitingForAnswers)
-    {
-        <SingleAnswerMultiSelectQuestionDisplay
-        Question="@_currentQuestion.Title" 
-        Options="@_currentQuestion.Options" 
-        QuestionEndTime="@_currentQuestionEndTime"
-        UserAnswerCount="@_userCurrentAnswers.Count" 
-        ImageUrl="@_currentQuestion.ImageUrl" />
-    }
+        @if (_state == AdminUserState.WaitingForAnswers)
+        {
+            if (_currentQuestion is not null)
+            {
+                <SingleAnswerMultiSelectQuestionDisplay
+                Question="@_currentQuestion.Title" 
+                Options="@_currentQuestion.Options" 
+                QuestionEndTime="@_currentQuestionEndTime"
+                UserAnswerCount="@_userCurrentAnswers.Count" 
+                ImageUrl="@_currentQuestion.ImageUrl" />
+            }
+        }
 
-    @if (_state == AdminUserState.WaitingForQuestionStart)
-    {
-        <QuestionAnswerChart 
-        CorrectAnswerIndex="@_currentQuestion.CorrectAnswerIndex" 
-        Options="@_currentQuestion.Options" 
-        UserAnswers="@_userCurrentAnswers" 
-        OnNextQuestion="@OnNextQuestion"  />
-    }
+        @if (_state == AdminUserState.WaitingForQuestionStart)
+        {
+            if (_currentQuestion is not null)
+            {
+                <QuestionAnswerChart 
+                CorrectAnswerIndex="@_currentQuestion.CorrectAnswerIndex" 
+                Options="@_currentQuestion.Options" 
+                UserAnswers="@_userCurrentAnswers" 
+                OnNextQuestion="@OnNextQuestion"  />
+            }
+        }
 
-    @if (_state == AdminUserState.ShowingPodium)
-    {
-        <Podium Leaderboard="@_orderedLeaderboard"  Users="@_users" />
-    }
+        @if (_state == AdminUserState.ShowingPodium)
+        {
+            <Podium Leaderboard
+            ="@_orderedLeaderboard"  Users
+            ="@_users" />
+        }
+
 }
 
 <div class="quiz-present-audio-container">
@@ -54,17 +65,17 @@
 
 @code {
     [Parameter]
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
     private AdminUserState _state = AdminUserState.WaitingForGameStart;
 
-    private HubConnection _hubConnection;
+    private HubConnection? _hubConnection;
 
-    private string _clientQuizId;
+    private string? _clientQuizId;
 
     private bool _isLoaded = false;
 
-    private QuestionSet _questionSet = null;
+    private QuestionSet? _questionSet = null;
 
     private Dictionary<string, string> _users = new Dictionary<string, string>();
 
@@ -77,7 +88,7 @@
 
     private int _currentQuestionIndex = 0;
 
-    private Question _currentQuestion = null;
+    private Question? _currentQuestion = null;
 
     private DateTime _currentQuestionEndTime;
 
@@ -91,6 +102,10 @@
                 { "clientQuizId", _clientQuizId }
                     }
             );
+        if(_hubConnection is null)
+        {
+            throw new NullReferenceException("PresentComponent: OnGameRegistered: HubConnection is null");
+        }
         await _hubConnection.SendAsync("RegisterQuizSession", clientQuizId);
     }
 
@@ -101,7 +116,25 @@
 
     private async Task SendQuestion()
     {
-        _currentQuestion = _questionSet.Questions[_currentQuestionIndex];
+        if(_questionSet is null)
+        {
+            throw new NullReferenceException("PresentComponent: SendQuestion: QuestionSet is null");
+        }
+        if(_questionSet.Questions is null)
+        {
+            throw new NullReferenceException("PresentComponent: SendQuestion: Questions Array is null");
+        }
+        if(_currentQuestionIndex >= _questionSet.Questions?.Count)
+        {
+            throw new IndexOutOfRangeException("PresentComponent: SendQuestion: Question index is out of range");
+        }
+
+        _currentQuestion = _questionSet.Questions?[_currentQuestionIndex];
+        if(_currentQuestion is null)
+        {
+            throw new NullReferenceException("PresentComponent: SendQuestion: Current Question is null");
+        }
+
         _userCurrentAnswers.Clear();
         _currentQuestionEndTime = DateTime.Now.AddSeconds(_currentQuestion.Timeout);
         _state = AdminUserState.WaitingForAnswers;
@@ -115,6 +148,10 @@
                     { "question", _currentQuestion.Title }
                 }
             );
+        if(_hubConnection is null)
+        {
+            throw new NullReferenceException("PresentComponent: SendQuestion: HubConnection is null");
+        }
         await _hubConnection.SendAsync("SendQuestion", _clientQuizId, _currentQuestion.Title, _currentQuestion.Options);
 
         using var tmr = new PeriodicTimer(TimeSpan.FromSeconds(_currentQuestion.Timeout));
@@ -130,6 +167,10 @@
         for (int i = 0; i < _orderedLeaderboard.Count; i++)
         {
             var user = _orderedLeaderboard.ElementAt(i);
+            if(_hubConnection is null)
+            {
+                throw new NullReferenceException("PresentComponent: SendFinalPositions: HubConnection is null");
+            }
             await _hubConnection.SendAsync("SendPlayerPosition", _clientQuizId, user.Key, i + 1, user.Value);
             
         }
@@ -138,6 +179,15 @@
 
     private async Task OnNextQuestion()
     {
+        if(_questionSet is null)
+        {
+            throw new NullReferenceException("PresentComponent: OnNextQuestion: QuestionSet is null");
+        }
+        if(_questionSet.Questions is null)
+        {
+            throw new NullReferenceException("PresentComponent: OnNextQuestion: Questions Array is null");
+        }
+
         if(_currentQuestionIndex + 1 >= _questionSet.Questions.Count)
         {
             //Show the final leaderboard
@@ -157,7 +207,13 @@
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var userId = user.Claims.FirstOrDefault(r => r.Type == "oid").Value;
+
+        var userId = user.Claims.FirstOrDefault(r => r.Type == "oid")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new NullReferenceException("PresentComponent: OnInitializedAsync: User ID is null or empty");
+        }
 
         var response = await Http.GetAsync($"questionset/get?userId={userId}&id={Id}");
 
@@ -202,7 +258,7 @@
                 new Dictionary<string, object?>
                 {
                     { "clientQuizId", _clientQuizId },
-                    { "question", _currentQuestion.Title },
+                    { "question", _currentQuestion?.Title },
                     { "answerIndex", answerIndex },
                     { "timeTaken", timeTaken },
                     { "clientConnectionId", clientConnectionId }
@@ -221,6 +277,11 @@
     private async Task CloseQuestion()
     {
         _cts.Cancel();
+
+        if(_currentQuestion is null)
+{
+            throw new NullReferenceException("PresentComponent: CloseQuestion: Current Question is null");
+        }
 
         var questionMaxMs = (double)(_currentQuestion.Timeout * 1000);
 
@@ -261,9 +322,26 @@
                 }
             );
 
+        if(_hubConnection is null)
+        {
+            throw new NullReferenceException("PresentComponent: CloseQuestion: HubConnection is null");
+        }
+        if(_questionSet is null)
+        {
+            throw new NullReferenceException("PresentComponent: CloseQuestion: QuestionSet is null");
+        }
+        if(_questionSet.Questions is null)
+        {
+            throw new NullReferenceException("PresentComponent: CloseQuestion: Questions Array is null");
+        }
         foreach (var c in unionAnswers)
         {
-            await _hubConnection.SendAsync("SendAnswerResult", _clientQuizId, c.UserId, _currentQuestion.CorrectAnswerIndex, _leaderboard[c.UserId], (_orderedLeaderboard.Keys.ToList().IndexOf(c.UserId) + 1), (_currentQuestionIndex + 1 >= _questionSet.Questions.Count));
+            await _hubConnection.SendAsync("SendAnswerResult", _clientQuizId,
+            c.UserId,
+            _currentQuestion.CorrectAnswerIndex,
+            _leaderboard[c.UserId],
+            (_orderedLeaderboard.Keys.ToList().IndexOf(c.UserId) + 1),
+            (_currentQuestionIndex + 1 >= _questionSet.Questions.Count));
         }
 
         _state = AdminUserState.WaitingForQuestionStart;

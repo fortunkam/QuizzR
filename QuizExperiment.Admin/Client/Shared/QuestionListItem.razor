@@ -1,30 +1,33 @@
 ﻿@using QuizExperiment.Models
 
-<!-- Question Item -->
-<div class="quiz-edit-question-item d-flex flex-column align-items-center @(Question.IsValid ? "" : "quiz-edit-question-item-validation-failed")">
-    <div class="quiz-edit-question-item-validation-icon">
-        !
-    </div>
-    <div class="quiz-edit-question-item-title fw-bold">@QuestionIndex) @Question.Title</div>
-
-    <img class="img-fluid rounded quiz-edit-question-item-img" src="@Question.ImageUrl" />
-
-    <div class="d-flex quiz-edit-question-item-controls align-items-center">
-        <button class="quiz-edit-question-item-edit" title="edit" @onclick="@(e=> OnEditQuestion.InvokeAsync(Question))">
-            ✏️
-        </button>
-        <div class="flex-grow-1">
+@if(Question is not null)
+{
+    <!-- Question Item -->
+    <div class="quiz-edit-question-item d-flex flex-column align-items-center @(Question.IsValid ? "" : "quiz-edit-question-item-validation-failed")">
+        <div class="quiz-edit-question-item-validation-icon">
+            !
         </div>
-        <button class="quiz-edit-question-item-delete" title="delete" @onclick="@(e=> OnDeleteQuestion.InvokeAsync(Question))">
-            🗑️
-        </button>
+        <div class="quiz-edit-question-item-title fw-bold">@QuestionIndex) @Question.Title</div>
+
+        <img class="img-fluid rounded quiz-edit-question-item-img" src="@Question.ImageUrl" />
+
+        <div class="d-flex quiz-edit-question-item-controls align-items-center">
+            <button class="quiz-edit-question-item-edit" title="edit" @onclick="@(e=> OnEditQuestion.InvokeAsync(Question))">
+                ✏️
+            </button>
+            <div class="flex-grow-1">
+            </div>
+            <button class="quiz-edit-question-item-delete" title="delete" @onclick="@(e=> OnDeleteQuestion.InvokeAsync(Question))">
+                🗑️
+            </button>
+        </div>
     </div>
-</div>
+}
 
 @code {
 
     [Parameter]
-    public Question Question { get; set; }
+    public Question? Question { get; set; }
 
     [Parameter]
     public int QuestionIndex { get; set; }

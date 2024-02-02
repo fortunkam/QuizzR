@@ -10,7 +10,7 @@
         <div class="quiz-admin-question-title my-3 fs-1 fw-bold">@Question</div>
         <img class="img-fluid rounded img-quiz" src="@ImageUrl" />
         <div class="quiz-admin-button-container">
-            @for (var i = 0; i < Options.Length; i++)
+            @for (var i = 0; i < Options?.Length; i++)
             {
                 var answer = Options[i];
                 var index = i;
@@ -32,10 +32,10 @@
 @code {
 
     [Parameter]
-    public string Question { get; set; }
+    public string? Question { get; set; }
 
     [Parameter]
-    public string[] Options { get; set; }
+    public string[]? Options { get; set; }
 
     [Parameter]
     public DateTime QuestionEndTime { get; set; }
@@ -44,7 +44,7 @@
     public int UserAnswerCount { get; set; }
 
     [Parameter]
-    public string ImageUrl { get; set; }
+    public string? ImageUrl { get; set; }
 
 
 

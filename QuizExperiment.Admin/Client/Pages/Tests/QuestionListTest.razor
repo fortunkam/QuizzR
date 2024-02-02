@@ -30,17 +30,17 @@
             }
         }).ToList(); 
 
-    private async Task OnQuestionEdit(Question question)
+    private void OnQuestionEdit(Question question)
     {
         Console.WriteLine($"Editing: {question.Title}");
     }
 
-    private async Task OnQuestionDelete(Question question)
+    private void OnQuestionDelete(Question question)
     {
         Console.WriteLine($"Deleting: {question.Title}");
     }
 
-    private async Task OnQuestionAdd()
+    private void OnQuestionAdd()
     {
         Console.WriteLine($"Adding new question");
     }

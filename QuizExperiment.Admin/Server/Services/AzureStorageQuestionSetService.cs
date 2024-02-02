@@ -22,6 +22,10 @@ namespace QuizExperiment.Admin.Server.Services
             var blobClient = _blobContainerClient.GetBlobClient($"/{userId}/{id}/quiz.json");
             var stream = await blobClient.OpenReadAsync();
             var questionSet = JsonSerializer.Deserialize<QuestionSet>(stream);
+            if(questionSet is null)
+            {
+                throw new NullReferenceException("GetQuestionSet: questionSet is null");
+            }
             return questionSet;
         }
 
@@ -36,8 +40,6 @@ namespace QuizExperiment.Admin.Server.Services
             {
                 foreach (BlobItem blobItem in blobPage.Values)
                 {
-                    //var blobClient = _blobContainerClient.GetBlobClient(blobItem.Name);
-                   // var props = await blobClient.GetPropertiesAsync();
                     questionSets.Add(new QuestionSetSummary
                     {
                         Id = blobItem.Metadata["id"],
@@ -56,14 +58,19 @@ namespace QuizExperiment.Admin.Server.Services
 
         public async Task<QuestionSetSummary> UpsertQuestionSet(QuestionSet questionSet)
         {
+            if (questionSet is null)
+            {
+                throw new NullReferenceException("UpsertQuestionSet: questionSet is null");
+            }
+
             var blobClient = _blobContainerClient.GetBlobClient($"/{questionSet.UserId}/{questionSet.Id}/quiz.json");
 
             await blobClient.UploadAsync(new BinaryData(questionSet), overwrite: true);
-            await blobClient.SetMetadataAsync(new Dictionary<string, string>{
+            await blobClient.SetMetadataAsync(new Dictionary<string, string?>{
                     { "id", questionSet.Id },
                     { "userid", questionSet.UserId },
                     { "title",questionSet.Title},
-                    { "questioncount",questionSet.Questions.Count.ToString() }
+                    { "questioncount",questionSet.Questions?.Count.ToString() }
                 }
             );
 

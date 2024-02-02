@@ -11,7 +11,7 @@
     <button class="btn btn-success my-3 btn-primary-action" @onclick="@(e=> OnGameStarted.InvokeAsync())">
         START QUIZ >
     </button>
-    @if (Users.Count > 0)
+    @if (Users?.Count > 0)
     {
         <div class="d-flex flex-column justify-content-center align-items-center min-vw-100 player-icon-container">
             <div class="fs-5">Current players (@(Users.Count))</div>
@@ -34,12 +34,12 @@
     public EventCallback<string> OnGameRegistered { get; set; }
 
     [Parameter]
-    public string QuestionSetId { get; set; }
+    public string? QuestionSetId { get; set; }
 
     [Parameter]
-    public Dictionary<string,string> Users { get; set; }
+    public Dictionary<string,string>? Users { get; set; }
 
-    private string _clientQuizId;
+    private string? _clientQuizId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,7 +51,7 @@
             return;
         }
         _clientQuizId = await response.Content.ReadAsStringAsync();
-        OnGameRegistered.InvokeAsync(_clientQuizId);
+        await OnGameRegistered.InvokeAsync(_clientQuizId);
         return;
     }
 }
