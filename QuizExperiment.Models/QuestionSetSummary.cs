@@ -10,16 +10,16 @@ namespace QuizExperiment.Models
     public class QuestionSetSummary
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [JsonPropertyName("userid")]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         [JsonPropertyName("title")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [JsonPropertyName("lastModified")]
-        public DateTimeOffset LastModified { get; set; }
+        public DateTimeOffset? LastModified { get; set; }
 
         [JsonPropertyName("questionCount")]
         public int? QuestionCount { get; set; }

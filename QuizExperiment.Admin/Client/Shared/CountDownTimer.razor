@@ -50,7 +50,7 @@
     protected override void OnInitialized()
     {
         SetPercent(100);
-        Start();
+        Task.Run(async () => await Start());
     }
 
     public double totalseconds;
@@ -61,7 +61,7 @@
             isStarted=true;
             totalseconds=( EndDate -DateTime.Now).TotalSeconds;
             isRunning = true;
-            Run();
+            await Run();
         }
         else
         {
@@ -72,7 +72,7 @@
             else
             {
                 isRunning = true;
-                Run();
+                await Run();
             }
         }
     }

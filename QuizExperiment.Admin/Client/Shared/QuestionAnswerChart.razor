@@ -9,13 +9,13 @@
     </div>
     <div class="my-3 fs-4">The correct answer is</div>
     <button class="btn btn-correct-answer btn-answer-@CorrectAnswerIndex" value="@(CorrectAnswerIndex.GetButtonNameFromIndex())"><span>@(CorrectAnswerIndex.GetButtonNameFromIndex())</span></button>
-    <div class="my-3 fs-2 fw-bold">@(Options[CorrectAnswerIndex])</div>
+    <div class="my-3 fs-2 fw-bold">@(Options?[CorrectAnswerIndex])</div>
     <QuizExperiment.Admin.Client.Shared.Components.AnswerChart Values="@_answers" />
 </div>
 
 @code {
     [Parameter]
-    public Dictionary<string, UserAnswer> UserAnswers { get; set; }
+    public Dictionary<string, UserAnswer>? UserAnswers { get; set; }
 
     [Parameter]
     public EventCallback<string> OnNextQuestion { get; set; }
@@ -24,12 +24,16 @@
     public int CorrectAnswerIndex { get; set; }
 
     [Parameter]
-    public string[] Options { get; set; }
+    public string[]? Options { get; set; }
 
-    private Dictionary<int, int> _answers;
+    private Dictionary<int, int>? _answers;
 
     protected override void OnParametersSet()
     {
+        if(UserAnswers is null)
+        {
+            throw new NullReferenceException("AnswerSummary: UserAnswers collection is null");
+        }
         _answers = UserAnswers.GroupBy(r => r.Value.AnswerIndex).Select(r => new
         {
             AnswerIndex = r.Key,

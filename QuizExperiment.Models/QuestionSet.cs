@@ -10,35 +10,35 @@ namespace QuizExperiment.Models
     public class QuestionSet
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [JsonPropertyName("title")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [JsonPropertyName("description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [JsonPropertyName("userid")]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         [JsonPropertyName("questions")]
-        public List<Question> Questions { get; set; }
+        public List<Question>? Questions { get; set; }
     }
 
 
     public class Question
     {
         [JsonPropertyName("title")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [JsonPropertyName("imageUrl")]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
 
         [JsonPropertyName("timeout")]
         public int Timeout { get; set; }
 
         [JsonPropertyName("options")]
-        public string[] Options { get; set; }
+        public string[]? Options { get; set; }
 
         [JsonPropertyName("correctAnswerIndex")]
         public int CorrectAnswerIndex { get; set; }

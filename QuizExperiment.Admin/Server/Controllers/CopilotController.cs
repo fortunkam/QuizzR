@@ -41,7 +41,7 @@ namespace QuizExperiment.Admin.Server.Controllers
 
             var result = chatResult.ToString();
 
-            var q = JsonSerializer.Deserialize<Question>(result);
+            var q = JsonSerializer.Deserialize<Question>(result) ?? throw new NullReferenceException("SuggestQuestion: Question q is null");
             q.Timeout = 20;
 
             return q;

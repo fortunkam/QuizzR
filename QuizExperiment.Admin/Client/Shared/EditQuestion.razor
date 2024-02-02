@@ -2,156 +2,159 @@
 @using System.Text.Json
 @inject HttpClient Http
 
-<!-- Question Editor -->
-<div class="quiz-edit-question-editor d-flex flex-column justify-content-start">
-    <input type="text" class="form-control quiz-edit-question-input-text" @bind-value="Question.Title"
-           placeholder="Quiz Question" required="required" />
-    <div class="d-flex flex-row quiz-edit-question-panel">
-        <div class="d-flex flex-column flex-grow-1 justify-content-start quiz-edit-question-details-panel">
-            <div class="my-2">Enter the image URL:</div>
-            <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-image-url"
-                   placeholder="Image URL" required="required" @bind-value="@Question.ImageUrl" />
-            <div class="my-2">Or search for an image</div>
-            <button class="btn btn-success btn-primary-action btn-giphy-search" 
+@if (Question is not null && Question.Options is not null && Question.Options.Length == 4)
+{
+    <!-- Question Editor -->
+    <div class="quiz-edit-question-editor d-flex flex-column justify-content-start">
+        <input type="text" class="form-control quiz-edit-question-input-text" @bind-value="Question.Title"
+        placeholder="Quiz Question" required="required" />
+        <div class="d-flex flex-row quiz-edit-question-panel">
+            <div class="d-flex flex-column flex-grow-1 justify-content-start quiz-edit-question-details-panel">
+                <div class="my-2">Enter the image URL:</div>
+                <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-image-url"
+                placeholder="Image URL" required="required" @bind-value="@Question.ImageUrl" />
+                <div class="my-2">Or search for an image</div>
+                <button class="btn btn-success btn-primary-action btn-giphy-search" 
                 data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="@ClearSearch">
-                GIPHY SEARCH
-            </button>
+                    GIPHY SEARCH
+                </button>
 
-            <div class="d-flex flex-row quiz-edit-question-input-timeout-container">
-                <div class="quiz-edit-question-input-timeout-label"><span>Timeout</span></div>
-                <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-timeout"
-                       placeholder="Timeout (seconds)" required="required" @bind-value="Question.Timeout" />
+                <div class="d-flex flex-row quiz-edit-question-input-timeout-container">
+                    <div class="quiz-edit-question-input-timeout-label"><span>Timeout</span></div>
+                    <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-timeout"
+                    placeholder="Timeout (seconds)" required="required" @bind-value="Question.Timeout" />
+                </div>
+            </div>
+            <div class="d-flex flex-column">
+                <img class="img-fluid rounded quiz-edit-question-editor-image" src="@Question.ImageUrl" />
             </div>
         </div>
-        <div class="d-flex flex-column">
-            <img class="img-fluid rounded quiz-edit-question-editor-image" src="@Question.ImageUrl" />
+        <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
+            <table class="table table-bordered quiz-edit-question-answers-table">
+                <thead>
+                    <th colspan="2">ANSWER</th>
+                    <th>CORRECT?</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="quiz-edit-question-answers-table-icon">
+                            <button class="btn btn-edit-answer btn-edit-answer-0" value="Y">
+                                <span>Y</span>
+                            </button>
+                        </td>
+                        <td class="quiz-edit-question-answers-table-answer">
+                            <input type="text" class="form-control quiz-edit-question-input-answer"
+                            placeholder="" required="required" @bind-value="Question.Options[0]" />
+                        </td>
+                        <td class="quiz-edit-question-answers-table-correct">
+                            <input class="form-check-input" type="radio" id="flexCheckChecked1"
+                            name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 0)"
+                            onchange="@(() => {Question.CorrectAnswerIndex = 0; })">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="quiz-edit-question-answers-table-icon">
+                            <button class="btn btn-edit-answer btn-edit-answer-1" value="X">
+                                <span>X</span>
+                            </button>
+                        </td>
+                        <td class="quiz-edit-question-answers-table-answer">
+                            <input type="text" class="form-control quiz-edit-question-input-answer"
+                            placeholder="" required="required" @bind-value="Question.Options[1]" />
+                        </td>
+                        <td class="quiz-edit-question-answers-table-correct">
+                            <input class="form-check-input" type="radio" id="flexCheckChecked1"
+                            name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 1)"
+                            onchange="@(() => {Question.CorrectAnswerIndex = 1;})">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="quiz-edit-question-answers-table-icon">
+                            <button class="btn btn-edit-answer btn-edit-answer-2" value="B">
+                                <span>B</span>
+                            </button>
+                        </td>
+                        <td class="quiz-edit-question-answers-table-answer">
+                            <input type="text" class="form-control quiz-edit-question-input-answer"
+                            placeholder="" required="required" @bind-value="Question.Options[2]" />
+                        </td>
+                        <td class="quiz-edit-question-answers-table-correct">
+                            <input class="form-check-input" type="radio" id="flexCheckChecked1" 
+                            name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 2)"
+                            onchange="@(() => {Question.CorrectAnswerIndex = 2;})">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="quiz-edit-question-answers-table-icon">
+                            <button class="btn btn-edit-answer btn-edit-answer-3" value="A">
+                                <span>A</span>
+                            </button>
+                        </td>
+                        <td class="quiz-edit-question-answers-table-answer">
+                            <input type="text" class="form-control quiz-edit-question-input-answer"
+                            placeholder="" required="required" @bind-value="Question.Options[3]" />
+                        </td>
+                        <td class="quiz-edit-question-answers-table-correct">
+                            <input class="form-check-input" type="radio" id="flexCheckChecked1"
+                            name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 3)"
+                            onchange="@(() => {Question.CorrectAnswerIndex = 3; })">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
-        <table class="table table-bordered quiz-edit-question-answers-table">
-            <thead>
-            <th colspan="2">ANSWER</th>
-            <th>CORRECT?</th>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="quiz-edit-question-answers-table-icon">
-                        <button class="btn btn-edit-answer btn-edit-answer-0" value="Y">
-                            <span>Y</span>
-                        </button>
-                    </td>
-                    <td class="quiz-edit-question-answers-table-answer">
-                        <input type="text" class="form-control quiz-edit-question-input-answer"
-                               placeholder="" required="required" @bind-value="Question.Options[0]" />
-                    </td>
-                    <td class="quiz-edit-question-answers-table-correct">
-                        <input class="form-check-input" type="radio" id="flexCheckChecked1"
-                               name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 0)"
-                               onchange="@(() => {Question.CorrectAnswerIndex = 0; })">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="quiz-edit-question-answers-table-icon">
-                        <button class="btn btn-edit-answer btn-edit-answer-1" value="X">
-                            <span>X</span>
-                        </button>
-                    </td>
-                    <td class="quiz-edit-question-answers-table-answer">
-                        <input type="text" class="form-control quiz-edit-question-input-answer"
-                               placeholder="" required="required" @bind-value="Question.Options[1]" />
-                    </td>
-                    <td class="quiz-edit-question-answers-table-correct">
-                        <input class="form-check-input" type="radio" id="flexCheckChecked1"
-                               name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 1)"
-                               onchange="@(() => {Question.CorrectAnswerIndex = 1;})">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="quiz-edit-question-answers-table-icon">
-                        <button class="btn btn-edit-answer btn-edit-answer-2" value="B">
-                            <span>B</span>
-                        </button>
-                    </td>
-                    <td class="quiz-edit-question-answers-table-answer">
-                        <input type="text" class="form-control quiz-edit-question-input-answer"
-                               placeholder="" required="required" @bind-value="Question.Options[2]" />
-                    </td>
-                    <td class="quiz-edit-question-answers-table-correct">
-                        <input class="form-check-input" type="radio" id="flexCheckChecked1" 
-                        name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 2)"
-                               onchange="@(() => {Question.CorrectAnswerIndex = 2;})">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="quiz-edit-question-answers-table-icon">
-                        <button class="btn btn-edit-answer btn-edit-answer-3" value="A">
-                            <span>A</span>
-                        </button>
-                    </td>
-                    <td class="quiz-edit-question-answers-table-answer">
-                        <input type="text" class="form-control quiz-edit-question-input-answer"
-                               placeholder="" required="required" @bind-value="Question.Options[3]" />
-                    </td>
-                    <td class="quiz-edit-question-answers-table-correct">
-                        <input class="form-check-input" type="radio" id="flexCheckChecked1"
-                               name="flexCheckChecked" checked="@(Question.CorrectAnswerIndex == 3)"
-                               onchange="@(() => {Question.CorrectAnswerIndex = 3; })">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Search for a gif</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <div class="row align-items-center">
-              <div class="input-group mb-3 mt-3">
-                <input type="text" class="form-control" placeholder="Search Term"
-                               @bind-value="@_searchTerm" @onkeydown="@Enter" />
-                        <button type="button" class="btn btn-primary-action" value="Search" @onclick="@SearchGiphy">Search</button>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Search for a gif</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row align-items-center">
+                        <div class="input-group mb-3 mt-3">
+                            <input type="text" class="form-control" placeholder="Search Term"
+                            @bind-value="@_searchTerm" @onkeydown="@Enter" />
+                            <button type="button" class="btn btn-primary-action" value="Search" @onclick="@SearchGiphy">Search</button>
+                        </div>
+                    </div>
+                    @if (_giphyResults.Count > 0)
+                    {
+                        <div class="row align-items-center">
+                            <table class="table table-borderless giphy-result-table">
+                                <tbody>
+                                    @foreach (var giphyUrlBatch in _giphyResults.Chunk(4))
+                                    {
+                                        <tr>
+                                            @foreach (var giphyUrl in giphyUrlBatch)
+                                            {
+                                                <td>
+                                                    <img src="@giphyUrl" class="img-giphyresult" data-bs-dismiss="modal" @onclick="@(()=>Question.ImageUrl = @giphyUrl)" />
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
             </div>
-          </div>
-        @if (_giphyResults.Count > 0)
-        {
-            <div class="row align-items-center">
-                        <table class="table table-borderless giphy-result-table">
-                    <tbody>
-                        @foreach (var giphyUrlBatch in _giphyResults.Chunk(4))
-                        {
-                            <tr>
-                                @foreach (var giphyUrl in giphyUrlBatch)
-                                {
-                                    <td>
-                                        <img src="@giphyUrl" class="img-giphyresult" data-bs-dismiss="modal" @onclick="@(()=>Question.ImageUrl = @giphyUrl)" />
-                                    </td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-      </div>
+        </div>
     </div>
-  </div>
-</div>
+}
 
 @code {
 
     [Parameter]
-    public Question Question { get; set; }
+    public Question? Question { get; set; }
 
-    private string _searchTerm;
+    private string? _searchTerm;
 
-    private List<string> _giphyResults = new List<string>();
+    private List<string?> _giphyResults = new List<string?>();
 
     public void Enter(KeyboardEventArgs e)
     {
@@ -175,9 +178,13 @@
             return;
         }
 
-
-        _giphyResults.AddRange(await response.Content.ReadFromJsonAsync<string[]>());
-        InvokeAsync(StateHasChanged);
+        var giphyApiResult = await response.Content.ReadFromJsonAsync<string[]>();
+        if(giphyApiResult is not null)
+        {
+            _giphyResults.AddRange(giphyApiResult);
+            await InvokeAsync(StateHasChanged);
+        }
+        
     }
 
     private void ClearSearch()

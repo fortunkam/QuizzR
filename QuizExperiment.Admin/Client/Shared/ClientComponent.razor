@@ -39,7 +39,7 @@
     @if (_userState == ClientUserState.IdleInGame)
     {
         <AnswerSummary MyAnswerIndex="@currentAnswerIndex" CorrectAnswerIndex="@correctAnswerIndex" 
-        CurrentScore=@_currentScore CorrectAnswer="@(currentPossibleAnswers[correctAnswerIndex])"
+        CurrentScore=@_currentScore CorrectAnswer="@(currentPossibleAnswers?[correctAnswerIndex])"
         Position=@_position IsLastQuestion="@_isLastQuestion"/>
     }
 
@@ -56,11 +56,11 @@
     [SupplyParameterFromQuery]
     public string? clientQuizId { get; set; }
 
-    private string userName;
+    private string? userName;
 
     private string currentQuestion = "";
     private int currentAnswerIndex = -1;
-    private string[] currentPossibleAnswers = null;
+    private string[]? currentPossibleAnswers = null;
 
     private int correctAnswerIndex = -1;
     private bool wasLastAnswerCorrect = false;
@@ -73,7 +73,7 @@
 
     private DateTime? _questionStartTime;
 
-    private HubConnection hubConnection;
+    private HubConnection? hubConnection;
 
     public bool IsConnected =>
         hubConnection?.State == HubConnectionState.Connected;
@@ -123,7 +123,7 @@
                StateHasChanged();
            });
 
-        hubConnection.On<int, int>("PlayerPositionArrived", async (position, score) =>
+        hubConnection.On<int, int>("PlayerPositionArrived", (position, score) =>
         {
             _position = position;
             _currentScore = score;
@@ -144,7 +144,7 @@
 
     private ClientUserState _userState = ClientUserState.Idle;
 
-    private async Task EnterQuizId(string quizId)
+    private void EnterQuizId(string quizId)
     {
         clientQuizId = quizId;
         _userState = ClientUserState.WaitingForUserName;
@@ -162,6 +162,10 @@
                     { "clientQuizId", clientQuizId }
                         }
                 );
+            if(hubConnection is null)
+            {
+                throw new NullReferenceException("hubConnection is null");
+            }
             await hubConnection.SendAsync("JoinQuizSession", clientQuizId, userName);
             _userState = ClientUserState.WaitingForStart;
         }
@@ -185,6 +189,10 @@
                     { "timeTaken", timeTaken }
                         }
                 );
+            if(hubConnection is null)
+            {
+                throw new NullReferenceException("hubConnection is null");
+            }
             await hubConnection.SendAsync("SubmitAnswer", clientQuizId, currentAnswerIndex, timeTaken);
             _userState = ClientUserState.WaitForAnswerCheck;
         }

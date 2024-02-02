@@ -7,16 +7,16 @@
 
 @code {
     [Parameter]
-    public string PlayerName { get; set; }
+    public string? PlayerName { get; set; }
     
     private Random _random = new Random();
 
     public string GetPlayerIcon()
     {
-        var val = _random.Next(1, 11);
+        var val = _random.Next(1, 19);
         return val switch
         {
-            1 => "",
+            1 => "🤯",
             2 => "😁",
             3 => "😄",
             4 => "😎",
@@ -25,6 +25,15 @@
             7 => "😆",
             8 => "😋",
             9 => "😲",
+            10 => "🤐",
+            11 => "😖",
+            12 => "😷",
+            13 => "😵",
+            14 => "🥸",
+            15 => "🧐",
+            16 => "🤢",
+            17 => "😱",
+            18 => "🥵",
             _ => "🥳"
         };
     }

@@ -15,7 +15,7 @@ namespace QuizExperiment.Admin.Server.Controllers
 
         private readonly Giphy _giphy;
         [HttpGet("search")]
-        public async Task<string[]> Search([FromQuery] string query)
+        public async Task<string?[]> Search([FromQuery] string query)
         {
             var result = await _giphy.GifSearch(new SearchParameter
             {
@@ -24,7 +24,14 @@ namespace QuizExperiment.Admin.Server.Controllers
                 Limit= 10
             });
 
-            return result.Data.Select(r => r.Images.Original.Url).ToArray();
+            if(result == null || result.Data == null || result.Data.Length == 0)
+            {
+                return Array.Empty<string?>();
+            }
+
+            return result.Data
+                .Where(r => r.Images?.Original?.Url != null)
+                .Select(r => r.Images?.Original?.Url).ToArray();
         }
     }
 }
