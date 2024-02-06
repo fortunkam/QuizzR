@@ -1,4 +1,5 @@
 using BlazorApplicationInsights;
+using BlazorApplicationInsights.Models;
 using Blazored.Toast;
 using Blazorise;
 using Blazorise.Bootstrap;
@@ -33,17 +34,22 @@ builder.Services.AddMsalAuthentication(options =>
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
 });
 
-builder.Services.AddBlazorApplicationInsights(async applicationInsights =>
+builder.Services.AddBlazorApplicationInsights(config =>
 {
-    var key = builder.Configuration["AppInsightsInstrumentationKey"];
-    if(key == null)
+
+    var key = builder.Configuration["AppInsightsConnectionString"];
+    if (key == null)
     {
-        throw new InvalidOperationException("Application Insights Instrumentation Key not found in configuration");
+        throw new InvalidOperationException("Application Insights ConnectionString not found in configuration");
     }
-    await applicationInsights.SetInstrumentationKey(key);
+
+    config.ConnectionString = builder.Configuration["AppInsightsConnectionString"];
+}, async applicationInsights =>
+{ 
+
     var telemetryItem = new TelemetryItem()
     {
-        Tags = new Dictionary<string, object>()
+        Tags = new Dictionary<string, object?>()
         {
             { "ai.cloud.role", "SPA" },
             { "ai.cloud.roleInstance", "Blazor Wasm" },

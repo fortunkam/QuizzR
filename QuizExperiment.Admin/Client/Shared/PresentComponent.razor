@@ -96,12 +96,14 @@
     private async Task OnGameRegistered(string clientQuizId)
     {
         _clientQuizId = clientQuizId;
-        await AppInsights.TrackEvent("PresentGameRegistered",
-                new Dictionary<string, object?>
-                    {
+        await AppInsights.TrackEvent(new EventTelemetry()
+        {
+            Name = "PresentGameRegistered",
+            Properties = new Dictionary<string, object?>
+            {
                 { "clientQuizId", _clientQuizId }
-                    }
-            );
+            }
+        });
         if(_hubConnection is null)
         {
             throw new NullReferenceException("PresentComponent: OnGameRegistered: HubConnection is null");
@@ -141,13 +143,15 @@
 
         _cts = new CancellationTokenSource();
 
-        await AppInsights.TrackEvent("PresentSendQuestion", 
-                new Dictionary<string, object?>
-                {
-                    { "clientQuizId", _clientQuizId },
-                    { "question", _currentQuestion.Title }
-                }
-            );
+        await AppInsights.TrackEvent(new EventTelemetry()
+        {
+            Name = "PresentSendQuestion",
+            Properties = new Dictionary<string, object?>
+            {
+                { "clientQuizId", _clientQuizId },
+                { "question", _currentQuestion.Title }
+            }
+        });
         if(_hubConnection is null)
         {
             throw new NullReferenceException("PresentComponent: SendQuestion: HubConnection is null");
@@ -172,9 +176,9 @@
                 throw new NullReferenceException("PresentComponent: SendFinalPositions: HubConnection is null");
             }
             await _hubConnection.SendAsync("SendPlayerPosition", _clientQuizId, user.Key, i + 1, user.Value);
-            
+
         }
-            
+
     }
 
     private async Task OnNextQuestion()
@@ -235,14 +239,16 @@
         _hubConnection.On<string, string, string>("UserJoined", async (quizId, userName, connectionId) =>
         {
             _users.Add(connectionId, userName);
-            await AppInsights.TrackEvent("PresentUserJoined", 
-                new Dictionary<string, object?>
+            await AppInsights.TrackEvent(new EventTelemetry()
+            {
+                Name = "PresentUserJoined",
+                Properties = new Dictionary<string, object?>
                 {
                     { "clientQuizId", _clientQuizId },
                     { "userName", userName },
                     { "connectionId", connectionId }
                 }
-            );
+            });
             StateHasChanged();
         });
 
@@ -254,8 +260,10 @@
                 await CloseQuestion();
             }
 
-            await AppInsights.TrackEvent("PresentClientAnswerReceived", 
-                new Dictionary<string, object?>
+            await AppInsights.TrackEvent(new EventTelemetry()
+            {
+                Name = "PresentClientAnswerReceived",
+                Properties = new Dictionary<string, object?>
                 {
                     { "clientQuizId", _clientQuizId },
                     { "question", _currentQuestion?.Title },
@@ -263,7 +271,7 @@
                     { "timeTaken", timeTaken },
                     { "clientConnectionId", clientConnectionId }
                 }
-            );
+            });
             StateHasChanged();
         });
 
@@ -271,7 +279,7 @@
 
         _isLoaded = true;
 
-        
+
     }
 
     private async Task CloseQuestion()
@@ -279,7 +287,7 @@
         _cts.Cancel();
 
         if(_currentQuestion is null)
-{
+        {
             throw new NullReferenceException("PresentComponent: CloseQuestion: Current Question is null");
         }
 
@@ -314,13 +322,15 @@
 
         _orderedLeaderboard = _leaderboard.OrderByDescending(r => r.Value).ToDictionary(k=>k.Key, v=>v.Value);
 
-         await AppInsights.TrackEvent("PresentSendAnswerResult", 
-                new Dictionary<string, object?>
-                {
-                    { "clientQuizId", _clientQuizId },
-                    { "question", _currentQuestion.Title }
-                }
-            );
+        await AppInsights.TrackEvent(new EventTelemetry()
+        {
+            Name = "PresentSendAnswerResult",
+            Properties = new Dictionary<string, object?>
+            {
+                { "clientQuizId", _clientQuizId },
+                { "question", _currentQuestion.Title }
+            }
+        });
 
         if(_hubConnection is null)
         {
