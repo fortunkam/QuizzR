@@ -1,4 +1,5 @@
 using BlazorApplicationInsights;
+using BlazorApplicationInsights.Models;
 using Blazored.Toast;
 using Blazorise;
 using Blazorise.Bootstrap;
@@ -31,19 +32,26 @@ builder.Services.AddSingleton(new HttpClient
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("openid");
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("offline_access");
 });
 
-builder.Services.AddBlazorApplicationInsights(async applicationInsights =>
+builder.Services.AddBlazorApplicationInsights(config =>
 {
-    var key = builder.Configuration["AppInsightsInstrumentationKey"];
-    if(key == null)
+
+    var key = builder.Configuration["AppInsightsConnectionString"];
+    if (key == null)
     {
-        throw new InvalidOperationException("Application Insights Instrumentation Key not found in configuration");
+        throw new InvalidOperationException("Application Insights ConnectionString not found in configuration");
     }
-    await applicationInsights.SetInstrumentationKey(key);
+
+    config.ConnectionString = builder.Configuration["AppInsightsConnectionString"];
+}, async applicationInsights =>
+{ 
+
     var telemetryItem = new TelemetryItem()
     {
-        Tags = new Dictionary<string, object>()
+        Tags = new Dictionary<string, object?>()
         {
             { "ai.cloud.role", "SPA" },
             { "ai.cloud.roleInstance", "Blazor Wasm" },
@@ -55,5 +63,7 @@ builder.Services.AddBlazorApplicationInsights(async applicationInsights =>
 });
 
 builder.Services.AddBlazoredToast();
+
+builder.Services.AddCascadingAuthenticationState();
 
 await builder.Build().RunAsync();

@@ -175,11 +175,15 @@
         var indexOfQuestionSetToBeRemoved = _questionSets.IndexOf(_questionSets.First(r => r.Id == id));
         _questionSets.RemoveAt(indexOfQuestionSetToBeRemoved);
 
-        await AppInsights.TrackEvent("QuestionSetRemoved", new Dictionary<string, object?>
-        {
-            { "userId", _userId },
-            { "Id", id },
-        });
+        await AppInsights.TrackEvent(new EventTelemetry()
+            {
+                Name = "QuestionSetRemoved",
+                Properties = new Dictionary<string, object?>
+                {
+                    { "userId", _userId },
+                    { "Id", id },
+                }
+            });
         quizToDelete = "";
     }
 

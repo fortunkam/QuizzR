@@ -207,10 +207,14 @@
             Console.WriteLine($"There was an error saving the question set! {errorMessage}");
         }
 
-        await AppInsights.TrackEvent("QuestionSetUpserted", new Dictionary<string, object?>
+        await AppInsights.TrackEvent(new EventTelemetry()
         {
-            { "userId", _userId },
-            { "Id", _questionSet?.Id },
+            Name = "QuestionSetUpserted", 
+            Properties = new Dictionary<string, object?>
+            {
+                { "userId", _userId },
+                { "Id", _questionSet?.Id },
+            }
         });
     }
 

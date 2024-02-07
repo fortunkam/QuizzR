@@ -10,7 +10,7 @@ namespace QuizExperiment.Admin.Server.Controllers
     {
         public GiphyController(IConfiguration configuration)
         {
-            _giphy = new Giphy(configuration["Giphy:ApiKey"]);
+            _giphy = new Giphy(configuration["Giphy:ApiKey"] ?? "");
         }
 
         private readonly Giphy _giphy;
