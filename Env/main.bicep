@@ -16,6 +16,7 @@ param location string = resourceGroup().location
 
 @description('The Runtime stack of current web app')
 param linuxFxVersion string = 'DOTNETCORE|6.0'
+param linuxFxBetaVersion string = 'DOTNETCORE|8.0'
 
 @secure()
 param giphyApiKey string
@@ -116,7 +117,7 @@ resource webApplicationBeta 'Microsoft.Web/sites@2021-03-01' = {
     httpsOnly: true
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: linuxFxVersion
+      linuxFxVersion: linuxFxBetaVersion
     }
   }
   identity: {

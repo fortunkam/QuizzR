@@ -32,6 +32,8 @@ builder.Services.AddSingleton(new HttpClient
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("openid");
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("offline_access");
 });
 
 builder.Services.AddBlazorApplicationInsights(config =>
@@ -61,5 +63,7 @@ builder.Services.AddBlazorApplicationInsights(config =>
 });
 
 builder.Services.AddBlazoredToast();
+
+builder.Services.AddCascadingAuthenticationState();
 
 await builder.Build().RunAsync();
