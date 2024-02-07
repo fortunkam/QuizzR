@@ -12,9 +12,9 @@ namespace QuizExperiment.Admin.Server.Controllers
     {
         public CopilotController(IConfiguration configuration)
         {
-            _openAIEndpoint = configuration["OpenAI:Endpoint"];
-            _openAIKey = configuration["OpenAI:Key"];
-            _openAIDeploymentName = configuration["OpenAI:DeploymentName"];
+            _openAIEndpoint = configuration["OpenAI:Endpoint"] ?? "";
+            _openAIKey = configuration["OpenAI:Key"] ?? "";
+            _openAIDeploymentName = configuration["OpenAI:DeploymentName"] ?? "";
         }
 
         private readonly string _openAIEndpoint;
