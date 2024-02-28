@@ -511,6 +511,11 @@ nav.title-bar {
     /*height: calc(100vh - 178px)*/
 }
 
+.quiz-edit-question-scroll-panel {
+    height: calc(100vh - 208px);
+    overflow: scroll;
+}
+
 .quiz-edit-question-list-container {
     width: 300px;
     background-color: black;
