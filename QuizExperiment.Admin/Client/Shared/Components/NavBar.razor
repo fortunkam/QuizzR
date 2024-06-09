@@ -1,4 +1,6 @@
-﻿<nav class="navbar navbar-dark bg-dark fixed-top">
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<nav class="navbar navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand ms-4" href="#">
             <svg width="40" height="40" class="clear">
@@ -14,8 +16,8 @@
             <a class="navbar-brand ms-4" href="#">
                 <AuthorizeView>
                 <Authorized>
-                    <span class="fs-6">Your host for today, @context.User.Identity?.Name</span>
-                </Authorized>
+                        <span class="fs-6">Your host for today, @GetUserName(context.User)</span>
+                    </Authorized>
                 <NotAuthorized>
                 </NotAuthorized>
             </AuthorizeView>
@@ -28,4 +30,17 @@
 @code {
     [Parameter]
     public bool ShowLogin { get; set; }
+
+    private string? _userName;
+
+    private string GetUserName(System.Security.Claims.ClaimsPrincipal user)
+    {
+        var claims = user.Claims.ToArray();
+
+        var firstName = claims.FirstOrDefault(c => c.Type == "given_name")?.Value;
+        var name = claims.FirstOrDefault(c => c.Type == "name")?.Value;
+
+        return firstName ?? (name ?? "Unknown");
+
+    }
 }
