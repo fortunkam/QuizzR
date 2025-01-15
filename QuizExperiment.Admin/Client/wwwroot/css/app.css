@@ -446,6 +446,11 @@ nav.title-bar {
     margin-top: 20px;
 }
 
+.quiz-manage-item-container:hover {
+    box-shadow: 5px 5px gray;
+    background-color: #585555;
+}
+
 .quiz-manage-item-present {
     width: 80px;
     height: 80px;
@@ -453,9 +458,9 @@ nav.title-bar {
     border-radius: 40px;
     border-color: #ECDB33;
     border-width: 10px;
-    border-style:solid;
-    background-color:black;
-    color:white;
+    border-style: solid;
+    background-color: black;
+    color: white;
 }
 
 .quiz-manage-item-present.disabled {
