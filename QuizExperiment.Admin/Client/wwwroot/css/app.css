@@ -430,8 +430,10 @@ nav.title-bar {
 }
 
 .quiz-manage-items-container {
-    width: 80%;
-    overflow-y:auto;
+    width: 100%;
+    overflow-y: auto;
+    max-height: calc(100vh - 250px);
+    padding-left: 10%
 }
 
 .quiz-manage-item-container {
