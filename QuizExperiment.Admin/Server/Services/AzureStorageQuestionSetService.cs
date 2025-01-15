@@ -3,6 +3,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using QuizExperiment.Models;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace QuizExperiment.Admin.Server.Services
 {
@@ -14,6 +15,9 @@ namespace QuizExperiment.Admin.Server.Services
                 configuration["Azure:Storage:QuizAssetsContainerName"]);
             _blobContainerClient.CreateIfNotExists();
         }
+
+        private const string _folderPattern = @"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/(.*?)/*[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/quiz.json";
+        private readonly Regex _folderMatch = new Regex(_folderPattern, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
         private readonly BlobContainerClient _blobContainerClient;
 
@@ -32,7 +36,8 @@ namespace QuizExperiment.Admin.Server.Services
 
         public async Task<QuestionSetSummary[]> GetQuestionSetsForUser(string userId)
         {
-            var blobs = _blobContainerClient.GetBlobsAsync(BlobTraits.Metadata,prefix: $"{userId}").AsPages();
+           
+            var blobs = _blobContainerClient.GetBlobsAsync(BlobTraits.Metadata,prefix: userId).AsPages();
 
             var questionSets = new List<QuestionSetSummary>();
 
@@ -40,14 +45,19 @@ namespace QuizExperiment.Admin.Server.Services
             {
                 foreach (BlobItem blobItem in blobPage.Values)
                 {
+                    var folderPath = "";
+                    if(_folderMatch.IsMatch(blobItem.Name))
+                    {
+                        folderPath = _folderMatch.Match(blobItem.Name).Groups[1].Value;
+                    }
                     questionSets.Add(new QuestionSetSummary
                     {
                         Id = blobItem.Metadata["id"],
                         UserId = blobItem.Metadata["userid"],
                         Title = blobItem.Metadata["title"],
                         LastModified = blobItem.Properties.LastModified ?? DateTime.MinValue,
-                        QuestionCount = blobItem.Metadata.ContainsKey("questioncount") ? int.Parse(blobItem.Metadata["questioncount"]) : null
-
+                        QuestionCount = blobItem.Metadata.ContainsKey("questioncount") ? int.Parse(blobItem.Metadata["questioncount"]) : null,
+                        FolderPath = folderPath
                     });
                 }
             }

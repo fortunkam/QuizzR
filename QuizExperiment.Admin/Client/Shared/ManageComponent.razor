@@ -1,4 +1,5 @@
 ﻿@using Blazorise
+@using Microsoft.AspNetCore.WebUtilities
 @using QuizExperiment.Models
 @using System.Text.Json
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -12,7 +13,45 @@
 
     <div class="d-flex flex-column justify-content-center align-items-center">
         <div class="d-flex min-vw-100 quiz-manage-controls-container">
-            <div class="quiz-manage-search-container flex-grow-1"></div>
+            <div class="quiz-manage-search-container flex-grow-1">
+                <div class="quiz-manage-breadcrumb-container">
+                    @if (!string.IsNullOrWhiteSpace(_folderFilter))
+                    {
+                        var filterSegements = _folderFilter.Split("/");
+                        
+
+                        <button class="btn btn-success my-3 btn-breadcrumb" @onclick="()=>BrowseFolder(HomeFilter)">
+                            🏠
+                        </button>
+                        @foreach (var segment in filterSegements)
+                        {
+                            var aggregatePath = "";
+                            foreach(var innerSeg in filterSegements)
+                            {
+
+                                if (aggregatePath == "")
+                                {
+                                    aggregatePath = innerSeg;
+                                }
+                                else
+                                {
+                                    aggregatePath = aggregatePath + "/" + innerSeg;
+                                }
+
+                                if (innerSeg == segment)
+                                {
+                                    break;
+                                }
+                            }
+
+                            <span>/</span>
+                            <button class="btn btn-success my-3 btn-breadcrumb" @onclick="()=>BrowseFolder(aggregatePath)">
+                                @segment
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
             <div class="quiz-manage-create-new-container">
                 <button class="btn btn-success my-3 btn-primary-action" @onclick="AddNewQuestionSet">
                     CREATE NEW QUIZ >
@@ -21,6 +60,27 @@
         </div>
 
         <div class="d-flex flex-grow-1 quiz-manage-items-container flex-wrap align-items-start">
+            @foreach (var a in _folders)
+            {
+                var fullFolderPath="";
+                if(string.IsNullOrWhiteSpace(_folderFilter))
+                {
+                    fullFolderPath = a;
+                }
+                else
+                {
+                    fullFolderPath = _folderFilter + "/" + a;
+                }
+                <div class="d-flex flex-column quiz-manage-item-container" @onclick="()=>BrowseFolder(fullFolderPath)">
+                    <div class="flex-grow-1 quiz-manage-item-details">
+                        <div class="quiz-manage-item-folder">
+                            <div class="quiz-manage-item-folder-icon">📁</div>
+                            <div class="quiz-manage-item-folder-title fs-3 fw-bold">@a</div>
+                        </div>
+                    </div>
+                </div>
+            }
+
             @foreach (var a in _questionSets)
             {
                 <div class="d-flex flex-column quiz-manage-item-container ">
@@ -40,6 +100,7 @@
 
                     <div class="flex-grow-1 quiz-manage-item-details">
                         <div class="quiz-manage-item-title fs-3 fw-bold">@a.Title</div>
+                        <div class="quiz-manage-item-title">@a.FolderPath</div>
                         @if (a.QuestionCount.HasValue)
                         {
                             <div class="quiz-manage-item-questions fs-5">@a.QuestionCount Questions</div>
@@ -54,9 +115,9 @@
     </div>
     <Blazorise.Modal @ref="confirmDelete">
         <Blazorise.ModalContent Centered>
-             <Blazorise.ModalHeader>
+            <Blazorise.ModalHeader>
                 <Blazorise.ModalTitle>Confirm Delete?</Blazorise.ModalTitle>
-             </Blazorise.ModalHeader>
+            </Blazorise.ModalHeader>
             <Blazorise.ModalBody>
                 Are you sure you want to delete this quiz?
             </Blazorise.ModalBody>
@@ -74,11 +135,18 @@
 
     private List<QuestionSetSummary> _questionSets = new List<QuestionSetSummary>();
 
+    private List<string?> _folders = new List<string?>();
+
     private bool _isLoaded = false; 
 
     private string? _userId;
 
-    protected override async Task OnInitializedAsync()
+    [SupplyParameterFromQuery(Name = "path")]
+    private string _folderFilter { get; set; } = "";
+
+    private const string HomeFilter = "";
+
+    private async Task FetchData()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
@@ -96,9 +164,38 @@
 
         var questionSetSummary = await response.Content.ReadFromJsonAsync<List<QuestionSetSummary>>() ?? new List<QuestionSetSummary>();
 
-        _questionSets = questionSetSummary.OrderByDescending(r=>r.LastModified).ToList();
+
+
+        if (string.IsNullOrWhiteSpace(_folderFilter))
+        {
+            _questionSets = questionSetSummary
+                                .Where(r=>string.IsNullOrWhiteSpace(r.FolderPath))
+                                .OrderByDescending(r=>r.LastModified).ToList();
+        }
+        else
+        {
+            _questionSets = questionSetSummary
+                                .Where(r => r.FolderPath == _folderFilter)
+                                .OrderByDescending(r => r.LastModified).ToList();
+        }
+
+        _folders = questionSetSummary.Where(k => k.FolderPath.StartsWith(_folderFilter ?? "") 
+                                            && k.FolderPath != (_folderFilter ?? ""))
+                                .Select(k => string.IsNullOrWhiteSpace(_folderFilter)
+                                            ? k.FolderPath.Split("/")[0] 
+                                            : k.FolderPath.Substring(_folderFilter.Length + 1).Split("/")[0])
+                                .Distinct()
+                                .ToList();
+
+
+
         _isLoaded = true;
         return;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchData();
     }
 
     private async Task AddNewQuestionSet()
@@ -193,6 +290,8 @@
         {
             throw new NullReferenceException("ManageComponent: PresentQuestionSet: Id is null or empty");
         }
+
+
         NavigationManager.NavigateTo($"/present/{id}");
     }
 
@@ -203,6 +302,29 @@
             throw new NullReferenceException("ManageComponent: EditQuestionSet: Id is null or empty");
         }
         NavigationManager.NavigateTo($"/edit/{id}");
+    }
+
+    private async Task BrowseFolder(string? folderName)
+    {
+
+        if (string.IsNullOrWhiteSpace(folderName))
+        {
+            _folderFilter = "";
+        }
+        else
+        {
+            _folderFilter = folderName;
+        }
+
+        if (string.IsNullOrWhiteSpace(_folderFilter))
+        {
+            NavigationManager.NavigateTo($"/manage");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/manage?path={_folderFilter}");
+        }
+        await FetchData();
     }
 
 

@@ -903,3 +903,35 @@ nav.title-bar {
             top: 60%;
             animation-delay: -0.4s;
         }
+
+
+
+.quiz-manage-item-folder {
+}
+
+.quiz-manage-item-folder-title {
+    color: black;
+    margin-top: -130px;
+    width:260px;
+    text-align:center;
+}
+.quiz-manage-item-folder-icon {
+    font-size: 200px;
+    vertical-align: top;
+    margin-top: -50px;
+    margin-left: -5px;
+}
+
+.btn-breadcrumb {
+    background-color: white;
+    color: black;
+    font-weight:bold;
+    border-color:darkgray;
+    border:none;
+}
+
+.btn-breadcrumb:hover {
+    background-color: lightgray;
+    color: black;
+    font-weight: bold;
+}
