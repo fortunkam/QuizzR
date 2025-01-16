@@ -18,7 +18,7 @@
                     @if (!string.IsNullOrWhiteSpace(_folderFilter))
                     {
                         var filterSegements = _folderFilter.Split("/");
-                        
+
 
                         <button class="btn btn-success my-3 btn-breadcrumb" @onclick="()=>BrowseFolder(HomeFilter)">
                             🏠
@@ -211,7 +211,8 @@
                 Title = "",
                 Questions = new List<Question>()
                 {
-                }
+                },
+                FolderPath = ""
         };
 
         var serializedQuestionSet = JsonSerializer.Serialize(qs);
@@ -262,6 +263,14 @@
         }
 
         var id = quizToDelete;
+        var indexOfQuestionSetToBeRemoved = _questionSets.IndexOf(_questionSets.First(r => r.Id == id));
+        var questionSet = _questionSets[indexOfQuestionSetToBeRemoved];
+
+        if (!string.IsNullOrWhiteSpace(questionSet.FolderPath))
+        {
+            id = $"{questionSet.FolderPath}/{id}";
+        }
+
         var response = await Http.DeleteAsync($"questionset/delete?userId={_userId}&id={id}");
         if (!response.IsSuccessStatusCode)
         {
@@ -269,8 +278,8 @@
             Console.WriteLine($"There was an error getting the list of quizzes! {errorMessage}");
             return;
         }
-        var indexOfQuestionSetToBeRemoved = _questionSets.IndexOf(_questionSets.First(r => r.Id == id));
-        _questionSets.RemoveAt(indexOfQuestionSetToBeRemoved);
+
+       _questionSets.RemoveAt(indexOfQuestionSetToBeRemoved);
 
         await AppInsights.TrackEvent(new EventTelemetry()
             {
@@ -282,6 +291,9 @@
                 }
             });
         quizToDelete = "";
+
+        NavigationManager.NavigateTo($"/manage");
+        await FetchData();
     }
 
     private void PresentQuestionSet(string? id)
@@ -290,9 +302,12 @@
         {
             throw new NullReferenceException("ManageComponent: PresentQuestionSet: Id is null or empty");
         }
-
-
-        NavigationManager.NavigateTo($"/present/{id}");
+        var query_string = "";
+        if (!string.IsNullOrWhiteSpace(_folderFilter))
+        {
+            query_string = "?path=" + _folderFilter;
+        }
+        NavigationManager.NavigateTo($"/present/{id}{query_string}");
     }
 
     private void EditQuestionSet(string? id)
@@ -301,7 +316,13 @@
         {
             throw new NullReferenceException("ManageComponent: EditQuestionSet: Id is null or empty");
         }
-        NavigationManager.NavigateTo($"/edit/{id}");
+
+        var query_string = "";
+        if(!string.IsNullOrWhiteSpace(_folderFilter))
+        {
+            query_string = "?path=" + _folderFilter;
+        }
+        NavigationManager.NavigateTo($"/edit/{id}{query_string}");
     }
 
     private async Task BrowseFolder(string? folderName)

@@ -73,7 +73,13 @@ namespace QuizExperiment.Admin.Server.Services
                 throw new NullReferenceException("UpsertQuestionSet: questionSet is null");
             }
 
-            var blobClient = _blobContainerClient.GetBlobClient($"/{questionSet.UserId}/{questionSet.Id}/quiz.json");
+            var questionSetId = questionSet.Id;
+            if(!string.IsNullOrWhiteSpace(questionSet.FolderPath))
+            {
+                questionSetId = $"{questionSet.FolderPath}/{questionSet.Id}";
+            }
+
+            var blobClient = _blobContainerClient.GetBlobClient($"/{questionSet.UserId}/{questionSetId}/quiz.json");
 
             await blobClient.UploadAsync(new BinaryData(questionSet), overwrite: true);
             await blobClient.SetMetadataAsync(new Dictionary<string, string?>{

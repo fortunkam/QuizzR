@@ -23,6 +23,9 @@ namespace QuizExperiment.Models
 
         [JsonPropertyName("questions")]
         public List<Question>? Questions { get; set; }
+
+        [JsonPropertyName("folderPath")]
+        public string? FolderPath { get; set; }
     }
 
 

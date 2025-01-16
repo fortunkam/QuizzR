@@ -67,6 +67,9 @@
     [Parameter]
     public string? Id { get; set; }
 
+    [SupplyParameterFromQuery(Name = "path")]
+    public string? FolderPath { get; set; }
+
     private AdminUserState _state = AdminUserState.WaitingForGameStart;
 
     private HubConnection? _hubConnection;
@@ -219,7 +222,13 @@
             throw new NullReferenceException("PresentComponent: OnInitializedAsync: User ID is null or empty");
         }
 
-        var response = await Http.GetAsync($"questionset/get?userId={userId}&id={Id}");
+        var quizId = Id;
+        if (!string.IsNullOrWhiteSpace(FolderPath))
+        {
+            quizId = $"{FolderPath}/{Id}";
+        }
+
+        var response = await Http.GetAsync($"questionset/get?userId={userId}&id={quizId}");
 
         if (!response.IsSuccessStatusCode)
         {
