@@ -212,7 +212,7 @@
                 Questions = new List<Question>()
                 {
                 },
-                FolderPath = ""
+                FolderPath = _folderFilter ?? ""
         };
 
         var serializedQuestionSet = JsonSerializer.Serialize(qs);
@@ -227,7 +227,13 @@
             return;
         }
 
-        NavigationManager.NavigateTo($"/edit/{qs.Id}");
+        var query_string = "";
+        if (!string.IsNullOrWhiteSpace(_folderFilter))
+        {
+            query_string = "?path=" + _folderFilter;
+        }
+
+        NavigationManager.NavigateTo($"/edit/{qs.Id}{query_string}");
     }
 
     private string quizToDelete = "";
