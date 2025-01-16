@@ -24,5 +24,9 @@ namespace QuizExperiment.Models
         [JsonPropertyName("questionCount")]
         public int? QuestionCount { get; set; }
 
+        [JsonPropertyName("folderPath")]
+        public string? FolderPath { get; set; }
+
+
     }
 }

@@ -3,7 +3,7 @@
     "QuizExperiment.Admin": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "https://localhost:7134/stylingcopilot.html",
+      "launchUrl": "https://localhost:7134/stylingmanage.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

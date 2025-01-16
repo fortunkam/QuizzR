@@ -10,23 +10,23 @@
 {
     if(_questionSet is not null)
     {
-         <!--Page Title bar -->
-         <nav class="navbar navbar-dark" style="background-color: #585555; margin-top: 69px">
-             <div class="container-fluid">
-                 <span class="ms-4 fs-4 text-light" style="padding-left:70px;">Quiz Editor</span>
-                 <div class="d-flex flex-row align-items-center justify-content-end">
-                     <div class="mx-2">
-                         <button class="btn btn-outline-danger text-light title-bar-button" @onclick="SaveAndClose">Close</button>
-                     </div>
-                     <div class="mx-2">
+        <!--Page Title bar -->
+        <nav class="navbar navbar-dark" style="background-color: #585555; margin-top: 69px">
+            <div class="container-fluid">
+                <span class="ms-4 fs-4 text-light" style="padding-left:70px;">Quiz Editor</span>
+                <div class="d-flex flex-row align-items-center justify-content-end">
+                    <div class="mx-2">
+                        <button class="btn btn-outline-danger text-light title-bar-button" @onclick="SaveAndClose">Close</button>
+                    </div>
+                    <div class="mx-2">
                         <button class="btn btn-outline-primary text-light title-bar-button" @onclick="SaveAndContinue">Save</button>
-                     </div>
-                     <div class="mx-2">
+                    </div>
+                    <div class="mx-2">
                         <button class="btn btn-outline-warning text-light title-bar-button" @onclick="SaveAndPresent">Present</button>
-                     </div>
-                 </div>
-             </div>
-         </nav>
+                    </div>
+                </div>
+            </div>
+        </nav>
         <!--Quiz Title bar -->
         <nav class="navbar navbar-dark" style="background-color: #979696;">
             <div class="container-fluid">
@@ -36,6 +36,14 @@
                     </div>
                     <div class="flex-fill">
                         <input @bind="@_questionSet.Title" type="text" class="form-control" placeholder="Quiz name" required="required" />
+                    </div>
+                </div>
+                <div class="d-flex flex-row align-items-center w-50" style="padding-left:93px;padding-right:93px;">
+                    <div class="pe-3">
+                        <span class="fs-5 text-light">Folder (Optional)</span>
+                    </div>
+                    <div class="flex-fill">
+                        <input @bind="@FolderPath" type="text" class="form-control" placeholder="Folder Path (e.g. top/2025)" />
                     </div>
                 </div>
             </div>
@@ -54,7 +62,7 @@
                 </div>
             </nav>
         }
-   
+
 
         <div class="d-flex flex-column justify-content-center quiz-edit-question">
             <div class="d-flex flex-row quiz-edit-question-list-panel flex-fill">
@@ -71,10 +79,10 @@
                     }
                 </div>
                 <QuestionList Questions="_questions"
-                          OnEditQuestion="OnEditQuestion"
-                          OnDeleteQuestion="OnDeleteQuestion"
-                          OnAddQuestion="OnAddQuestion"
-                          OnAddGeneratedQuestion="OnAddGeneratedQuestion"/>
+                OnEditQuestion="OnEditQuestion"
+                OnDeleteQuestion="OnDeleteQuestion"
+                OnAddQuestion="OnAddQuestion"
+                OnAddGeneratedQuestion="OnAddGeneratedQuestion"/>
             </div>
         </div>
     }
@@ -84,7 +92,12 @@
     [Parameter]
     public string? Id { get; set; }
 
+    [SupplyParameterFromQuery(Name = "path")]
+    public string? FolderPath { get; set; }
+
     private bool _isLoaded = false; 
+
+    private string? OriginalFolderPath { get; set; }
 
     private QuestionSet? _questionSet = new QuestionSet();
 
@@ -140,7 +153,14 @@
         var claims = user.Claims.ToArray();
         _userId = claims.First(r => r.Type == "oid").Value;
 
-        var response = await Http.GetAsync($"questionset/get?userId={_userId}&id={Id}");
+        OriginalFolderPath = FolderPath;
+        var quizId = Id;
+        if(!string.IsNullOrWhiteSpace(FolderPath))
+        {
+            quizId = $"{FolderPath}/{Id}";
+        }
+
+        var response = await Http.GetAsync($"questionset/get?userId={_userId}&id={quizId}");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -199,7 +219,25 @@
 
     private async Task Save()
     {
-        
+
+        _questionSet.FolderPath = FolderPath;
+        if (FolderPath != OriginalFolderPath)
+        {
+            // Need to remove the original quiz before saving a new one.
+            var originalId = _questionSet.Id;
+            if(!string.IsNullOrWhiteSpace(OriginalFolderPath))
+            {
+                originalId = $"{OriginalFolderPath}/{Id}";
+            }
+
+            var deleteResponse = await Http.DeleteAsync($"questionset/delete?userId={_userId}&id={originalId}");
+            if (!deleteResponse.IsSuccessStatusCode)
+            {
+                var errorMessage = deleteResponse.ReasonPhrase;
+                Console.WriteLine($"There was an error deleting the original quiz! {errorMessage}");
+            }
+        }
+
         var response = await Http.PostAsJsonAsync($"questionset/upsert", _questionSet);
         if (!response.IsSuccessStatusCode)
         {
