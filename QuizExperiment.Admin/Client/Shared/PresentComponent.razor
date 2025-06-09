@@ -54,7 +54,6 @@
 }
 
 <div class="quiz-present-audio-container">
-    @* Currently needs to be started manually, add autoplay attribute to run on startup *@
     <audio controls loop>
         <source src="/audio/background.mp3" />
     </audio>
@@ -91,7 +90,7 @@
 
     private int _currentQuestionIndex = 0;
 
-    private Question? _currentQuestion = null;
+    private MultipleChoiceQuestion? _currentQuestion = null;
 
     private DateTime _currentQuestionEndTime;
 
@@ -134,7 +133,7 @@
             throw new IndexOutOfRangeException("PresentComponent: SendQuestion: Question index is out of range");
         }
 
-        _currentQuestion = _questionSet.Questions?[_currentQuestionIndex];
+        _currentQuestion = _questionSet.Questions?[_currentQuestionIndex] as MultipleChoiceQuestion;
         if(_currentQuestion is null)
         {
             throw new NullReferenceException("PresentComponent: SendQuestion: Current Question is null");

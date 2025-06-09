@@ -25,19 +25,47 @@ namespace QuizExperiment.Admin.Server.Services
         {
             var blobClient = _blobContainerClient.GetBlobClient($"/{userId}/{id}/quiz.json");
             var stream = await blobClient.OpenReadAsync();
-            var questionSet = JsonSerializer.Deserialize<QuestionSet>(stream);
-            if(questionSet is null)
+            // Use custom options with converters for deserialization
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new PolymorphicQuestionConverter());
+            options.Converters.Add(new PolymorphicQuestionListConverter());
+            options.PropertyNamingPolicy = null;
+            var questionSet = JsonSerializer.Deserialize<QuestionSet>(stream, options);
+            if (questionSet is null)
             {
                 throw new NullReferenceException("GetQuestionSet: questionSet is null");
             }
+
+            // Convert legacy questions to MultipleChoiceQuestion if needed
+            if (questionSet.Questions != null)
+            {
+                for (int i = 0; i < questionSet.Questions.Count; i++)
+                {
+                    var q = questionSet.Questions[i];
+                    // If the type is exactly Question (not a derived type), convert to MultipleChoiceQuestion
+                    if (q.GetType() == typeof(Question))
+                    {
+                        // Try to map legacy Question to MultipleChoiceQuestion
+                        var mcq = new MultipleChoiceQuestion
+                        {
+                            Title = q.Title,
+                            ImageUrl = q.ImageUrl,
+                            Timeout = q.Timeout,
+                            // Use reflection to get legacy properties if present
+                            Options = (string[]?)q.GetType().GetProperty("Options")?.GetValue(q),
+                            CorrectAnswerIndex = (int?)(q.GetType().GetProperty("CorrectAnswerIndex")?.GetValue(q)) ?? 0
+                        };
+                        questionSet.Questions[i] = mcq;
+                    }
+                }
+            }
+
             return questionSet;
         }
 
-
         public async Task<QuestionSetSummary[]> GetQuestionSetsForUser(string userId)
         {
-           
-            var blobs = _blobContainerClient.GetBlobsAsync(BlobTraits.Metadata,prefix: userId).AsPages();
+            var blobs = _blobContainerClient.GetBlobsAsync(BlobTraits.Metadata, prefix: userId).AsPages();
 
             var questionSets = new List<QuestionSetSummary>();
 
@@ -46,7 +74,7 @@ namespace QuizExperiment.Admin.Server.Services
                 foreach (BlobItem blobItem in blobPage.Values)
                 {
                     var folderPath = "";
-                    if(_folderMatch.IsMatch(blobItem.Name))
+                    if (_folderMatch.IsMatch(blobItem.Name))
                     {
                         folderPath = _folderMatch.Match(blobItem.Name).Groups[1].Value;
                     }
@@ -63,7 +91,6 @@ namespace QuizExperiment.Admin.Server.Services
             }
 
             return questionSets.ToArray();
-
         }
 
         public async Task<QuestionSetSummary> UpsertQuestionSet(QuestionSet questionSet)
@@ -74,7 +101,7 @@ namespace QuizExperiment.Admin.Server.Services
             }
 
             var questionSetId = questionSet.Id;
-            if(!string.IsNullOrWhiteSpace(questionSet.FolderPath))
+            if (!string.IsNullOrWhiteSpace(questionSet.FolderPath))
             {
                 questionSetId = $"{questionSet.FolderPath}/{questionSet.Id}";
             }
@@ -111,9 +138,5 @@ namespace QuizExperiment.Admin.Server.Services
                 }
             }
         }
-
-
-
-
     }
 }

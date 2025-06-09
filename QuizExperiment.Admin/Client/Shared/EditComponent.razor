@@ -75,7 +75,25 @@
                     }
                     else
                     {
-                        <EditQuestion Question="_currentQuestion" />
+                        if(_currentQuestion is MultipleChoiceQuestion)
+                        {
+
+                            <EditSingleAnswerMultiSelectQuestion Question="_currentQuestion" />
+                        }
+                        else if(_currentQuestion is TrueFalseQuestion)
+                        {
+                            @* <EditTrueFalseQuestion Question="_currentQuestion" /> *@
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="my-3 fs-4 fw-bold">PLACEHOLDER FOR TRUE FALSE QUESTION TYPE</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="my-3 fs-4 fw-bold">Unknown Question Type</div>
+                            </div>
+                        }
+                        
                     }
                 </div>
                 <QuestionList Questions="_questions"
@@ -103,7 +121,7 @@
 
     private List<Question> _questions = new List<Question>();
 
-    private Question? _currentQuestion = new Question();
+    private Question? _currentQuestion;
 
     private string? _userId;
 
@@ -120,7 +138,7 @@
 
     private void OnAddQuestion()
     {
-        _currentQuestion = new Question()
+        _currentQuestion = new MultipleChoiceQuestion()
         {
             Options = new[] {"","","",""},
             Timeout = 20,

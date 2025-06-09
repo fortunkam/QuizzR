@@ -28,8 +28,10 @@ namespace QuizExperiment.Models
         public string? FolderPath { get; set; }
     }
 
-
-    public class Question
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "questionType")]
+    [JsonDerivedType(typeof(MultipleChoiceQuestion), "multipleChoice")]
+    [JsonDerivedType(typeof(TrueFalseQuestion), "trueFalse")]
+    public abstract class Question
     {
         [JsonPropertyName("title")]
         public string? Title { get; set; }
@@ -40,6 +42,12 @@ namespace QuizExperiment.Models
         [JsonPropertyName("timeout")]
         public int Timeout { get; set; }
 
+        [JsonIgnore]
+        public abstract bool IsValid { get; }
+    }
+
+    public class MultipleChoiceQuestion : Question
+    {
         [JsonPropertyName("options")]
         public string[]? Options { get; set; }
 
@@ -47,20 +55,24 @@ namespace QuizExperiment.Models
         public int CorrectAnswerIndex { get; set; }
 
         [JsonIgnore]
-        public bool IsValid
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(Title) &&
-                    !string.IsNullOrWhiteSpace(ImageUrl) &&
-                    Options != null &&
-                    Options.Length == 4 &&
-                    Options.All(o => !string.IsNullOrWhiteSpace(o)) &&
-                    CorrectAnswerIndex >= 0 &&
-                    CorrectAnswerIndex < 4;
-            }
-        }
-
+        public override bool IsValid =>
+            !string.IsNullOrWhiteSpace(Title) &&
+            !string.IsNullOrWhiteSpace(ImageUrl) &&
+            Options != null &&
+            Options.Length == 4 &&
+            Options.All(o => !string.IsNullOrWhiteSpace(o)) &&
+            CorrectAnswerIndex >= 0 &&
+            CorrectAnswerIndex < 4;
     }
 
+    public class TrueFalseQuestion : Question
+    {
+        [JsonPropertyName("isTrue")]
+        public bool IsTrue { get; set; }
+
+        [JsonIgnore]
+        public override bool IsValid =>
+            !string.IsNullOrWhiteSpace(Title) &&
+            !string.IsNullOrWhiteSpace(ImageUrl);
+    }
 }
