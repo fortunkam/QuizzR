@@ -108,7 +108,13 @@ namespace QuizExperiment.Admin.Server.Services
 
             var blobClient = _blobContainerClient.GetBlobClient($"/{questionSet.UserId}/{questionSetId}/quiz.json");
 
-            await blobClient.UploadAsync(new BinaryData(questionSet), overwrite: true);
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new PolymorphicQuestionConverter());
+            options.Converters.Add(new PolymorphicQuestionListConverter());
+            options.PropertyNamingPolicy = null;
+
+            var json = JsonSerializer.Serialize(questionSet, options);
+            await blobClient.UploadAsync(BinaryData.FromString(json), overwrite: true);
             await blobClient.SetMetadataAsync(new Dictionary<string, string?>{
                     { "id", questionSet.Id },
                     { "userid", questionSet.UserId },

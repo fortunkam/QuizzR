@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Reflection;
 
 namespace QuizExperiment.Models
 {
@@ -26,7 +27,26 @@ namespace QuizExperiment.Models
 
         public override void Write(Utf8JsonWriter writer, Question value, JsonSerializerOptions options)
         {
-            JsonSerializer.Serialize(writer, (object)value, value.GetType(), options);
+            writer.WriteStartObject();
+            // Write the type discriminator
+            if (value is MultipleChoiceQuestion)
+                writer.WriteString("questionType", "multipleChoice");
+            else if (value is TrueFalseQuestion)
+                writer.WriteString("questionType", "trueFalse");
+            // Write all other properties as named properties
+            var type = value.GetType();
+            foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (!prop.CanRead || prop.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length > 0)
+                    continue;
+                var propValue = prop.GetValue(value);
+                var propName = prop.GetCustomAttributes(typeof(JsonPropertyNameAttribute), true).Length > 0
+                    ? ((JsonPropertyNameAttribute)prop.GetCustomAttributes(typeof(JsonPropertyNameAttribute), true)[0]).Name
+                    : prop.Name;
+                writer.WritePropertyName(propName);
+                JsonSerializer.Serialize(writer, propValue, propValue?.GetType() ?? typeof(object), options);
+            }
+            writer.WriteEndObject();
         }
     }
 }

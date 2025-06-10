@@ -23,12 +23,13 @@
         {
             if (_currentQuestion is not null)
             {
-                <SingleAnswerMultiSelectQuestionDisplay
-                Question="@_currentQuestion.Title" 
-                Options="@_currentQuestion.Options" 
-                QuestionEndTime="@_currentQuestionEndTime"
-                UserAnswerCount="@_userCurrentAnswers.Count" 
-                ImageUrl="@_currentQuestion.ImageUrl" />
+                
+                <SingleAnswerMultiSelectQuestionDisplay Question="@_currentQuestion.Title"
+                                                    Options="@_currentQuestion.Options"
+                                                    QuestionEndTime="@_currentQuestionEndTime"
+                                                    UserAnswerCount="@_userCurrentAnswers.Count"
+                                                    ImageUrl="@_currentQuestion.ImageUrl" />
+                
             }
         }
 

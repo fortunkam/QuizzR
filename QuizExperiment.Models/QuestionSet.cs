@@ -22,6 +22,7 @@ namespace QuizExperiment.Models
         public string? UserId { get; set; }
 
         [JsonPropertyName("questions")]
+        [JsonConverter(typeof(PolymorphicQuestionListConverter))]
         public List<Question>? Questions { get; set; }
 
         [JsonPropertyName("folderPath")]

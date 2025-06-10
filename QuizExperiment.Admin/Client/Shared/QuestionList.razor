@@ -2,7 +2,11 @@
 
 <div class="quiz-edit-question-list-container d-flex flex-column align-items-center">
     <div class="quiz-edit-question-add-container">
-        <button class="btn btn-success my-3 btn-primary-action" @onclick="@(e=> OnAddQuestion.InvokeAsync())">
+        <select class="form-select d-inline-block w-auto me-2" @bind="selectedQuestionType">
+            <option value="multipleChoice">Multiple Choice</option>
+            <option value="trueFalse">True/False</option>
+        </select>
+        <button class="btn btn-success my-3 btn-primary-action" @onclick="AddQuestionWithType">
             + NEW QUESTION
         </button>
         <button class="btn btn-success btn-copilot" style="padding:3px" data-bs-toggle="modal" data-bs-target="#copilotModal">
@@ -39,13 +43,20 @@
     public EventCallback<Question> OnDeleteQuestion { get; set; }
 
     [Parameter]
-    public EventCallback OnAddQuestion { get; set; }
+    public EventCallback<string> OnAddQuestion { get; set; }
 
     [Parameter]
     public EventCallback<Question> OnAddGeneratedQuestion { get;set; }
 
+    private string selectedQuestionType = "multipleChoice";
+
     private string GetQuestionCountSuffix()
     {
         return Questions?.Count == 1 ? "" : "s";
+    }
+
+    private async Task AddQuestionWithType()
+    {
+        await OnAddQuestion.InvokeAsync(selectedQuestionType);
     }
 }

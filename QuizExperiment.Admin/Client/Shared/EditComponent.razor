@@ -77,15 +77,11 @@
                     {
                         if(_currentQuestion is MultipleChoiceQuestion)
                         {
-
                             <EditSingleAnswerMultiSelectQuestion Question="_currentQuestion" />
                         }
                         else if(_currentQuestion is TrueFalseQuestion)
                         {
-                            @* <EditTrueFalseQuestion Question="_currentQuestion" /> *@
-                            <div class="d-flex flex-column align-items-center">
-                                <div class="my-3 fs-4 fw-bold">PLACEHOLDER FOR TRUE FALSE QUESTION TYPE</div>
-                            </div>
+                            <EditTrueFalseQuestion Question="_currentQuestion" />
                         }
                         else
                         {
@@ -127,7 +123,6 @@
 
     private void OnEditQuestion(Question question)
     {
-
         _currentQuestion = question;
     }
 
@@ -136,18 +131,31 @@
         _questions.Remove(question);
     }
 
-    private void OnAddQuestion()
+    private void OnAddQuestion(string questionType)
     {
-        _currentQuestion = new MultipleChoiceQuestion()
+        Question newQuestion;
+        if (questionType == "trueFalse")
         {
-            Options = new[] {"","","",""},
-            Timeout = 20,
-            ImageUrl = "",
-            Title = "",          
-            CorrectAnswerIndex = -1
-        };
-
-        _questions.Add(_currentQuestion); 
+            newQuestion = new TrueFalseQuestion()
+            {
+                Timeout = 20,
+                ImageUrl = "",
+                Title = ""
+            };
+        }
+        else // default to multipleChoice
+        {
+            newQuestion = new MultipleChoiceQuestion()
+            {
+                Options = new[] {"","","",""},
+                Timeout = 20,
+                ImageUrl = "",
+                Title = "",
+                CorrectAnswerIndex = -1
+            };
+        }
+        _questions.Add(newQuestion);
+        _currentQuestion = newQuestion;
     }
 
     private void OnAddGeneratedQuestion(Question question)
