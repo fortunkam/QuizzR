@@ -1,0 +1,23 @@
+﻿using System.Text.Json.Serialization;
+
+namespace QuizExperiment.Models
+{
+    public class MultipleChoiceQuestion : Question
+    {
+        [JsonPropertyName("options")]
+        public string[]? Options { get; set; }
+
+        [JsonPropertyName("correctAnswerIndex")]
+        public int CorrectAnswerIndex { get; set; }
+
+        [JsonIgnore]
+        public override bool IsValid =>
+            !string.IsNullOrWhiteSpace(Title) &&
+            !string.IsNullOrWhiteSpace(ImageUrl) &&
+            Options != null &&
+            Options.Length == 4 &&
+            Options.All(o => !string.IsNullOrWhiteSpace(o)) &&
+            CorrectAnswerIndex >= 0 &&
+            CorrectAnswerIndex < 4;
+    }
+}
