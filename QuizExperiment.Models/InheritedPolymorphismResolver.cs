@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace QuizExperiment.Models
 {
+    /// <summary>
+    /// Fix to issue related to serialization of polymorphic objects https://github.com/dotnet/runtime/issues/77532#issuecomment-1300541631
+    /// </summary>
     public class InheritedPolymorphismResolver : DefaultJsonTypeInfoResolver
     {
         public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
