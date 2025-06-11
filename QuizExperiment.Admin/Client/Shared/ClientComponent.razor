@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.SignalR.Client
 @using QuizExperiment.Admin.Client.Enums
 @using QuizExperiment.Models
+@using QuizExperiment.Models.Client
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @implements IAsyncDisposable
@@ -23,12 +24,9 @@
         <WaitingForQuestions UserName="@userName" />
     }
 
-
-
     @if (_userState == ClientUserState.WaitingForAnswer)
     {
-        <SingleAnswerMultiSelectQuestion PossibleAnswers="@currentPossibleAnswers"
-                                         OnAnswerSubmit="@AnswerQuestion" Question="@currentQuestion" />
+        <ClientQuestionPicker OnAnswerSubmit="@AnswerQuestion" Question="@currentQuestion" />
     }
 
     @if (_userState == ClientUserState.WaitForAnswerCheck)
@@ -38,8 +36,8 @@
 
     @if (_userState == ClientUserState.IdleInGame)
     {
-        <AnswerSummary MyAnswerIndex="@currentAnswerIndex" CorrectAnswerIndex="@correctAnswerIndex"
-                       CurrentScore=@_currentScore CorrectAnswer="@(currentPossibleAnswers?[correctAnswerIndex])"
+        <AnswerSummary MyAnswer="@currentAnswer" CorrectAnswer="@correctAnswer"
+                       CurrentScore=@_currentScore
                        Position=@_position IsLastQuestion="@_isLastQuestion" />
     }
 
@@ -59,11 +57,9 @@
 
     private string? userName;
 
-    private string currentQuestion = "";
-    private int currentAnswerIndex = -1;
-    private string[]? currentPossibleAnswers = null;
-
-    private int correctAnswerIndex = -1;
+    private ClientQuestion? currentQuestion;
+    private ClientAnswer? currentAnswer;
+    private ClientAnswer? correctAnswer;
     private bool wasLastAnswerCorrect = false;
     private bool _isLastQuestion = false;
 
@@ -85,12 +81,9 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
             .Build();
 
-        hubConnection.On<string, string[]>("QuestionArrived", async (question, possibleAnswers) =>
+        hubConnection.On<ClientQuestion>("QuestionArrived", async (question) =>
         {
             currentQuestion = question;
-            currentPossibleAnswers = possibleAnswers;
-            currentAnswerIndex = -1;
-            correctAnswerIndex = -1;
             wasLastAnswerCorrect = false;
             _questionStartTime = DateTime.UtcNow;
             _userState = ClientUserState.WaitingForAnswer;
@@ -107,10 +100,10 @@
             StateHasChanged();
         });
 
-        hubConnection.On<int, int, int, bool>("AnswerArrived", async (answer, currentScore, position, isLastQuestion) =>
+        hubConnection.On<ClientAnswer, int, int, bool>("AnswerArrived", async (answer, currentScore, position, isLastQuestion) =>
            {
-               correctAnswerIndex = answer;
-               wasLastAnswerCorrect = (answer == currentAnswerIndex);
+               correctAnswer = answer;
+               wasLastAnswerCorrect = (answer == currentAnswer);
                _position = position;
                _currentScore = currentScore;
                _isLastQuestion = isLastQuestion;
@@ -179,11 +172,11 @@
 
     }
 
-    private async Task AnswerQuestion(int answerIndex)
+    private async Task AnswerQuestion(ClientAnswer answer)
     {
         if (IsConnected)
         {
-            currentAnswerIndex = answerIndex;
+            currentAnswer = answer;
             var timeTaken = (DateTime.UtcNow - (_questionStartTime ?? DateTime.MinValue)).TotalMilliseconds;
 
             await AppInsights.TrackEvent(new EventTelemetry()
@@ -194,7 +187,7 @@
                         { "userName", userName },
                         { "clientQuizId", clientQuizId },
                         { "question", currentQuestion },
-                        { "currentAnswerIndex", currentAnswerIndex },
+                        { "currentAnswer", answer },
                         { "timeTaken", timeTaken }
                     }
                 });
@@ -202,7 +195,7 @@
             {
                 throw new NullReferenceException("hubConnection is null");
             }
-            await hubConnection.SendAsync("SubmitAnswer", clientQuizId, currentAnswerIndex, timeTaken);
+            await hubConnection.SendAsync("SubmitAnswer", clientQuizId, answer, timeTaken);
             _userState = ClientUserState.WaitForAnswerCheck;
         }
 

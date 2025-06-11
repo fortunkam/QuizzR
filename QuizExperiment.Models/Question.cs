@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using QuizExperiment.Models.Client;
+using System.Text.Json.Serialization;
 
 namespace QuizExperiment.Models
 {
@@ -18,5 +19,9 @@ namespace QuizExperiment.Models
 
         [JsonIgnore]
         public abstract bool IsValid { get; }
+
+        public abstract ClientAnswer GetCorrectAnswer();
+
+        public abstract ClientQuestion ToClientQuestion();
     }
 }

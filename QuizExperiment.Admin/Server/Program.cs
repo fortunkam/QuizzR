@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using QuizExperiment.Admin.Server.Hubs;
 using QuizExperiment.Admin.Server.Services;
 using QuizExperiment.Models;
+using QuizExperiment.Models.Client;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +23,13 @@ builder.Services.AddSingleton<IQuestionSetService>(r=>
     new AzureStorageQuestionSetService(builder.Configuration));
 
 IWebHostEnvironment environment = builder.Environment;
-
+//var signalRServiceBuilder = builder.Services.AddSignalR()
+//    .AddJsonProtocol(options=>
+//    {
+//        options.PayloadSerializerOptions.Converters.Add(new ClientQuestionConverter());
+//    });
 var signalRServiceBuilder = builder.Services.AddSignalR();
+
 if(!environment.IsDevelopment())
 {
     signalRServiceBuilder.AddAzureSignalR();

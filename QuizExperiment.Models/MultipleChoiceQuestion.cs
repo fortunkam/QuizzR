@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using QuizExperiment.Models.Client;
+using System.Text.Json.Serialization;
 
 namespace QuizExperiment.Models
 {
@@ -10,6 +11,8 @@ namespace QuizExperiment.Models
         [JsonPropertyName("correctAnswerIndex")]
         public int CorrectAnswerIndex { get; set; }
 
+       
+
         [JsonIgnore]
         public override bool IsValid =>
             !string.IsNullOrWhiteSpace(Title) &&
@@ -19,5 +22,24 @@ namespace QuizExperiment.Models
             Options.All(o => !string.IsNullOrWhiteSpace(o)) &&
             CorrectAnswerIndex >= 0 &&
             CorrectAnswerIndex < 4;
+
+        public override ClientAnswer GetCorrectAnswer()
+        {
+            return new ClientMultipleChoiceAnswer
+            {
+                AnswerIndex = CorrectAnswerIndex
+            };
+        }
+
+        public override ClientQuestion ToClientQuestion()
+        {
+            return new ClientMultipleChoiceQuestion
+            {
+                Title = Title,
+                ImageUrl = ImageUrl,
+                Options = Options?.ToList() ?? new List<string>()
+            };
+        }
+
     }
 }

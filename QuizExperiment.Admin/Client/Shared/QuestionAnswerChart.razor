@@ -1,5 +1,14 @@
 ﻿@using QuizExperiment.Models
 @using Blazorise.Charts
+@using QuizExperiment.Models.Client
+
+@{
+    var correctAnswer = Question?.GetCorrectAnswer();
+    var details = correctAnswer?.GetAnswerDetails(Question);
+    var correctAnswerIndex = details?.index ?? -1;
+    var correctAnswerText = details?.description ?? "Unknown answer";
+    var correctButtonName = details?.buttonName ?? "Unknown";
+}
 
 <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
     <div class="next-question-fixed-container">
@@ -8,37 +17,37 @@
         </button>
     </div>
     <div class="my-3 fs-4">The correct answer is</div>
-    <button class="btn btn-correct-answer btn-answer-@CorrectAnswerIndex" value="@(CorrectAnswerIndex.GetButtonNameFromIndex())"><span>@(CorrectAnswerIndex.GetButtonNameFromIndex())</span></button>
-    <div class="my-3 fs-2 fw-bold">@(Options?[CorrectAnswerIndex])</div>
-    <QuizExperiment.Admin.Client.Shared.Components.AnswerChart Values="@_answers" />
+    <button class="btn btn-correct-answer btn-answer-@correctAnswerIndex" value="@correctButtonName"><span>@correctButtonName</span></button>
+    <div class="my-3 fs-2 fw-bold">@correctAnswerText</div>
+    @* //TODO: Re-add the answer chart back in *@
+    @* <QuizExperiment.Admin.Client.Shared.Components.AnswerChart Values="@_answers" /> *@
 </div>
 
 @code {
     [Parameter]
-    public Dictionary<string, UserAnswer>? UserAnswers { get; set; }
+    public Dictionary<string, ClientAnswerTiming>? UserAnswers { get; set; }
 
     [Parameter]
     public EventCallback<string> OnNextQuestion { get; set; }
 
     [Parameter]
-    public int CorrectAnswerIndex { get; set; }
-
-    [Parameter]
-    public string[]? Options { get; set; }
-
-    private Dictionary<int, int>? _answers;
+    public Question? Question { get; set; }
+    
+    // private Dictionary<int, int>? _answers;
 
     protected override void OnParametersSet()
     {
-        if(UserAnswers is null)
-        {
-            throw new NullReferenceException("AnswerSummary: UserAnswers collection is null");
-        }
-        _answers = UserAnswers.GroupBy(r => r.Value.AnswerIndex).Select(r => new
-        {
-            AnswerIndex = r.Key,
-            Count = r.Count()
-        }).ToDictionary(k => k.AnswerIndex, v => v.Count);
+        // if(UserAnswers is null)
+        // {
+        //     throw new NullReferenceException("AnswerSummary: UserAnswers collection is null");
+        // }
+        // _answers = UserAnswers.GroupBy(r => r.Value.AnswerIndex).Select(r => new
+        // {
+        //     AnswerIndex = r.Key,
+        //     Count = r.Count()
+        // }).ToDictionary(k => k.AnswerIndex, v => v.Count);
+
+
         
         base.OnParametersSet();
     }

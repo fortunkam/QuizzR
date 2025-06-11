@@ -1,7 +1,8 @@
 ﻿@using QuizExperiment.Models
+@using QuizExperiment.Models.Client
 <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
     
-    @if (MyAnswerIndex == CorrectAnswerIndex)
+    @if (MyAnswer == CorrectAnswer)
     {
         <div class="my-3 fs-2 fw-bold">Correct!</div>
         <div class="answer-icon answer-correct">
@@ -11,7 +12,7 @@
     else
     {
         <div class="my-3 fs-2 fw-bold">Better luck next time!</div>
-        <div class="my-3 fs-4">The correct answer was @CorrectAnswer</div>
+        <div class="my-3 fs-4">The correct answer was @CorrectAnswer.</div>
         <div class="answer-icon answer-wrong">
             <span class="oi oi-x" title="icon name" aria-hidden="true"></span>
         </div>
@@ -29,16 +30,13 @@
 
 @code {
         [Parameter]
-        public int MyAnswerIndex { get; set; }
+        public ClientAnswer? MyAnswer { get; set; }
 
         [Parameter]
         public bool IsLastQuestion { get; set; }
 
         [Parameter]
-        public int CorrectAnswerIndex { get; set; }
-
-        [Parameter]
-        public string? CorrectAnswer { get; set; }
+        public ClientAnswer? CorrectAnswer { get; set; }
 
         [Parameter]
         public int CurrentScore { get; set; }
