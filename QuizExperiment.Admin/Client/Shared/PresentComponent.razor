@@ -38,10 +38,9 @@
             if (_currentQuestion is not null)
             {
                 <QuestionAnswerChart 
-                CorrectAnswerIndex="@_currentQuestion.CorrectAnswerIndex" 
-                Options="@_currentQuestion.Options" 
-                UserAnswers="@_userCurrentAnswers" 
-                OnNextQuestion="@OnNextQuestion"  />
+                    Question="@_currentQuestion" 
+                    UserAnswers="@_userCurrentAnswers" 
+                    OnNextQuestion="@OnNextQuestion"  />
             }
         }
 
@@ -247,11 +246,7 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
             .AddJsonProtocol(options =>
             {
-                // options.PayloadSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver()
-                //     .WithAddedModifier(JsonExtensions.AddNativePolymorphicTypeInfo);
-
-                // options.PayloadSerializerOptions.Converters.Add(new ClientQuestionConverter());
-                // options.PayloadSerializerOptions.Converters.Add(new ClientMultipleChoiceQuestionConverter());
+                options.PayloadSerializerOptions.TypeInfoResolver = new InheritedPolymorphismResolver();
             })
             .Build();
 

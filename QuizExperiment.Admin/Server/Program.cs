@@ -23,14 +23,13 @@ builder.Services.AddSingleton<IQuestionSetService>(r=>
     new AzureStorageQuestionSetService(builder.Configuration));
 
 IWebHostEnvironment environment = builder.Environment;
-//var signalRServiceBuilder = builder.Services.AddSignalR()
-//    .AddJsonProtocol(options=>
-//    {
-//        options.PayloadSerializerOptions.Converters.Add(new ClientQuestionConverter());
-//    });
-var signalRServiceBuilder = builder.Services.AddSignalR();
+var signalRServiceBuilder = builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.TypeInfoResolver = new InheritedPolymorphismResolver();
+    });
 
-if(!environment.IsDevelopment())
+if (!environment.IsDevelopment())
 {
     signalRServiceBuilder.AddAzureSignalR();
 }

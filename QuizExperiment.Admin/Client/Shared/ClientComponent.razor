@@ -79,6 +79,10 @@
     {
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
+            .AddJsonProtocol(options =>
+            {
+                options.PayloadSerializerOptions.TypeInfoResolver = new InheritedPolymorphismResolver();
+            })
             .Build();
 
         hubConnection.On<ClientQuestion>("QuestionArrived", async (question) =>
