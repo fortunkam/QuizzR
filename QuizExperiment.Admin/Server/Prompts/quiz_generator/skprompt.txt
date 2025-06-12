@@ -77,4 +77,4 @@ The quiz should be returned in json format conforming to the following schema:
 ---
 
 id and userid can be left as empty strings.
-The title should be "Quiz on {{$subject}}".
+The title should be "Generated Quiz on {{$subject}}".
