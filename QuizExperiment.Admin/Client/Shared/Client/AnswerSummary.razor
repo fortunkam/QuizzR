@@ -2,7 +2,6 @@
 @using QuizExperiment.Models.Client
 @{
     var answerDetails = CorrectAnswer?.GetAnswerDetails(Question);
-    var correctAnswerIndex = answerDetails?.index ?? "0";
     var correctAnswerText = answerDetails?.description ?? "Unknown answer";
 }
 
