@@ -1,8 +1,9 @@
 ﻿@page "/"
-@layout ClientLayout
+@using QuizClient = QuizExperiment.Admin.Client.Shared.Client
+@layout QuizClient.Layout
 
 <PageTitle>QuizzR - Fun and Games with Microsoft Blazor and SignalR</PageTitle>
-<ClientComponent clientQuizId="@clientQuizId" />
+<QuizExperiment.Admin.Client.Shared.Client.RootComponent clientQuizId="@clientQuizId" />
 
 
 @code {

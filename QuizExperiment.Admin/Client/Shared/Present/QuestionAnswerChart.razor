@@ -1,0 +1,59 @@
+﻿@using QuizExperiment.Models
+@using Blazorise.Charts
+@using QuizExperiment.Models.Client
+
+@{
+    var correctAnswer = Question?.GetCorrectAnswer();
+    var details = correctAnswer?.GetAnswerDetails(Question?.ToClientQuestion());
+    var correctAnswerIndex = details?.index ?? "0";
+    var correctAnswerText = details?.description ?? "Unknown answer";
+    var correctButtonName = details?.buttonName ?? "Unknown";
+
+    var correctAnswerCount = UserAnswers?.Count(r => r.Value.Answer == correctAnswer);
+    var totalAnswers = UserAnswers?.Count ?? 0;
+
+    var correctAnswerPercentage = ((int)Math.Round(totalAnswers > 0 ? (double)correctAnswerCount / totalAnswers * 100 : 0, 0)).ToString() + "%";
+    var fastestUserId = UserAnswers?.Where(r => r.Value.Answer == correctAnswer).OrderBy(r => r.Value.TimeTaken).FirstOrDefault();
+    var fastestUser = Users[fastestUserId?.Key];
+
+}
+
+<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+    <div class="next-question-fixed-container">
+        <button class="btn btn-success my-3 btn-primary-action" @onclick="@(e=> OnNextQuestion.InvokeAsync())">
+            NEXT >
+        </button>
+    </div>
+    <div class="my-3 fs-4">The correct answer is</div>
+    <button class="btn btn-correct-answer btn-answer-@correctAnswerIndex" value="@correctButtonName"><span>@correctButtonName</span></button>
+    @if(string.Compare(correctButtonName, correctAnswerText, true) != 0)
+    {
+        <div class="my-3 fs-2 fw-bold">@correctAnswerText</div>
+    }
+
+    @{
+        <div class="my-3 fs-3 fw-bold">@correctAnswerPercentage of people got the correct answer</div>
+        if(fastestUserId != null)
+        {
+            <div class="my-3 fs-3 fw-bold">🏎️@fastestUser was the fastest!🏁</div>
+        }
+        
+    }
+
+    
+</div>
+
+@code {
+    [Parameter]
+    public Dictionary<string, ClientAnswerTiming>? UserAnswers { get; set; }
+
+    [Parameter]
+    public Dictionary<string, string> Users { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnNextQuestion { get; set; }
+
+    [Parameter]
+    public Question? Question { get; set; }
+
+}

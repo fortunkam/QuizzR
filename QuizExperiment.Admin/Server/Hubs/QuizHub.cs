@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using QuizExperiment.Models;
+using QuizExperiment.Models.Client;
 
 namespace QuizExperiment.Admin.Server.Hubs
 {
     public class QuizHub : Hub
     {
-
         public async Task SendAdminInfoMessage(string clientQuizId, string message)
         {
             await Clients.Groups(clientQuizId).SendAsync("AdminInfoMessage", clientQuizId, message);
@@ -24,19 +23,19 @@ namespace QuizExperiment.Admin.Server.Hubs
             await Clients.Groups(clientQuizId).SendAsync("UserJoined", clientQuizId, userName, Context.ConnectionId);
         }
 
-        public async Task SendQuestion(string clientQuizId, string question, string[] possibleAnswers)
+        public async Task SendQuestion(string clientQuizId, ClientQuestion question)
         {
-            await Clients.Groups(clientQuizId).SendAsync("QuestionArrived", question, possibleAnswers);
+            await Clients.Groups(clientQuizId).SendAsync("QuestionArrived", question);
         }
 
-        public async Task SubmitAnswer(string clientQuizId, int answerIndex, double timeTaken)
+        public async Task SubmitAnswer(string clientQuizId, ClientAnswer answer, double timeTaken)
         {
-            await Clients.Groups(clientQuizId).SendAsync("ClientAnswerReceived", clientQuizId, Context.ConnectionId, answerIndex, timeTaken);
+            await Clients.Groups(clientQuizId).SendAsync("ClientAnswerReceived", clientQuizId, Context.ConnectionId, answer, timeTaken);
         }
 
-        public async Task SendAnswerResult(string clientQuizId, string clientId, int correctAnswerIndex, int currentScore, int position, bool isLastQuestion)
+        public async Task SendAnswerResult(string clientQuizId, string clientId, ClientAnswer answer, int currentScore, int position, bool isLastQuestion)
         {
-            await Clients.Client(clientId).SendAsync("AnswerArrived", correctAnswerIndex, currentScore, position, isLastQuestion);
+            await Clients.Client(clientId).SendAsync("AnswerArrived", answer, currentScore, position, isLastQuestion);
         }
 
         public async Task SendPlayerPosition(string clientQuizId, string clientId,int position, int score)

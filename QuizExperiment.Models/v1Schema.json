@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quiz",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the quiz"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the quiz"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the quiz"
+    },
+    "userid": {
+      "type": "string",
+      "description": "User ID of the quiz creator"
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "timeout": {
+            "type": "integer"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correctAnswerIndex": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "title",
+          "imageUrl",
+          "timeout",
+          "options",
+          "correctAnswerIndex"
+        ]
+      }
+    },
+    "folderPath": {
+      "type": [ "string", "null" ],
+      "description": "Optional folder path"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "description",
+    "userid",
+    "questions",
+    "folderPath"
+  ]
+}

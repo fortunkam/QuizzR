@@ -1,0 +1,80 @@
+Create a quiz on the subject of "{{$subject}}".
+The quiz should consist of "{{$questionCount}}" unique questions.
+Questions can be one of the following types: multiple choice or true/false
+
+Multiple Choice questions should have four possible answers, with one correct answer.
+The correct answer should be resented as the zero-based index of the correct answer in the list of possible answers.
+Muliple choice questions should return json in the following format
+---
+{
+	"questionType": "multipleChoice",
+	"title": "Quiz Question?",
+	"imageUrl": "https://placehold.co/600x400"
+	"options": [
+		"Answer 1",
+		"Answer 2",
+		"Answer 3",
+		"Answer 4"
+	],
+	"correctAnswerIndex": 2
+}
+Do not include the ```json identifier in your response.
+
+True/False questions should return json in the following format
+---
+{
+	"questionType": "trueFalse",
+	"title": "Quiz Question?",
+	"imageUrl": "https://placehold.co/600x400"
+	"isTrue": true
+}
+
+For all question types the imageUrl should always be set to "https://placehold.co/600x400".
+For all question types the timeout should be set to 20.
+
+The quiz should be returned in json format conforming to the following schema:
+
+---
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QuestionSet",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "userid": { "type": "string" },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+            "properties": {
+              "questionType": { "type": "string" },
+              "options": { "type": "array", "items": { "type": "string" } },
+              "correctAnswerIndex": { "type": "integer" },
+              "isTrue": { "type": "boolean" },
+              "title": { "type": "string" },
+              "imageUrl": { "type": ["string", "null"] },
+              "timeout": { "type": "integer" }
+            },
+            "required": ["questionType", "title", "timeout"],
+            "allOf": [
+              {
+                "if": { "properties": { "questionType": { "const": "multipleChoice" } } },
+                "then": { "required": ["options", "correctAnswerIndex"] }
+              },
+              {
+                "if": { "properties": { "questionType": { "const": "trueFalse" } } },
+                "then": { "required": ["isTrue"] }
+              }
+            ]
+      }
+    },
+    "folderPath": { "type": ["string", "null"] }
+  },
+  "required": ["id", "title", "description", "userid", "questions"]
+}
+---
+
+id and userid can be left as empty strings.
+The title should be "Generated Quiz on {{$subject}}".

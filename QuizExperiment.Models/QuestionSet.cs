@@ -22,45 +22,10 @@ namespace QuizExperiment.Models
         public string? UserId { get; set; }
 
         [JsonPropertyName("questions")]
+        [JsonConverter(typeof(PolymorphicQuestionListConverter))]
         public List<Question>? Questions { get; set; }
 
         [JsonPropertyName("folderPath")]
         public string? FolderPath { get; set; }
     }
-
-
-    public class Question
-    {
-        [JsonPropertyName("title")]
-        public string? Title { get; set; }
-
-        [JsonPropertyName("imageUrl")]
-        public string? ImageUrl { get; set; }
-
-        [JsonPropertyName("timeout")]
-        public int Timeout { get; set; }
-
-        [JsonPropertyName("options")]
-        public string[]? Options { get; set; }
-
-        [JsonPropertyName("correctAnswerIndex")]
-        public int CorrectAnswerIndex { get; set; }
-
-        [JsonIgnore]
-        public bool IsValid
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(Title) &&
-                    !string.IsNullOrWhiteSpace(ImageUrl) &&
-                    Options != null &&
-                    Options.Length == 4 &&
-                    Options.All(o => !string.IsNullOrWhiteSpace(o)) &&
-                    CorrectAnswerIndex >= 0 &&
-                    CorrectAnswerIndex < 4;
-            }
-        }
-
-    }
-
 }

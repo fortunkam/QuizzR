@@ -1,4 +1,4 @@
-﻿@using QuizExperiment.Models
+﻿@using QuizModels = QuizExperiment.Models
 @using System.Text.Json
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HttpClient Http
@@ -75,14 +75,28 @@
                     }
                     else
                     {
-                        <EditQuestion Question="_currentQuestion" />
+                        if (_currentQuestion is QuizModels.MultipleChoiceQuestion)
+                        {
+                            <SingleAnswerMultiSelectQuestion Question="_currentQuestion" />
+                        }
+                        else if(_currentQuestion is QuizModels.TrueFalseQuestion)
+                        {
+                            <TrueFalseQuestion Question="_currentQuestion" />
+                        }
+                        else
+                        {
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="my-3 fs-4 fw-bold">Unknown Question Type</div>
+                            </div>
+                        }
+                        
                     }
                 </div>
                 <QuestionList Questions="_questions"
-                OnEditQuestion="OnEditQuestion"
-                OnDeleteQuestion="OnDeleteQuestion"
-                OnAddQuestion="OnAddQuestion"
-                OnAddGeneratedQuestion="OnAddGeneratedQuestion"/>
+                    OnEditQuestion="OnEditQuestion"
+                    OnDeleteQuestion="OnDeleteQuestion"
+                    OnAddQuestion="OnAddQuestion"
+                    OnAddGeneratedQuestion="OnAddGeneratedQuestion"/>
             </div>
         </div>
     }
@@ -103,13 +117,12 @@
 
     private List<Question> _questions = new List<Question>();
 
-    private Question? _currentQuestion = new Question();
+    private Question? _currentQuestion;
 
     private string? _userId;
 
     private void OnEditQuestion(Question question)
     {
-
         _currentQuestion = question;
     }
 
@@ -118,18 +131,31 @@
         _questions.Remove(question);
     }
 
-    private void OnAddQuestion()
+    private void OnAddQuestion(string questionType)
     {
-        _currentQuestion = new Question()
+        Question newQuestion;
+        if (questionType == "trueFalse")
         {
-            Options = new[] {"","","",""},
-            Timeout = 20,
-            ImageUrl = "",
-            Title = "",          
-            CorrectAnswerIndex = -1
-        };
-
-        _questions.Add(_currentQuestion); 
+            newQuestion = new QuizModels.TrueFalseQuestion()
+            {
+                Timeout = 20,
+                ImageUrl = "",
+                Title = ""
+            };
+        }
+        else // default to multipleChoice
+        {
+            newQuestion = new QuizModels.MultipleChoiceQuestion()
+            {
+                Options = new[] {"","","",""},
+                Timeout = 20,
+                ImageUrl = "",
+                Title = "",
+                CorrectAnswerIndex = -1
+            };
+        }
+        _questions.Add(newQuestion);
+        _currentQuestion = newQuestion;
     }
 
     private void OnAddGeneratedQuestion(Question question)
@@ -264,6 +290,6 @@
             return;
         }
         await Save();
-        NavigationManager.NavigateTo($"/manage");
+        NavigationManager.NavigateTo($"/manage?path={_questionSet.FolderPath}");
     }
 }

@@ -1,0 +1,37 @@
+﻿@using QuizExperiment.Models.Client
+
+@{
+    if(Question != null)
+    {
+        <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+            <h1 class="h1 text-center">@Question.Title</h1>
+            <div class="quiz-button-container">
+                <button class="btn-client-quiz-true-false btn-quiz-true" @onclick="@(e => SubmitAnswer(true))" value="1"><span>True</span></button>
+                <button class="btn-client-quiz-true-false btn-quiz-false" @onclick="@(e => SubmitAnswer(false))" value="2"><span>False</span></button>
+
+            </div>
+        </div>
+    }
+}
+
+@code {
+
+    [Parameter]
+    public ClientTrueFalseQuestion? Question { get; set; }
+
+    [Parameter]
+    public EventCallback<ClientAnswer> OnAnswerSubmit { get; set; }
+
+    private async Task SubmitAnswer(bool answerValue)
+    {
+        var answer = new ClientTrueFalseAnswer
+        {
+            Answer = answerValue
+        };
+        await OnAnswerSubmit.InvokeAsync(answer);
+    }
+
+
+    
+
+}

@@ -118,7 +118,7 @@
 
 
 @code {
-    private Question? _question = null;
+    private MultipleChoiceQuestion? _question = null;
 
     private string? _subject;
     private bool _isLoading = false;
@@ -148,7 +148,7 @@
         _question = null;
         await InvokeAsync(StateHasChanged);
 
-        var response = await Http.GetAsync($"copilot/suggestquestion?subject={System.Web.HttpUtility.UrlEncode(_subject)}");
+        var response = await Http.GetAsync($"copilot/suggestmulitchoicequestion?subject={System.Web.HttpUtility.UrlEncode(_subject)}");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -158,7 +158,7 @@
         }
         _isLoading = false;
 
-        _question = await response.Content.ReadFromJsonAsync<Question>();
+        _question = await response.Content.ReadFromJsonAsync<MultipleChoiceQuestion>();
         await InvokeAsync(StateHasChanged);
     }
 

@@ -16,6 +16,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Env", "Env", "{33E368B8-092
 		Env\rbac.bicep = Env\rbac.bicep
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		test.http = test.http
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizExperiment.Models.Test", "QuizExperiment.Models.Test\QuizExperiment.Models.Test.csproj", "{2CA0F51F-525A-47AB-B27C-6594180CDC8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +41,10 @@ Global
 		{2E605310-F8A0-4338-B91C-0001FC018E83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E605310-F8A0-4338-B91C-0001FC018E83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E605310-F8A0-4338-B91C-0001FC018E83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CA0F51F-525A-47AB-B27C-6594180CDC8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CA0F51F-525A-47AB-B27C-6594180CDC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CA0F51F-525A-47AB-B27C-6594180CDC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CA0F51F-525A-47AB-B27C-6594180CDC8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

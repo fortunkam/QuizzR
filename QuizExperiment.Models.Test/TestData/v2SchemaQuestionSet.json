@@ -1,0 +1,28 @@
+{
+  "id": "b395c553-56c4-42d0-97d4-a104caf2f847",
+  "title": "Sample Quiz",
+  "description": "Some Sample Quiz",
+  "userid": "5694c6de-add8-412f-b1c7-a9e5c7ca9945",
+  "questions": [
+    {
+      "questionType": "multipleChoice",
+      "options": [
+        "Paris",
+        "London",
+        "Berlin"
+      ],
+      "correctAnswerIndex": 0,
+      "title": "What is the capital of France?",
+      "imageUrl": null,
+      "timeout": 30
+    },
+    {
+      "questionType": "trueFalse",
+      "isTrue": true,
+      "title": "The sky is blue.",
+      "imageUrl": null,
+      "timeout": 15
+    }
+  ],
+  "folderPath": null
+}

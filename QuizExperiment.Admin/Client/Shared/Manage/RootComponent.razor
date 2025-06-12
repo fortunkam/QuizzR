@@ -56,6 +56,9 @@
                 <button class="btn btn-success my-3 btn-primary-action" @onclick="AddNewQuestionSet">
                     CREATE NEW QUIZ >
                 </button>
+                <button class="btn btn-success btn-copilot" style="padding:3px" @onclick="ShowQuizCopilotModal">
+                    <img src="images/copilot.png" style="height:30px;" />
+                </button>
             </div>
         </div>
 
@@ -127,6 +130,7 @@
             </Blazorise.ModalFooter>
         </Blazorise.ModalContent>
     </Blazorise.Modal>
+    <CopilotQuizRequestModal @ref="_quizCopilotModal" AddNewQuiz="@OnAddGeneratedQuiz" />
 }
 
 @code {
@@ -145,6 +149,13 @@
     private string _folderFilter { get; set; } = "";
 
     private const string HomeFilter = "";
+
+    private CopilotQuizRequestModal? _quizCopilotModal;
+
+    private void ShowQuizCopilotModal()
+    {
+        _quizCopilotModal?.Show();
+    }
 
     private async Task FetchData()
     {
@@ -215,7 +226,21 @@
                 FolderPath = _folderFilter ?? ""
         };
 
-        var serializedQuestionSet = JsonSerializer.Serialize(qs);
+        await EditNewQuestionSet(qs);
+    }
+
+    private async Task OnAddGeneratedQuiz(QuestionSet questionSet)
+    {
+        questionSet.Id = Guid.NewGuid().ToString();
+        questionSet.UserId = _userId;
+        questionSet.FolderPath = _folderFilter ?? "";
+
+        await EditNewQuestionSet(questionSet);
+    }
+
+    private async Task EditNewQuestionSet(QuestionSet questionSet)
+    {
+        var serializedQuestionSet = JsonSerializer.Serialize(questionSet);
         var content = new StringContent(serializedQuestionSet,
             System.Text.Encoding.UTF8, "application/json");
         var response = await Http.PostAsync($"questionset/upsert",
@@ -233,7 +258,7 @@
             query_string = "?path=" + _folderFilter;
         }
 
-        NavigationManager.NavigateTo($"/edit/{qs.Id}{query_string}");
+        NavigationManager.NavigateTo($"/edit/{questionSet.Id}{query_string}");
     }
 
     private string quizToDelete = "";
@@ -353,6 +378,8 @@
         }
         await FetchData();
     }
+
+    
 
 
 }

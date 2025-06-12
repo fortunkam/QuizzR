@@ -1,0 +1,32 @@
+﻿@using QuizExperiment.Models.Client
+
+@{
+    if(Question is null)
+    {
+        <p class="text-warning">Question information is not available.</p>
+    }
+    else
+    {
+        if(Question is ClientMultipleChoiceQuestion mulChoiceQuestion)
+        {
+            <SingleAnswerMultiSelectQuestion Question="@mulChoiceQuestion" OnAnswerSubmit="@OnAnswerSubmit" />
+        }
+        else if(Question is ClientTrueFalseQuestion trueFalseQuestion)
+        {
+            <TrueFalseQuestion Question="@trueFalseQuestion" OnAnswerSubmit="@OnAnswerSubmit" />
+        }
+        else
+        {
+            <p class="text-warning">Unsupported question type.</p>
+        }
+    }
+}
+
+
+@code {
+    [Parameter]
+    public ClientQuestion? Question { get; set; }
+
+    [Parameter]
+    public EventCallback<ClientAnswer> OnAnswerSubmit { get; set; }
+}

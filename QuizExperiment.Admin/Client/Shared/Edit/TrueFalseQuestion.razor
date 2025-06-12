@@ -1,0 +1,59 @@
+﻿@using QuizModels = QuizExperiment.Models
+@using System.Text.Json
+@inject HttpClient Http
+
+@if (Question is not null)
+{
+    var trueFalseQuestion = Question as QuizModels.TrueFalseQuestion;
+    if (trueFalseQuestion is not null)
+    {
+        <CommonQuestion Question="Question" />
+        <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
+            <table class="table table-bordered quiz-edit-question-answers-table">
+                <thead>
+                    <th colspan="2">ANSWER</th>
+                    <th>CORRECT?</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="quiz-edit-question-answers-table-icon">
+                            <button class="btn btn-edit-answer btn-edit-answer-true-false btn-edit-answer-0" value="True">
+                                <span>True</span>
+                            </button>
+                        </td>
+                        <td class="quiz-edit-question-answers-table-answer">
+                            <input type="text" class="form-control quiz-edit-question-input-answer"
+                                   value="True" readonly="readonly" />
+                        </td>
+                        <td class="quiz-edit-question-answers-table-correct">
+                                <input class="form-check-input" type="radio" id="flexCheckChecked1"
+                                   name="flexCheckChecked" checked="@(trueFalseQuestion.IsTrue == true)"
+                                   onchange="@(() => { trueFalseQuestion.IsTrue = true; })" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="quiz-edit-question-answers-table-icon">
+                            <button class="btn btn-edit-answer btn-edit-answer-true-false btn-edit-answer-1" value="False">
+                                <span>False</span>
+                                </button>
+                            </td>
+                            <td class="quiz-edit-question-answers-table-answer">
+                                <input type="text" class="form-control quiz-edit-question-input-answer"
+                                   value="False" readonly="readonly" />
+                            </td>
+                            <td class="quiz-edit-question-answers-table-correct">
+                            <input class="form-check-input" type="radio" id="flexCheckChecked1"
+                                   name="flexCheckChecked" checked="@(trueFalseQuestion.IsTrue == false)"
+                                   onchange="@(() => { trueFalseQuestion.IsTrue = false; })" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public QuizModels.Question? Question { get; set; }
+}

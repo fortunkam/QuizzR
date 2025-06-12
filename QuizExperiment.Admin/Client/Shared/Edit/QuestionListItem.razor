@@ -15,8 +15,13 @@
             <button class="quiz-edit-question-item-edit" title="edit" @onclick="@(e=> OnEditQuestion.InvokeAsync(Question))">
                 ✏️
             </button>
-            <div class="flex-grow-1">
-            </div>
+            <button class="btn btn-outline-secondary btn-sm ms-2" title="Move Up" @onclick="MoveUp" disabled="@(IsFirst)">
+                ▲
+            </button>
+            <button class="btn btn-outline-secondary btn-sm ms-1" title="Move Down" @onclick="MoveDown" disabled="@(IsLast)">
+                ▼
+            </button>
+            <div class="flex-grow-1"></div>
             <button class="quiz-edit-question-item-delete" title="delete" @onclick="@(e=> OnDeleteQuestion.InvokeAsync(Question))">
                 🗑️
             </button>
@@ -37,5 +42,20 @@
 
     [Parameter]
     public EventCallback<Question> OnDeleteQuestion { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnMoveUp { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnMoveDown { get; set; }
+
+    [Parameter]
+    public bool IsFirst { get; set; }
+
+    [Parameter]
+    public bool IsLast { get; set; }
+
+    private async Task MoveUp() => await OnMoveUp.InvokeAsync(QuestionIndex - 1);
+    private async Task MoveDown() => await OnMoveDown.InvokeAsync(QuestionIndex - 1);
 
 }

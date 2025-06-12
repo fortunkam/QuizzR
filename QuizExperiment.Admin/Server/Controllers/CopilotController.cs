@@ -21,8 +21,8 @@ namespace QuizExperiment.Admin.Server.Controllers
         private readonly string _openAIKey;
         private readonly string _openAIDeploymentName;
 
-        [HttpGet("suggestquestion")]
-        public async Task<Question> SuggestQuestion([FromQuery] string subject)
+        [HttpGet("suggestmulitchoicequestion")]
+        public async Task<MultipleChoiceQuestion> SuggestMultipleChoiceQuestion([FromQuery] string subject)
         {
             var builder = Kernel.CreateBuilder();
             builder.AddAzureOpenAIChatCompletion(_openAIDeploymentName,
@@ -41,8 +41,34 @@ namespace QuizExperiment.Admin.Server.Controllers
 
             var result = chatResult.ToString();
 
-            var q = JsonSerializer.Deserialize<Question>(result) ?? throw new NullReferenceException("SuggestQuestion: Question q is null");
+            var q = JsonSerializer.Deserialize<MultipleChoiceQuestion>(result) ?? throw new NullReferenceException("SuggestQuestion: Question q is null");
             q.Timeout = 20;
+
+            return q;
+        }
+
+        [HttpGet("buildquiz")]
+        public async Task<QuestionSet> SuggestQuestionSet([FromQuery] string subject, [FromQuery] int questionCount)
+        {
+            var builder = Kernel.CreateBuilder();
+            builder.AddAzureOpenAIChatCompletion(_openAIDeploymentName,
+                _openAIEndpoint,
+                _openAIKey);
+
+            var kernel = builder.Build();
+            var prompts = kernel.CreatePluginFromPromptDirectory("Prompts");
+
+            var chatResult = await kernel.InvokeAsync(
+                prompts["quiz_generator"],
+                    new() {
+                        { "subject", subject },
+                        { "questionCount", questionCount.ToString() }
+                }
+            );
+
+            var result = chatResult.ToString();
+
+            var q = JsonSerializer.Deserialize<QuestionSet>(result) ?? throw new NullReferenceException("SuggestQuestion: QuestionSet q is null");
 
             return q;
         }

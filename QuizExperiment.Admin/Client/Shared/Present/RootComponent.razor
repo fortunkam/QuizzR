@@ -1,6 +1,8 @@
 ﻿@using QuizExperiment.Admin.Client.Enums
 @using QuizExperiment.Models
 @using Microsoft.AspNetCore.SignalR.Client
+@using QuizExperiment.Models.Client
+@using System.Text.Json.Serialization.Metadata
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HttpClient Http
@@ -23,12 +25,11 @@
         {
             if (_currentQuestion is not null)
             {
-                <SingleAnswerMultiSelectQuestionDisplay
-                Question="@_currentQuestion.Title" 
-                Options="@_currentQuestion.Options" 
-                QuestionEndTime="@_currentQuestionEndTime"
-                UserAnswerCount="@_userCurrentAnswers.Count" 
-                ImageUrl="@_currentQuestion.ImageUrl" />
+
+                <QuestionPicker Question="@_currentQuestion"
+                                        QuestionEndTime="@_currentQuestionEndTime"
+                                        UserAnswerCount="@_userCurrentAnswers.Count" />
+                
             }
         }
 
@@ -37,10 +38,10 @@
             if (_currentQuestion is not null)
             {
                 <QuestionAnswerChart 
-                CorrectAnswerIndex="@_currentQuestion.CorrectAnswerIndex" 
-                Options="@_currentQuestion.Options" 
-                UserAnswers="@_userCurrentAnswers" 
-                OnNextQuestion="@OnNextQuestion"  />
+                    Question="@_currentQuestion" 
+                    UserAnswers="@_userCurrentAnswers" 
+                    Users="@_users"
+                    OnNextQuestion="@OnNextQuestion"  />
             }
         }
 
@@ -54,7 +55,6 @@
 }
 
 <div class="quiz-present-audio-container">
-    @* Currently needs to be started manually, add autoplay attribute to run on startup *@
     <audio controls loop>
         <source src="/audio/background.mp3" />
     </audio>
@@ -82,7 +82,7 @@
 
     private Dictionary<string, string> _users = new Dictionary<string, string>();
 
-    private Dictionary<string,  UserAnswer> _userCurrentAnswers = new Dictionary<string, UserAnswer>();
+    private Dictionary<string,  ClientAnswerTiming> _userCurrentAnswers = new Dictionary<string, ClientAnswerTiming>();
 
     private Dictionary<string, int> _leaderboard = new Dictionary<string, int>();
     private Dictionary<string, int> _orderedLeaderboard = new Dictionary<string, int>();
@@ -159,7 +159,9 @@
         {
             throw new NullReferenceException("PresentComponent: SendQuestion: HubConnection is null");
         }
-        await _hubConnection.SendAsync("SendQuestion", _clientQuizId, _currentQuestion.Title, _currentQuestion.Options);
+        var clientQuestion = _currentQuestion.ToClientQuestion();
+
+        await _hubConnection.SendAsync("SendQuestion", _clientQuizId, clientQuestion);
 
         using var tmr = new PeriodicTimer(TimeSpan.FromSeconds(_currentQuestion.Timeout));
         await tmr.WaitForNextTickAsync(_cts.Token);
@@ -243,6 +245,10 @@
 
         _hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/quizhub"))
+            .AddJsonProtocol(options =>
+            {
+                options.PayloadSerializerOptions.TypeInfoResolver = new InheritedPolymorphismResolver();
+            })
             .Build();
 
         _hubConnection.On<string, string, string>("UserJoined", async (quizId, userName, connectionId) =>
@@ -261,9 +267,9 @@
             StateHasChanged();
         });
 
-        _hubConnection.On<string, string, int, double>("ClientAnswerReceived", async (quizId, clientConnectionId, answerIndex, timeTaken) =>
+        _hubConnection.On<string, string, ClientAnswer, double>("ClientAnswerReceived", async (quizId, clientConnectionId, answer, timeTaken) =>
         {
-            _userCurrentAnswers.Add(clientConnectionId, new UserAnswer { AnswerIndex = answerIndex, TimeTaken = timeTaken } );
+            _userCurrentAnswers.Add(clientConnectionId, new ClientAnswerTiming { Answer = answer, TimeTaken = timeTaken } );
             if(_userCurrentAnswers.Count >= _users.Count)
             {
                 await CloseQuestion();
@@ -276,7 +282,7 @@
                 {
                     { "clientQuizId", _clientQuizId },
                     { "question", _currentQuestion?.Title },
-                    { "answerIndex", answerIndex },
+                    { "answer", answer },
                     { "timeTaken", timeTaken },
                     { "clientConnectionId", clientConnectionId }
                 }
@@ -302,23 +308,24 @@
 
         var questionMaxMs = (double)(_currentQuestion.Timeout * 1000);
 
+        var correctAnswer = _currentQuestion.GetCorrectAnswer();
         var correctAnswers = _userCurrentAnswers
-            .Where(r => _currentQuestion.CorrectAnswerIndex == r.Value.AnswerIndex)
+        .Where(r => correctAnswer == r.Value.Answer)
             .OrderByDescending(r => r.Value.TimeTaken)
             .Select(r=>new { 
                 UserId = r.Key, 
-                AnswerIndex = r.Value.AnswerIndex, 
+                Answer = r.Value.Answer, 
                 Score = (int)(((questionMaxMs - r.Value.TimeTaken) / questionMaxMs) * 1000), 
                 TimeTaken = r.Value.TimeTaken  })
             .ToArray();
 
         var incorrectAnswers = _userCurrentAnswers
-            .Where(r => _currentQuestion.CorrectAnswerIndex != r.Value.AnswerIndex)
-            .Select(r=>new { UserId = r.Key, AnswerIndex = r.Value.AnswerIndex, Score = 0, TimeTaken = r.Value.TimeTaken  })
+        .Where(r => correctAnswer != r.Value.Answer)
+            .Select(r=>new { UserId = r.Key, Answer = r.Value.Answer, Score = 0, TimeTaken = r.Value.TimeTaken  })
             .ToArray();
 
         var noAnswer = _users.Where(r => !_userCurrentAnswers.ContainsKey(r.Key))
-                        .Select(r => new { UserId = r.Key, AnswerIndex = -1, Score = 0, TimeTaken = 0.0 })
+                        .Select(r => new { UserId = r.Key, Answer = (ClientAnswer)new ClientTrueFalseAnswer(), Score = 0, TimeTaken = 0.0 })
                         .ToArray();
 
         var unionAnswers = correctAnswers.Union(incorrectAnswers).ToArray();
@@ -357,7 +364,7 @@
         {
             await _hubConnection.SendAsync("SendAnswerResult", _clientQuizId,
             c.UserId,
-            _currentQuestion.CorrectAnswerIndex,
+            correctAnswer,
             _leaderboard[c.UserId],
             (_orderedLeaderboard.Keys.ToList().IndexOf(c.UserId) + 1),
             (_currentQuestionIndex + 1 >= _questionSet.Questions.Count));

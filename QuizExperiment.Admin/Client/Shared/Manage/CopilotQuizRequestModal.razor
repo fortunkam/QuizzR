@@ -1,0 +1,97 @@
+@using Microsoft.AspNetCore.Components
+@inject HttpClient Http
+@* Copilot Quiz Request Modal *@
+@if (IsVisible)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-light">
+                    <h5 class="modal-title">Request Quiz from Copilot</h5>
+                    <button type="button" class="btn-close btn-close-white" aria-label="Close" @onclick="Cancel"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <input class="form-control" @bind="Subject" placeholder="Enter subject" disabled="@( _isLoading )" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Approximate Number of Questions</label>
+                        <input class="form-control" type="number" min="1" @bind="QuestionCount" placeholder="e.g. 10" disabled="@( _isLoading )" />
+                    </div>
+                    @if (_isLoading)
+                    {
+                        <div class="row d-flex flex-row justify-content-center">
+                            <div class="my-3 loading-animation">
+                                <span class="loading-animation-item loading-animation-item-1"></span>
+                                <span class="loading-animation-item loading-animation-item-2"></span>
+                                <span class="loading-animation-item loading-animation-item-3"></span>
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel" disabled="@( _isLoading )">Cancel</button>
+                    <button type="button" class="btn btn-primary-action" @onclick="Submit" disabled="@( _isLoading )">OK</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool IsVisible = false;
+    private string? Subject;
+    private int QuestionCount = 10;
+
+    private QuestionSet? _questionSet = null;
+
+    private string? _subject;
+    private bool _isLoading = false;
+
+    public void Show()
+    {
+        Subject = string.Empty;
+        QuestionCount = 10;
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    private void Cancel()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+    private async Task Submit()
+    {
+        await GenerateQuiz();
+        // TODO: Handle the submission (e.g., call an API or raise an event)
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+    [Parameter]
+    public EventCallback<QuestionSet> AddNewQuiz { get; set; }
+
+    private async Task GenerateQuiz()
+    {
+        _isLoading = true;
+        _questionSet = null;
+        var response = await Http.GetAsync($"copilot/buildquiz?subject={System.Web.HttpUtility.UrlEncode(Subject)}&questionCount={QuestionCount}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = response.ReasonPhrase;
+            Console.WriteLine($"There was an error generating a question! {errorMessage}");
+            return;
+        }
+        _isLoading = false;
+
+        _questionSet = await response.Content.ReadFromJsonAsync<QuestionSet>();
+
+        await AddNewQuiz.InvokeAsync(_questionSet);
+    }
+}

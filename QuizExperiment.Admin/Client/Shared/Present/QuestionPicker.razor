@@ -1,0 +1,35 @@
+﻿@using QuizModels = QuizExperiment.Models
+
+@{
+    if (Question is null)
+    {
+        <p class="text-warning">Question information is not available.</p>
+    }
+    else
+    {
+        if (Question is QuizModels.MultipleChoiceQuestion mulChoiceQuestion)
+        {
+            <QuizExperiment.Admin.Client.Shared.Present.SingleAnswerMultiSelectQuestion Question="@mulChoiceQuestion" QuestionEndTime="@QuestionEndTime" UserAnswerCount="@UserAnswerCount" />
+        }
+        else if (Question is QuizModels.TrueFalseQuestion trueFalseQuestion)
+        {
+            <QuizExperiment.Admin.Client.Shared.Present.TrueFalseQuestion Question="@trueFalseQuestion" QuestionEndTime="@QuestionEndTime" UserAnswerCount="@UserAnswerCount" />
+        }
+        else
+        {
+            <p class="text-warning">Unsupported question type.</p>
+        }
+    }
+}
+
+
+@code {
+    [Parameter]
+    public QuizModels.Question? Question { get; set; }
+
+    [Parameter]
+    public DateTime QuestionEndTime { get; set; }
+
+    [Parameter]
+    public int UserAnswerCount { get; set; }
+}

@@ -17,7 +17,7 @@
 
 @code {
     private List<Question> _questions = Enumerable.Range(1, 10)
-        .Select((r,i) => new Question
+        .Select((r,i) => (Question)new MultipleChoiceQuestion
         {
             ImageUrl = i % 2 == 0 ? "https://dummyimage.com/600x400/b01eb0/000000" : "https://dummyimage.com/600x400/005420/000000" ,
             Title = $"{i}. This is a sample question?",
