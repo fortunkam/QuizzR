@@ -37,6 +37,7 @@
     @if (_userState == ClientUserState.IdleInGame)
     {
         <AnswerSummary MyAnswer="@currentAnswer" CorrectAnswer="@correctAnswer"
+                       Question="@currentQuestion"
                        CurrentScore=@_currentScore
                        Position=@_position IsLastQuestion="@_isLastQuestion" />
     }

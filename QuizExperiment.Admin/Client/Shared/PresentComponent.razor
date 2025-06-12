@@ -90,7 +90,7 @@
 
     private int _currentQuestionIndex = 0;
 
-    private MultipleChoiceQuestion? _currentQuestion = null;
+    private Question? _currentQuestion = null;
 
     private DateTime _currentQuestionEndTime;
 
@@ -133,7 +133,7 @@
             throw new IndexOutOfRangeException("PresentComponent: SendQuestion: Question index is out of range");
         }
 
-        _currentQuestion = _questionSet.Questions?[_currentQuestionIndex] as MultipleChoiceQuestion;
+        _currentQuestion = _questionSet.Questions?[_currentQuestionIndex];
         if(_currentQuestion is null)
         {
             throw new NullReferenceException("PresentComponent: SendQuestion: Current Question is null");

@@ -1,0 +1,65 @@
+@* Modal for picking a question type *@
+@{
+    if (IsVisible)
+    {
+        <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">Select Question Type</h5>
+                        <button type="button" class="btn-close btn-close-white" aria-label="Close" @onclick="Cancel"></button>
+                    </div>
+                    <div class="modal-body d-flex flex-row justify-content-around align-items-center" style="min-height:120px;">
+                        <div class="text-center">
+                            <button class="btn btn-outline-primary" @onclick="MultipleChoiceClicked">
+                                <span class="oi oi-list-rich" style="font-size:2rem;"></span><br />
+                                <span>Multiple Choice</span>
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-outline-success" @onclick="TrueFalseClicked">
+                                <span class="oi oi-check" style="font-size:2rem;"></span><br />
+                                <span>True / False</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+}
+
+@code {
+    private bool IsVisible = false;
+
+    [Parameter]
+    public EventCallback<string?> OnQuestionTypeSelected { get; set; }
+
+    public void Show() => IsVisible = true;
+
+    private async Task MultipleChoiceClicked()
+    {
+        await SelectType("multipleChoice");
+    }
+    private async Task TrueFalseClicked()
+    {
+        await SelectType("trueFalse");
+    }
+    private async Task SelectType(string type)
+    {
+        IsVisible = false;
+        await OnQuestionTypeSelected.InvokeAsync(type);
+        StateHasChanged();
+    }
+
+    private async Task Cancel()
+    {
+        IsVisible = false;
+        await OnQuestionTypeSelected.InvokeAsync(null);
+        StateHasChanged();
+    }
+}

@@ -8,10 +8,10 @@ namespace QuizExperiment.Models.Client
         [JsonPropertyName("answer")]
         public bool Answer { get; set; }
 
-        public override (string description, int index, string buttonName) GetAnswerDetails(Question question)
+        public override (string description, string index, string buttonName) GetAnswerDetails(ClientQuestion question)
         {
             var answerText = Answer ? "True" : "False";
-            return (answerText, Answer ? 1 : 0, answerText);
+            return (answerText, Answer ? "true" : "false", answerText);
         }
 
         public override bool Equals(ClientAnswer? other)

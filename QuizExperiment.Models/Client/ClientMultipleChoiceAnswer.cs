@@ -8,11 +8,11 @@ namespace QuizExperiment.Models.Client
         [JsonPropertyName("answerIndex")]
         public int AnswerIndex { get; set; }
 
-        public override (string description, int index, string buttonName) GetAnswerDetails(Question question)
+        public override (string description, string index, string buttonName) GetAnswerDetails(ClientQuestion question)
         {
             return question switch
             {
-                MultipleChoiceQuestion mcq => (mcq.Options[AnswerIndex], AnswerIndex, AnswerIndex.GetButtonNameFromIndex()),
+                ClientMultipleChoiceQuestion mcq => (mcq.Options[AnswerIndex], AnswerIndex.ToString(), AnswerIndex.GetButtonNameFromIndex()),
                 _ => throw new InvalidOperationException("Invalid question type for multiple choice answer.")
             };
         }

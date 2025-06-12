@@ -1,5 +1,11 @@
 ﻿@using QuizExperiment.Models
 @using QuizExperiment.Models.Client
+@{
+    var answerDetails = CorrectAnswer?.GetAnswerDetails(Question);
+    var correctAnswerIndex = answerDetails?.index ?? "0";
+    var correctAnswerText = answerDetails?.description ?? "Unknown answer";
+}
+
 <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
     
     @if (MyAnswer == CorrectAnswer)
@@ -11,8 +17,9 @@
     }
     else
     {
+        
         <div class="my-3 fs-2 fw-bold">Better luck next time!</div>
-        <div class="my-3 fs-4">The correct answer was @CorrectAnswer.</div>
+        <div class="my-3 fs-4">The correct answer was @correctAnswerText.</div>
         <div class="answer-icon answer-wrong">
             <span class="oi oi-x" title="icon name" aria-hidden="true"></span>
         </div>
@@ -31,6 +38,9 @@
 @code {
         [Parameter]
         public ClientAnswer? MyAnswer { get; set; }
+
+        [Parameter]
+        public ClientQuestion? Question { get; set; }
 
         [Parameter]
         public bool IsLastQuestion { get; set; }

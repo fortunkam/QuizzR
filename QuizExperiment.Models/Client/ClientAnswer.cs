@@ -12,7 +12,7 @@ namespace QuizExperiment.Models.Client
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "anwserType")]
     public abstract class ClientAnswer : IEquatable<ClientAnswer>
     {
-        public abstract (string description, int index, string buttonName) GetAnswerDetails(Question question);
+        public abstract (string description, string index, string buttonName) GetAnswerDetails(ClientQuestion question);
 
         public abstract bool Equals(ClientAnswer? other);
 

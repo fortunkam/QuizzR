@@ -17,32 +17,34 @@
                 <tbody>
                     <tr>
                         <td class="quiz-edit-question-answers-table-icon">
-                            <button class="btn btn-edit-answer btn-edit-answer-0" value="True">
+                            <button class="btn btn-edit-answer btn-edit-answer-true-false btn-edit-answer-0" value="True">
                                 <span>True</span>
                             </button>
                         </td>
                         <td class="quiz-edit-question-answers-table-answer">
                             <input type="text" class="form-control quiz-edit-question-input-answer"
-                                   placeholder="" required="required" value="True" />
+                                   value="True" readonly="readonly" />
                         </td>
                         <td class="quiz-edit-question-answers-table-correct">
                                 <input class="form-check-input" type="radio" id="flexCheckChecked1"
-                                       name="flexCheckChecked" checked="@(trueFalseQuestion.IsTrue)" />
+                                   name="flexCheckChecked" checked="@(trueFalseQuestion.IsTrue == true)"
+                                   onchange="@(() => { trueFalseQuestion.IsTrue = true; })" />
                             </td>
                         </tr>
                         <tr>
                             <td class="quiz-edit-question-answers-table-icon">
-                                <button class="btn btn-edit-answer btn-edit-answer-1" value="False">
+                            <button class="btn btn-edit-answer btn-edit-answer-true-false btn-edit-answer-1" value="False">
                                 <span>False</span>
                                 </button>
                             </td>
                             <td class="quiz-edit-question-answers-table-answer">
                                 <input type="text" class="form-control quiz-edit-question-input-answer"
-                                   placeholder="" required="required" value="False" />
+                                   value="False" readonly="readonly" />
                             </td>
                             <td class="quiz-edit-question-answers-table-correct">
                             <input class="form-check-input" type="radio" id="flexCheckChecked1"
-                                   name="flexCheckChecked" checked="@(!trueFalseQuestion.IsTrue)" />
+                                   name="flexCheckChecked" checked="@(trueFalseQuestion.IsTrue == false)"
+                                   onchange="@(() => { trueFalseQuestion.IsTrue = false; })" />
                             </td>
                         </tr>
                     </tbody>

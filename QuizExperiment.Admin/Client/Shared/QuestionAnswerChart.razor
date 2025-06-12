@@ -4,8 +4,8 @@
 
 @{
     var correctAnswer = Question?.GetCorrectAnswer();
-    var details = correctAnswer?.GetAnswerDetails(Question);
-    var correctAnswerIndex = details?.index ?? -1;
+    var details = correctAnswer?.GetAnswerDetails(Question?.ToClientQuestion());
+    var correctAnswerIndex = details?.index ?? "0";
     var correctAnswerText = details?.description ?? "Unknown answer";
     var correctButtonName = details?.buttonName ?? "Unknown";
 }

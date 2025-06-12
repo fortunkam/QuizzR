@@ -6,8 +6,8 @@
         <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
             <h1 class="h1 text-center">@Question.Title</h1>
             <div class="quiz-button-container">
-                <button class="btn btn-client-quiz btn-quiz-1" @onclick="@(e => SubmitAnswer(1))" value="1"><span>True</span></button>
-                <button class="btn btn-client-quiz btn-quiz-0" @onclick="@(e => SubmitAnswer(0))" value="0"><span>False</span></button>
+                <button class="btn-client-quiz-true-false btn-quiz-true" @onclick="@(e => SubmitAnswer(true))" value="1"><span>True</span></button>
+                <button class="btn-client-quiz-true-false btn-quiz-false" @onclick="@(e => SubmitAnswer(false))" value="2"><span>False</span></button>
 
             </div>
         </div>
@@ -22,11 +22,11 @@
     [Parameter]
     public EventCallback<ClientAnswer> OnAnswerSubmit { get; set; }
 
-    private async Task SubmitAnswer(int answerIndex)
+    private async Task SubmitAnswer(bool answerValue)
     {
         var answer = new ClientTrueFalseAnswer
         {
-            Answer = answerIndex == 1 // True if answerIndex is 1, False if 0
+            Answer = answerValue
         };
         await OnAnswerSubmit.InvokeAsync(answer);
     }

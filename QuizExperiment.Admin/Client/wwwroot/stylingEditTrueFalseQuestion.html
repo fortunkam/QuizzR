@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+
+<!-- https://www.figma.com/file/08wkqvrk4u5yiTVahK69K5/QuizzR-UI-Design?node-id=0%3A1&t=ZNtsbXYhsK2lQ5Eo-0 -->
+<html>
+<head>
+    <title>stylingtests</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="css/open-iconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+</head>
+<body style="">
+    <!--Site Nav bar-->
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand ms-4" href="#">
+                <svg width="40" height="40" class="clear">
+                    <circle cx="20" cy="7" r="7" stroke="white" stroke-width="0" fill="#ECDB33" />
+                    <circle cx="20" cy="33" r="7" stroke="white" stroke-width="0" fill="#3CDB4E" />
+                    <circle cx="7" cy="20" r="7" stroke="white" stroke-width="0" fill="#1F75FE" />
+                    <circle cx="33" cy="20" r="7" stroke="white" stroke-width="0" fill="#D04242" />
+                </svg>
+                <span class="ms-4 fs-4">QuizzR</span>
+            </a>
+            <a class="navbar-brand ms-4" href="#">
+                <span class="fs-6">Logout</span>
+            </a>
+        </div>
+    </nav>
+
+    <!--Page Title bar -->
+    <nav class="navbar navbar-dark" style="background-color: #585555; margin-top: 69px">
+        <div class="container-fluid">
+            <span class="ms-4 fs-4 text-light" style="padding-left:70px;">Quiz Editor</span>
+            <div class="d-flex flex-row align-items-center justify-content-end">
+                <div class="mx-2">
+                    <button class="btn btn-outline-danger text-light" style="min-width:80px;">Cancel</button>
+                </div>
+                <div class="mx-2">
+                    <button class="btn btn-outline-primary text-light" style="min-width:80px;">Save</button>
+                </div>
+                <div class="mx-2">
+                    <button class="btn btn-outline-warning text-light" style="min-width:80px;">Present</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!--Quiz Title bar -->
+    <nav class="navbar navbar-dark" style="background-color: #979696;">
+        <div class="container-fluid">
+            <div class="d-flex flex-row align-items-center w-50" style="padding-left:93px;">
+                <div class="pe-3">
+                    <span class="fs-5 text-light">Quiz Name</span>
+                </div>
+                <div class="flex-fill">
+                    <input type="text" class="form-control" placeholder="Quiz name" style="border-radius: 0;" required="required" />
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <nav class="navbar navbar-danger navbar-question-validation">
+        <div class="container-fluid">
+            <div class="d-flex flex-row align-items-center w-50" style="padding-left:93px;">
+                <div class="flex-fill">
+                    <span class="fs-5 text-light">Make sure the question has a correct answer, title, image and timeout!</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Waiting for answers -->
+
+    <div class="d-flex flex-column justify-content-center quiz-edit-question">
+        <div class="d-flex flex-row quiz-edit-question-list-panel flex-fill">
+            <div class="flex-grow-1 ">
+                <!-- Question Editor -->
+                <div class="quiz-edit-question-editor d-flex flex-column justify-content-start">
+                    <input type="text" class="form-control quiz-edit-question-input-text"
+                           placeholder="Quiz Question" required="required" />
+                    <div class="d-flex flex-row quiz-edit-question-panel">
+                        <div class="d-flex flex-column flex-grow-1 justify-content-start quiz-edit-question-details-panel">
+                            <div class="my-2">Enter the image URL:</div>
+                            <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-image-url"
+                                   placeholder="Image URL" required="required" />
+                            <div class="my-2">Or search for an image</div>
+                            <button class="btn btn-success btn-primary-action btn-giphy-search">
+                                GIPHY SEARCH
+                            </button>
+
+                            <div class="d-flex flex-row quiz-edit-question-input-timeout-container">
+                                <div class="quiz-edit-question-input-timeout-label"><span>Timeout</span></div>
+                                <input type="text" class="form-control quiz-edit-question-input-text quiz-edit-question-input-timeout"
+                                       placeholder="Timeout (seconds)" required="required" />
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <img class="img-fluid rounded quiz-edit-question-editor-image" src="https://via.placeholder.com/600x400" />
+                        </div>
+                    </div>
+                    <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
+                        <table class="table table-bordered quiz-edit-question-answers-table">
+                            <thead>
+                            <th colspan="2">ANSWER</th>
+                            <th>CORRECT?</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="quiz-edit-question-answers-table-icon">
+                                        <button class="btn btn-edit-answer btn-edit-answer-true-false btn-edit-answer-0" value="True">
+                                            <span>True</span>
+                                        </button>
+                                    </td>
+                                    <td class="quiz-edit-question-answers-table-answer">
+                                        <input type="text" class="form-control quiz-edit-question-input-answer"
+                                               value="True" readonly="readonly" />
+                                    </td>
+                                    <td class="quiz-edit-question-answers-table-correct">
+                                        <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="quiz-edit-question-answers-table-icon">
+                                        <button class="btn btn-edit-answer btn-edit-answer-true-false btn-edit-answer-1" value="False">
+                                            <span>False</span>
+                                        </button>
+                                    </td>
+                                    <td class="quiz-edit-question-answers-table-answer">
+                                        <input type="text" class="form-control quiz-edit-question-input-answer"
+                                               value="False" readonly="readonly" />
+                                    </td>
+                                    <td class="quiz-edit-question-answers-table-correct">
+                                        <input class="form-check-input" type="radio" id="flexCheckChecked1" name="flexCheckChecked">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="quiz-edit-question-list-container d-flex flex-column align-items-center">
+                <div class="quiz-edit-question-add-container">
+                    <select class="form-select d-inline-block w-auto me-2" @bind="selectedQuestionType">
+                        <option value="multipleChoice">Multiple Choice</option>
+                        <option value="trueFalse">True/False</option>
+                    </select>
+                    <button class="btn btn-success my-3 btn-primary-action">
+                        + NEW QUESTION
+                    </button>
+                    <button class="btn btn-success btn-copilot" style="padding:3px">
+                        <img src="images/copilot.png" style="height:30px;" />
+                    </button>
+
+                </div>
+                <div class="quiz-edit-question-count fs-5">XX questions</div>
+                <div class="d-flex flex-column quiz-edit-question-list flex-grow-1 flex-fill">
+                    
+                    <!-- Question Item -->
+                    <div class="quiz-edit-question-item d-flex flex-column align-items-center">
+                        <div class="quiz-edit-question-item-validation-icon">
+                            !
+                        </div>
+                        <div class="quiz-edit-question-item-title fw-bold">1) What if the question is super long and goes on and on and on and on and on a bit?</div>
+
+                        <img class="img-fluid rounded quiz-edit-question-item-img" src="https://via.placeholder.com/300x200" />
+
+                        <div class="d-flex quiz-edit-question-item-controls align-items-center">
+                            <button class="quiz-edit-question-item-edit" title="edit">
+                                ✏️
+                            </button>
+                            <div class="flex-grow-1">
+                            </div>
+                            <button class="quiz-edit-question-item-delete" title="delete">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Question Item -->
+                    <div class="quiz-edit-question-item d-flex flex-column align-items-center quiz-edit-question-item-validation-failed">
+                        <div class="quiz-edit-question-item-validation-icon">
+                            !
+                        </div>
+                        <div class="quiz-edit-question-item-title fw-bold">2) What if the question is super long and goes on and on and on and on and on a bit?</div>
+
+                        <img class="img-fluid rounded quiz-edit-question-item-img" src="https://via.placeholder.com/300x200" />
+
+                        <div class="d-flex quiz-edit-question-item-controls align-items-center">
+                            <button class="quiz-edit-question-item-edit" title="edit">
+                                ✏️
+                            </button>
+                            <div class="flex-grow-1">
+                            </div>
+                            <button class="quiz-edit-question-item-delete" title="delete">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+</html>

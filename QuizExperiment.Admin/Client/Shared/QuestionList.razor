@@ -2,11 +2,7 @@
 
 <div class="quiz-edit-question-list-container d-flex flex-column align-items-center">
     <div class="quiz-edit-question-add-container">
-        <select class="form-select d-inline-block w-auto me-2" @bind="selectedQuestionType">
-            <option value="multipleChoice">Multiple Choice</option>
-            <option value="trueFalse">True/False</option>
-        </select>
-        <button class="btn btn-success my-3 btn-primary-action" @onclick="AddQuestionWithType">
+        <button class="btn btn-success my-3 btn-primary-action" @onclick="ShowQuestionTypeModal">
             + NEW QUESTION
         </button>
         <button class="btn btn-success btn-copilot" style="padding:3px" data-bs-toggle="modal" data-bs-target="#copilotModal">
@@ -28,11 +24,10 @@
     </div>
 </div>
 
+<QuestionTypePickerModal @ref="_questionTypeModal" OnQuestionTypeSelected="OnQuestionTypeSelected" />
 <CopilotModal AddNewQuestion="OnAddGeneratedQuestion" />
 
-
 @code {
-
     [Parameter]
     public List<Question>? Questions { get; set; }
 
@@ -48,15 +43,23 @@
     [Parameter]
     public EventCallback<Question> OnAddGeneratedQuestion { get;set; }
 
-    private string selectedQuestionType = "multipleChoice";
+    private QuestionTypePickerModal? _questionTypeModal;
 
     private string GetQuestionCountSuffix()
     {
         return Questions?.Count == 1 ? "" : "s";
     }
 
-    private async Task AddQuestionWithType()
+    private void ShowQuestionTypeModal()
     {
-        await OnAddQuestion.InvokeAsync(selectedQuestionType);
+        _questionTypeModal?.Show();
+    }
+
+    private async Task OnQuestionTypeSelected(string? type)
+    {
+        if (!string.IsNullOrEmpty(type))
+        {
+            await OnAddQuestion.InvokeAsync(type);
+        }
     }
 }
