@@ -26,7 +26,7 @@
 
     @if (_userState == ClientUserState.WaitingForAnswer)
     {
-        <ClientQuestionPicker OnAnswerSubmit="@AnswerQuestion" Question="@currentQuestion" />
+        <QuestionPicker OnAnswerSubmit="@AnswerQuestion" Question="@currentQuestion" />
     }
 
     @if (_userState == ClientUserState.WaitForAnswerCheck)

@@ -18,7 +18,11 @@
     </div>
     <div class="my-3 fs-4">The correct answer is</div>
     <button class="btn btn-correct-answer btn-answer-@correctAnswerIndex" value="@correctButtonName"><span>@correctButtonName</span></button>
-    <div class="my-3 fs-2 fw-bold">@correctAnswerText</div>
+    @if(string.Compare(correctButtonName, correctAnswerText, true) != 0)
+    {
+        <div class="my-3 fs-2 fw-bold">@correctAnswerText</div>
+    }
+    
     @* //TODO: Re-add the answer chart back in *@
     @* <QuizExperiment.Admin.Client.Shared.Components.AnswerChart Values="@_answers" /> *@
 </div>

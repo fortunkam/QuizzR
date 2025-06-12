@@ -4,6 +4,7 @@ Return the zero-based index of the correct answer.
 The question should return json in the following format
 ---
 {
+	"questionType": "multipleChoice",
 	"title": "Quiz Question?",
 	"options": [
 		"Answer 1",

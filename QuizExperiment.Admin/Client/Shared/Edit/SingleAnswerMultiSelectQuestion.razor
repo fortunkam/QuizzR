@@ -1,13 +1,13 @@
-﻿@using QuizExperiment.Models
+﻿@using QuizModels = QuizExperiment.Models
 @using System.Text.Json
 @inject HttpClient Http
 
 @if (Question is not null)
 {
-    var multipleChoiceQuestion = Question as MultipleChoiceQuestion;
+    var multipleChoiceQuestion = Question as QuizModels.MultipleChoiceQuestion;
     if (multipleChoiceQuestion is not null && multipleChoiceQuestion.Options is not null && multipleChoiceQuestion.Options.Length == 4)
     {
-        <EditCommonQuestion Question="Question" />
+        <CommonQuestion Question="Question" />
         <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
             <table class="table table-bordered quiz-edit-question-answers-table">
                 <thead>
@@ -87,5 +87,5 @@
 
 @code {
     [Parameter]
-    public Question? Question { get; set; }
+    public QuizModels.Question? Question { get; set; }
 }

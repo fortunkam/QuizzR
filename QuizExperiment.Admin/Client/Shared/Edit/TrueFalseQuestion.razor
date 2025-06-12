@@ -1,13 +1,13 @@
-﻿@using QuizExperiment.Models
+﻿@using QuizModels = QuizExperiment.Models
 @using System.Text.Json
 @inject HttpClient Http
 
 @if (Question is not null)
 {
-    var trueFalseQuestion = Question as TrueFalseQuestion;
+    var trueFalseQuestion = Question as QuizModels.TrueFalseQuestion;
     if (trueFalseQuestion is not null)
     {
-        <EditCommonQuestion Question="Question" />
+        <CommonQuestion Question="Question" />
         <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
             <table class="table table-bordered quiz-edit-question-answers-table">
                 <thead>
@@ -55,5 +55,5 @@
 
 @code {
     [Parameter]
-    public Question? Question { get; set; }
+    public QuizModels.Question? Question { get; set; }
 }

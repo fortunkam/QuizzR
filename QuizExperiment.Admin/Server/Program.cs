@@ -14,6 +14,7 @@ builder.Services.AddControllersWithViews()
     {
         options.JsonSerializerOptions.Converters.Add(new PolymorphicQuestionConverter());
         options.JsonSerializerOptions.Converters.Add(new PolymorphicQuestionListConverter());
+        options.JsonSerializerOptions.TypeInfoResolver = new InheritedPolymorphismResolver();
         // Optionally, keep property naming policy consistent
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
     });

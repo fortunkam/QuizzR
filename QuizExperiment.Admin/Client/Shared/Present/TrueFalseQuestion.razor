@@ -1,4 +1,6 @@
-﻿@{
+﻿@using QuizModels = QuizExperiment.Models
+
+@{
     if(Question != null)
     {
         <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
@@ -32,7 +34,7 @@
 @code {
 
     [Parameter]
-    public TrueFalseQuestion? Question { get; set; }
+    public QuizModels.TrueFalseQuestion? Question { get; set; }
 
     [Parameter]
     public DateTime QuestionEndTime { get; set; }

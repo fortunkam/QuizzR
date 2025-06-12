@@ -148,7 +148,7 @@
         _question = null;
         await InvokeAsync(StateHasChanged);
 
-        var response = await Http.GetAsync($"copilot/suggestquestion?subject={System.Web.HttpUtility.UrlEncode(_subject)}");
+        var response = await Http.GetAsync($"copilot/suggestmulitchoicequestion?subject={System.Web.HttpUtility.UrlEncode(_subject)}");
 
         if (!response.IsSuccessStatusCode)
         {

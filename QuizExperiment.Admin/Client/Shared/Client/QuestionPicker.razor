@@ -9,11 +9,11 @@
     {
         if(Question is ClientMultipleChoiceQuestion mulChoiceQuestion)
         {
-            <MultipleChoiceClientQuestion Question="@mulChoiceQuestion" OnAnswerSubmit="@OnAnswerSubmit" />
+            <SingleAnswerMultiSelectQuestion Question="@mulChoiceQuestion" OnAnswerSubmit="@OnAnswerSubmit" />
         }
         else if(Question is ClientTrueFalseQuestion trueFalseQuestion)
         {
-            <TrueFalseClientQuestion Question="@trueFalseQuestion" OnAnswerSubmit="@OnAnswerSubmit" />
+            <TrueFalseQuestion Question="@trueFalseQuestion" OnAnswerSubmit="@OnAnswerSubmit" />
         }
         else
         {

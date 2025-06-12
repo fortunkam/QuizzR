@@ -21,8 +21,8 @@ namespace QuizExperiment.Admin.Server.Controllers
         private readonly string _openAIKey;
         private readonly string _openAIDeploymentName;
 
-        [HttpGet("suggestquestion")]
-        public async Task<Question> SuggestQuestion([FromQuery] string subject)
+        [HttpGet("suggestmulitchoicequestion")]
+        public async Task<MultipleChoiceQuestion> SuggestMultipleChoiceQuestion([FromQuery] string subject)
         {
             var builder = Kernel.CreateBuilder();
             builder.AddAzureOpenAIChatCompletion(_openAIDeploymentName,
@@ -41,7 +41,7 @@ namespace QuizExperiment.Admin.Server.Controllers
 
             var result = chatResult.ToString();
 
-            var q = JsonSerializer.Deserialize<Question>(result) ?? throw new NullReferenceException("SuggestQuestion: Question q is null");
+            var q = JsonSerializer.Deserialize<MultipleChoiceQuestion>(result) ?? throw new NullReferenceException("SuggestQuestion: Question q is null");
             q.Timeout = 20;
 
             return q;

@@ -1,4 +1,4 @@
-﻿@using QuizExperiment.Models
+﻿@using QuizModels = QuizExperiment.Models
 @using System.Text.Json
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HttpClient Http
@@ -75,13 +75,13 @@
                     }
                     else
                     {
-                        if(_currentQuestion is MultipleChoiceQuestion)
+                        if (_currentQuestion is QuizModels.MultipleChoiceQuestion)
                         {
-                            <EditSingleAnswerMultiSelectQuestion Question="_currentQuestion" />
+                            <SingleAnswerMultiSelectQuestion Question="_currentQuestion" />
                         }
-                        else if(_currentQuestion is TrueFalseQuestion)
+                        else if(_currentQuestion is QuizModels.TrueFalseQuestion)
                         {
-                            <EditTrueFalseQuestion Question="_currentQuestion" />
+                            <TrueFalseQuestion Question="_currentQuestion" />
                         }
                         else
                         {
@@ -93,10 +93,10 @@
                     }
                 </div>
                 <QuestionList Questions="_questions"
-                OnEditQuestion="OnEditQuestion"
-                OnDeleteQuestion="OnDeleteQuestion"
-                OnAddQuestion="OnAddQuestion"
-                OnAddGeneratedQuestion="OnAddGeneratedQuestion"/>
+                    OnEditQuestion="OnEditQuestion"
+                    OnDeleteQuestion="OnDeleteQuestion"
+                    OnAddQuestion="OnAddQuestion"
+                    OnAddGeneratedQuestion="OnAddGeneratedQuestion"/>
             </div>
         </div>
     }
@@ -136,7 +136,7 @@
         Question newQuestion;
         if (questionType == "trueFalse")
         {
-            newQuestion = new TrueFalseQuestion()
+            newQuestion = new QuizModels.TrueFalseQuestion()
             {
                 Timeout = 20,
                 ImageUrl = "",
@@ -145,7 +145,7 @@
         }
         else // default to multipleChoice
         {
-            newQuestion = new MultipleChoiceQuestion()
+            newQuestion = new QuizModels.MultipleChoiceQuestion()
             {
                 Options = new[] {"","","",""},
                 Timeout = 20,

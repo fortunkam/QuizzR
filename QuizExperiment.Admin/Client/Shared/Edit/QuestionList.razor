@@ -16,9 +16,9 @@
             foreach (var question in Questions.Select((v, index) => new { Value = v, Index = index }))
             {
                 <QuestionListItem Question="question.Value"
-                QuestionIndex=question.Index+1
-                OnEditQuestion="OnEditQuestion"
-                OnDeleteQuestion="OnDeleteQuestion" />
+                    QuestionIndex=question.Index+1
+                    OnEditQuestion="OnEditQuestion"
+                    OnDeleteQuestion="OnDeleteQuestion" />
             }
         }
     </div>
