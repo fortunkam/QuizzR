@@ -46,5 +46,31 @@ namespace QuizExperiment.Admin.Server.Controllers
 
             return q;
         }
+
+        [HttpGet("buildquiz")]
+        public async Task<QuestionSet> SuggestQuestionSet([FromQuery] string subject, [FromQuery] int questionCount)
+        {
+            var builder = Kernel.CreateBuilder();
+            builder.AddAzureOpenAIChatCompletion(_openAIDeploymentName,
+                _openAIEndpoint,
+                _openAIKey);
+
+            var kernel = builder.Build();
+            var prompts = kernel.CreatePluginFromPromptDirectory("Prompts");
+
+            var chatResult = await kernel.InvokeAsync(
+                prompts["quiz_generator"],
+                    new() {
+                        { "subject", subject },
+                        { "questionCount", questionCount.ToString() }
+                }
+            );
+
+            var result = chatResult.ToString();
+
+            var q = JsonSerializer.Deserialize<QuestionSet>(result) ?? throw new NullReferenceException("SuggestQuestion: QuestionSet q is null");
+
+            return q;
+        }
     }
 }

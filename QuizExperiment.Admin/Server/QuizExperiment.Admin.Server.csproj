@@ -12,6 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Prompts\quiz_generator\skprompt.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Prompts\quiz_subject\skprompt.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -40,6 +43,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Prompts\quiz_generator\config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Prompts\quiz_subject\config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
