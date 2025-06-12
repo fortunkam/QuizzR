@@ -13,12 +13,16 @@
     <div class="d-flex flex-column quiz-edit-question-list flex-grow-1 flex-fill">
         @if (Questions is not null)
         {
-            foreach (var question in Questions.Select((v, index) => new { Value = v, Index = index }))
+            for (int i = 0; i < Questions.Count; i++)
             {
-                <QuestionListItem Question="question.Value"
-                    QuestionIndex=question.Index+1
+                <QuestionListItem Question="Questions[i]"
+                    QuestionIndex="@(i + 1)"
                     OnEditQuestion="OnEditQuestion"
-                    OnDeleteQuestion="OnDeleteQuestion" />
+                    OnDeleteQuestion="OnDeleteQuestion"
+                    OnMoveUp="OnMoveUp"
+                    OnMoveDown="OnMoveDown"
+                    IsFirst="@(i == 0)"
+                    IsLast="@(i == Questions.Count - 1)" />
             }
         }
     </div>
@@ -41,7 +45,7 @@
     public EventCallback<string> OnAddQuestion { get; set; }
 
     [Parameter]
-    public EventCallback<Question> OnAddGeneratedQuestion { get;set; }
+    public EventCallback<Question> OnAddGeneratedQuestion { get; set; }
 
     private QuestionTypePickerModal? _questionTypeModal;
 
@@ -61,5 +65,21 @@
         {
             await OnAddQuestion.InvokeAsync(type);
         }
+    }
+
+    private void OnMoveUp(int index)
+    {
+        if (Questions == null || index <= 0 || index >= Questions.Count) return;
+        var temp = Questions[index - 1];
+        Questions[index - 1] = Questions[index];
+        Questions[index] = temp;
+    }
+
+    private void OnMoveDown(int index)
+    {
+        if (Questions == null || index < 0 || index >= Questions.Count - 1) return;
+        var temp = Questions[index + 1];
+        Questions[index + 1] = Questions[index];
+        Questions[index] = temp;
     }
 }
