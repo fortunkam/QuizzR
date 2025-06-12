@@ -290,6 +290,6 @@
             return;
         }
         await Save();
-        NavigationManager.NavigateTo($"/manage");
+        NavigationManager.NavigateTo($"/manage?path={_questionSet.FolderPath}");
     }
 }
