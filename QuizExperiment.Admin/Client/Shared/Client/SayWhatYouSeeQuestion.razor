@@ -1,0 +1,34 @@
+@using QuizExperiment.Models.Client
+
+@{
+    if(Question != null)
+    {
+        <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+            <h1 class="h1 text-center px-3">@Question.Title</h1>
+            <img class="img-fluid rounded img-quiz my-3 px-3" src="@Question.ImageUrl" />
+            <div class="quiz-button-container swys-container d-flex flex-column align-items-center w-100 px-3" style="max-width: 400px;">
+                <input type="text" class="form-control quiz-edit-question-input-answer mb-2" placeholder="Type your answer..." @bind="UserAnswer" @bind:event="oninput" id="userAnswerInput" />
+                <button class="btn btn-success btn-primary-action w-100" @onclick="SubmitAnswer">Submit</button>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public ClientSayWhatYouSeeQuestion? Question { get; set; }
+
+    [Parameter]
+    public EventCallback<ClientAnswer> OnAnswerSubmit { get; set; }
+
+    private string UserAnswer { get; set; } = string.Empty;
+
+    private async Task SubmitAnswer()
+    {
+        var answer = new ClientSayWhatYouSeeAnswer
+        {
+            Answers = new List<string> { UserAnswer }
+        };
+        await OnAnswerSubmit.InvokeAsync(answer);
+    }
+}

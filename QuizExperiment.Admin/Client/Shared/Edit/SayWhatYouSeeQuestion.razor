@@ -1,0 +1,79 @@
+﻿@using QuizModels = QuizExperiment.Models
+@using System.Text.Json
+@inject HttpClient Http
+
+@if (Question is not null)
+{
+    var sayWhatYouSeeQuestion = Question as QuizModels.SayWhatYouSeeQuestion;
+    if (sayWhatYouSeeQuestion is not null)
+    {
+        // Ensure Answers is initialized
+        if (sayWhatYouSeeQuestion.Answers == null)
+        {
+            sayWhatYouSeeQuestion.Answers = new List<string>();
+        }
+        <CommonQuestion Question="Question" />
+        <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
+            <table class="table table-bordered quiz-edit-question-answers-table">
+                <thead>
+                    <tr>
+                        <th style="width: 90%">ANSWER</th>
+                        <th style="width: 10%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < sayWhatYouSeeQuestion.Answers.Count; i++)
+                    {
+                        var answer = sayWhatYouSeeQuestion.Answers[i];
+                        var index = i; // capture the current value of i
+                        <tr>
+                            <td class="quiz-edit-question-answers-table-answer">
+                                <input type="text" class="form-control quiz-edit-question-input-answer"
+                                       placeholder="Possible answer..." required="required"
+                                       value="@answer"
+                                       @oninput="e => UpdateAnswer(index, e)" />
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" title="Remove answer" @onclick="() => RemoveAnswer(index)">✕</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-primary" @onclick="AddAnswer">Add Answer</button>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public QuizModels.Question? Question { get; set; }
+
+    private void AddAnswer()
+    {
+        if (Question is QuizModels.SayWhatYouSeeQuestion swysq)
+        {
+            if (swysq.Answers == null)
+                swysq.Answers = new List<string>();
+            swysq.Answers.Add("");
+            StateHasChanged();
+        }
+    }
+
+    private void RemoveAnswer(int index)
+    {
+        if (Question is QuizModels.SayWhatYouSeeQuestion swysq && swysq.Answers != null && index >= 0 && index < swysq.Answers.Count)
+        {
+            swysq.Answers.RemoveAt(index);
+            StateHasChanged();
+        }
+    }
+
+    private void UpdateAnswer(int index, ChangeEventArgs e)
+    {
+        if (Question is QuizModels.SayWhatYouSeeQuestion swysq && swysq.Answers != null && index >= 0 && index < swysq.Answers.Count)
+        {
+            swysq.Answers[index] = e.Value?.ToString() ?? string.Empty;
+        }
+    }
+}

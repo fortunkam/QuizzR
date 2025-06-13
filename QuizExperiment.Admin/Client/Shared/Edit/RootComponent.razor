@@ -83,6 +83,10 @@
                         {
                             <TrueFalseQuestion Question="_currentQuestion" />
                         }
+                        else if (_currentQuestion is QuizModels.SayWhatYouSeeQuestion)
+                        {
+                            <SayWhatYouSeeQuestion Question="_currentQuestion" />
+                        }
                         else
                         {
                             <div class="d-flex flex-column align-items-center">
@@ -133,27 +137,30 @@
 
     private void OnAddQuestion(string questionType)
     {
-        Question newQuestion;
-        if (questionType == "trueFalse")
+        Question newQuestion = questionType switch
         {
-            newQuestion = new QuizModels.TrueFalseQuestion()
+            "trueFalse" => new QuizModels.TrueFalseQuestion()
             {
                 Timeout = 20,
                 ImageUrl = "",
                 Title = ""
-            };
-        }
-        else // default to multipleChoice
-        {
-            newQuestion = new QuizModels.MultipleChoiceQuestion()
+            },
+            "sayWhatYouSee" => new QuizModels.SayWhatYouSeeQuestion()
+            {
+                Timeout = 40,
+                ImageUrl = "",
+                Title = "",
+                // Add any other default properties for SayWhatYouSeeQuestion here
+            },
+            _ => new QuizModels.MultipleChoiceQuestion()
             {
                 Options = new[] {"","","",""},
                 Timeout = 20,
                 ImageUrl = "",
                 Title = "",
                 CorrectAnswerIndex = -1
-            };
-        }
+            }
+        };
         _questions.Add(newQuestion);
         _currentQuestion = newQuestion;
     }

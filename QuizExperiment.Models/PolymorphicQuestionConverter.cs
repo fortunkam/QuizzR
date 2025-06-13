@@ -19,6 +19,8 @@ namespace QuizExperiment.Models
                         return JsonSerializer.Deserialize<MultipleChoiceQuestion>(root.GetRawText(), options);
                     if (type == "trueFalse")
                         return JsonSerializer.Deserialize<TrueFalseQuestion>(root.GetRawText(), options);
+                    if (type == "sayWhatYouSee")
+                        return JsonSerializer.Deserialize<SayWhatYouSeeQuestion>(root.GetRawText(), options);
                 }
                 // Fallback: treat as MultipleChoiceQuestion (legacy)
                 return JsonSerializer.Deserialize<MultipleChoiceQuestion>(root.GetRawText(), options);
@@ -33,6 +35,8 @@ namespace QuizExperiment.Models
                 writer.WriteString("questionType", "multipleChoice");
             else if (value is TrueFalseQuestion)
                 writer.WriteString("questionType", "trueFalse");
+            else if (value is SayWhatYouSeeQuestion)
+                writer.WriteString("questionType", "sayWhatYouSee");
             // Write all other properties as named properties
             var type = value.GetType();
             foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))

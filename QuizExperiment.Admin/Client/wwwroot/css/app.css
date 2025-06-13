@@ -1050,8 +1050,17 @@ nav.title-bar {
         margin-top:75px;
     }
 
+    .swys-container {
+        margin-top:0px;
+    }
+
     .multiple-choice-answer-text {
         font-size: x-small;
         height: 18px;
+    }
+
+    .img-quiz {
+        max-width: 360px;
+        margin-left: 0px;
     }
 }

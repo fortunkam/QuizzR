@@ -1,0 +1,21 @@
+﻿@page "/test/present/saywhatyouee"  
+@using QuizModels = QuizExperiment.Models  
+@layout QuizExperiment.Admin.Client.Shared.Client.Layout
+
+<QuizExperiment.Admin.Client.Shared.Present.SayWhatYouSeeQuestion Question="@_currentQuestion" QuestionEndTime="@QuestionEndTime" UserAnswerCount="@UserAnswerCount" />
+
+@code {  
+
+    private DateTime QuestionEndTime => DateTime.Now.AddMinutes(10);
+    private int UserAnswerCount => 0; // Placeholder for user answer count
+    private QuizModels.SayWhatYouSeeQuestion _currentQuestion = new QuizModels.SayWhatYouSeeQuestion
+    {  
+        Title = "This is a test Question, it goes on a bit, in fact it goes on for ages and ages and ages",    
+        ImageUrl = "https://placehold.co/600x400"
+    };  
+
+    private void AnswerQuestion(QuizModels.Client.ClientAnswer answer)
+    {
+        Console.WriteLine($"User answered: {answer}");
+    }  
+}

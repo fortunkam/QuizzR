@@ -9,6 +9,7 @@ namespace QuizExperiment.Models.Client
 {
     [JsonDerivedType(typeof(ClientMultipleChoiceAnswer), "multipleChoice")]
     [JsonDerivedType(typeof(ClientTrueFalseAnswer), "trueFalse")]
+    [JsonDerivedType(typeof(ClientSayWhatYouSeeAnswer), "sayWhatYouSee")]
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "anwserType")]
     public abstract class ClientAnswer : IEquatable<ClientAnswer>
     {
