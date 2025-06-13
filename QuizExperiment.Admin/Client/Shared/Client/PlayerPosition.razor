@@ -1,11 +1,11 @@
 ﻿@using QuizExperiment.Models
 <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
-    <div class="my-3 fs-2 fw-bold">Well done!</div>
-    <div class="my-3 fs-4">You came @Position@(Position.GetSuffix()) with a score of @Score</div>
+    <div class="my-3 fs-2 fw-bold px-3 text-center">Well done!</div>
+    <div class="my-3 fs-4 px-3 text-center">You came @Position@(Position.GetSuffix()) with a score of @Score</div>
     <div class="player-position-icon-container">
         <p class="player-icon text-center">@Icon</p>
     </div>
-    <div class="my-3 fs-4">Thanks for playing</div>
+    <div class="my-3 fs-4 px-3 text-center">Thanks for playing</div>
 </div>
 
 @code {

@@ -1,0 +1,19 @@
+﻿@page "/test/client/truefalse"  
+@using QuizModels = QuizExperiment.Models.Client  
+@layout QuizExperiment.Admin.Client.Shared.Client.Layout
+
+<QuizExperiment.Admin.Client.Shared.Client.TrueFalseQuestion Question="@_currentQuestion"  
+OnAnswerSubmit="@AnswerQuestion" />  
+
+@code {  
+    private QuizModels.ClientTrueFalseQuestion _currentQuestion = new QuizModels.ClientTrueFalseQuestion
+    {  
+        Title = "This is a test Question, it goes on a bit, in fact it goes on for ages and ages and ages",    
+        ImageUrl = "https://imgur.com/NkMONh3"  
+    };  
+
+    private void AnswerQuestion(QuizModels.ClientAnswer answerIndex)
+    {
+        Console.WriteLine($"User answered: {answerIndex}");  
+    }  
+}

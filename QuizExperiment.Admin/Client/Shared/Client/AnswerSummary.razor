@@ -9,28 +9,28 @@
     
     @if (MyAnswer == CorrectAnswer)
     {
-        <div class="my-3 fs-2 fw-bold">Correct!</div>
+        <div class="my-3 fs-2 fw-bold px-3 text-center">Correct!</div>
         <div class="answer-icon answer-correct">
             <span class="oi oi-check" title="icon name" aria-hidden="true"></span>
         </div>
     }
     else
     {
-        
-        <div class="my-3 fs-2 fw-bold">Better luck next time!</div>
-        <div class="my-3 fs-4">The correct answer was @correctAnswerText.</div>
+
+        <div class="my-3 fs-2 fw-bold px-3 text-center">Better luck next time!</div>
+        <div class="my-3 fs-4 px-3 text-center">The correct answer was <strong>@correctAnswerText</strong>.</div>
         <div class="answer-icon answer-wrong">
             <span class="oi oi-x" title="icon name" aria-hidden="true"></span>
         </div>
     }
     @if (!IsLastQuestion)
     {
-        <div class="my-3 fs-4">You are in @Position@(Position.GetSuffix()) place with @CurrentScore points</div>
-        <div class="my-3 fs-4">Another question is on its way!</div>
+        <div class="my-3 fs-4 px-3 text-center">You are in @Position@(Position.GetSuffix()) place with @CurrentScore points</div>
+        <div class="my-3 fs-4 px-3 text-center">Another question is on its way!</div>
     }
     else
     {
-        <div class="my-3 fs-4">That was the last question, check the presenters screen to see how you did!</div>
+        <div class="my-3 fs-4 px-3 text-center">That was the last question, check the presenters screen to see how you did!</div>
     }
 </div>
 

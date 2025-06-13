@@ -5,13 +5,13 @@
     {
 
         <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
-            <h1 class="h1 text-center">@Question.Title</h1>
+            <h1 class="h1 text-center quiz-client-title px-3">@Question.Title</h1>
             <div class="quiz-button-container">
                 @for (var i = 0; i < Question.Options?.Count; i++)
                 {
                     var answer = Question.Options[i];
                     var index = i;
-                    <button class="btn btn-client-quiz btn-quiz-@i" @onclick="@(e => SubmitAnswer(index))" value="@index"><span>@(index.GetButtonNameFromIndex())</span></button>
+                    <button class="btn btn-client-quiz btn-quiz-@i" @onclick="@(e => SubmitAnswer(index))" value="@index"><span>@(index.GetButtonNameFromIndex())</span><span class="multiple-choice-answer-text">@answer</span></button>
                 }
 
             </div>
