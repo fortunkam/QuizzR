@@ -1,0 +1,13 @@
+﻿@page "/test/client/username"  
+@layout QuizExperiment.Admin.Client.Shared.Client.Layout
+
+<QuizExperiment.Admin.Client.Shared.Client.UserName OnUserNameSubmit="HandleUserNameSubmit"  />
+
+@code {  
+    private void HandleUserNameSubmit(string userName)
+    {
+        // Handle the submitted username
+        // Potentially invoke a method to set the username in a service or state
+        Console.WriteLine($"Username submitted: {userName}");
+    }
+}

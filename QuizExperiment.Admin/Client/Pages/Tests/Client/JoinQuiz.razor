@@ -1,0 +1,13 @@
+﻿@page "/test/client/joinquiz"  
+@layout QuizExperiment.Admin.Client.Shared.Client.Layout
+
+<QuizExperiment.Admin.Client.Shared.Client.JoinQuiz OnQuizIdSubmit="@HandleQuizIdSubmit"  />
+
+@code {  
+    private void HandleQuizIdSubmit(string quizId)
+    {
+        // Handle the submitted quiz ID
+        Console.WriteLine($"Quiz ID submitted: {quizId}");
+        // Potentially invoke a method to initiate the quiz based on the quiz ID
+    }
+}
