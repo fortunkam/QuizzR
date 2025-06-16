@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -15,22 +15,22 @@
 
   <ItemGroup>
     <PackageReference Include="blazor-dragdrop" Version="2.6.1" />
-    <PackageReference Include="BlazorApplicationInsights" Version="3.0.4" />
-    <PackageReference Include="Blazored.Toast" Version="4.1.0" />
-    <PackageReference Include="Blazorise" Version="1.4.2" />
-    <PackageReference Include="Blazorise.Animate" Version="1.4.2" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="1.4.2" />
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.4.2" />
-    <PackageReference Include="Blazorise.Charts" Version="1.4.2" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.4.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.12" />
-    <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="8.0.1" />
+    <PackageReference Include="BlazorApplicationInsights" Version="3.2.1" />
+    <PackageReference Include="Blazored.Toast" Version="4.2.1" />
+    <PackageReference Include="Blazorise" Version="1.7.7" />
+    <PackageReference Include="Blazorise.Animate" Version="1.7.7" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="1.7.7" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.7" />
+    <PackageReference Include="Blazorise.Charts" Version="1.7.7" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.6" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="9.0.6" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="System.Text.Json" Version="9.0.6" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 	
