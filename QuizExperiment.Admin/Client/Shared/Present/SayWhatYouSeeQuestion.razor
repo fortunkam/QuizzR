@@ -1,0 +1,31 @@
+@using QuizModels = QuizExperiment.Models
+
+@{
+    if(Question != null)
+    {
+        <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+            <div class="question-progress-container">
+                <div class="question-player-count">
+                    <div class="fs-4">PLAYERS ANSWERED</div>
+                    <div class="fs-4">@UserAnswerCount</div>
+                </div>
+                <CountDownTimer EndDate="@QuestionEndTime" />
+            </div>
+            <div class="question-container d-flex flex-column justify-content-center align-items-center">
+                <div class="quiz-admin-question-title my-3 fs-1 fw-bold px-3 text-center">@Question.Title</div>
+                <img class="img-fluid rounded img-quiz" src="@Question.ImageUrl" />
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public QuizModels.SayWhatYouSeeQuestion? Question { get; set; }
+
+    [Parameter]
+    public DateTime QuestionEndTime { get; set; }
+
+    [Parameter]
+    public int UserAnswerCount { get; set; }
+}

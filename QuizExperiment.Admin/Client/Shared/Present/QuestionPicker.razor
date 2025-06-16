@@ -15,6 +15,10 @@
         {
             <QuizExperiment.Admin.Client.Shared.Present.TrueFalseQuestion Question="@trueFalseQuestion" QuestionEndTime="@QuestionEndTime" UserAnswerCount="@UserAnswerCount" />
         }
+        else if (Question is QuizModels.SayWhatYouSeeQuestion sayWhatYouSeeQuestion)
+        {
+            <QuizExperiment.Admin.Client.Shared.Present.SayWhatYouSeeQuestion Question="@sayWhatYouSeeQuestion" QuestionEndTime="@QuestionEndTime" UserAnswerCount="@UserAnswerCount" />
+        }
         else
         {
             <p class="text-warning">Unsupported question type.</p>

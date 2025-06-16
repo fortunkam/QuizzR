@@ -1,0 +1,39 @@
+﻿@page "/test/client/answersummary/saywhatyousee"  
+@using QuizModels = QuizExperiment.Models.Client
+@layout QuizExperiment.Admin.Client.Shared.Client.Layout
+
+<QuizExperiment.Admin.Client.Shared.Client.AnswerSummary   MyAnswer="@myAnswer"
+                                                                Question="@question"
+                                                                IsLastQuestion="false"
+                                                                CorrectAnswer="@correctAnswer"
+                                                                CurrentScore="0"
+                                                                Position="1"
+/>
+
+@code {
+    QuizModels.ClientSayWhatYouSeeAnswer myAnswer = new QuizModels.ClientSayWhatYouSeeAnswer
+    {
+        Answers = new List<string>
+        {
+            "Dog"
+        }
+    };
+
+    QuizModels.ClientSayWhatYouSeeQuestion question = new QuizModels.ClientSayWhatYouSeeQuestion
+    {
+        Title = "This is a test Question, it goes on a bit, in fact it goes on for ages and ages and ages",
+        ImageUrl = "https://imgur.com/NkMONh3",
+        
+    };
+
+    QuizModels.ClientSayWhatYouSeeAnswer correctAnswer = new QuizModels.ClientSayWhatYouSeeAnswer
+    {
+        Answers = new List<string>
+        {
+            "One",
+            "Two",
+            "Three"
+        }
+    };
+
+}

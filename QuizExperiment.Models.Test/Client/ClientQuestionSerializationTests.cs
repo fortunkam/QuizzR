@@ -32,5 +32,44 @@ namespace QuizExperiment.Models.Test
             Assert.True(doc.RootElement.TryGetProperty("questionType", out _),
                     $"A question is missing the 'questionType' property: {question}");
         }
+
+        [Fact]
+        public void SayWhatYouSeeStringEqualityComparer_IsCaseInsensitive()
+        {
+            // Arrange
+            var comparer = new SayWhatYouSeeStringEqualityComparer();
+            var answer1 = "Hello World";
+            var answer2 = "hello world";
+
+            // Act
+            var areEqual = comparer.Equals(answer1, answer2);
+
+            // Assert
+            Assert.True(areEqual, "SayWhatYouSeeStringEqualityComparer should treat answers as equal regardless of case.");
+        }
+
+        [Fact]
+        public void ClientSayWhatYouSeeAnswer_Validation()
+        {
+
+            var answer1 = new ClientSayWhatYouSeeAnswer
+            {
+                Answers = new List<string>
+                {
+                    "one"
+                }
+            };
+
+            var answer2 = new ClientSayWhatYouSeeAnswer
+            {
+                Answers = new List<string>
+                {
+                    "One",
+                    "Two"
+                }
+            };
+
+            Assert.True(answer1 == answer2);
+        }
     }
 }

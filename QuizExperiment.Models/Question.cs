@@ -5,6 +5,7 @@ namespace QuizExperiment.Models
 {
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "questionType")]
     [JsonDerivedType(typeof(MultipleChoiceQuestion), "multipleChoice")]
+    [JsonDerivedType(typeof(SayWhatYouSeeQuestion), "sayWhatYouSee")]
     [JsonDerivedType(typeof(TrueFalseQuestion), "trueFalse")]
     public abstract class Question
     {

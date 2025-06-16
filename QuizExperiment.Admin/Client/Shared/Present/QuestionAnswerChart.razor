@@ -14,7 +14,12 @@
 
     var correctAnswerPercentage = ((int)Math.Round(totalAnswers > 0 ? (double)correctAnswerCount / totalAnswers * 100 : 0, 0)).ToString() + "%";
     var fastestUserId = UserAnswers?.Where(r => r.Value.Answer == correctAnswer).OrderBy(r => r.Value.TimeTaken).FirstOrDefault();
-    var fastestUser = Users[fastestUserId?.Key];
+    var fastestUser = "";
+    if (fastestUserId != null && fastestUserId?.Key != null && Users.ContainsKey(fastestUserId?.Key))
+    {
+        fastestUser = Users[fastestUserId?.Key];
+    }
+    
 
 }
 
@@ -25,19 +30,27 @@
         </button>
     </div>
     <div class="my-3 fs-4">The correct answer is</div>
-    <button class="btn btn-correct-answer btn-answer-@correctAnswerIndex" value="@correctButtonName"><span>@correctButtonName</span></button>
+    @if (!string.IsNullOrWhiteSpace(correctButtonName))
+    {
+        <button class="btn btn-correct-answer btn-answer-@correctAnswerIndex" value="@correctButtonName"><span>@correctButtonName</span></button>
+    }
+
     @if(string.Compare(correctButtonName, correctAnswerText, true) != 0)
     {
         <div class="my-3 fs-2 fw-bold">@correctAnswerText</div>
     }
 
     @{
-        <div class="my-3 fs-3 fw-bold">@correctAnswerPercentage of people got the correct answer</div>
-        if(fastestUserId != null)
+        if (fastestUserId != null && fastestUserId?.Key != null)
         {
+            <div class="my-3 fs-3 fw-bold">@correctAnswerPercentage of people got the correct answer</div>
             <div class="my-3 fs-3 fw-bold">🏎️@fastestUser was the fastest!🏁</div>
         }
-        
+        else
+        {
+            <div class="my-3 fs-3 fw-bold">No one got the correct answer</div>
+        }
+
     }
 
     

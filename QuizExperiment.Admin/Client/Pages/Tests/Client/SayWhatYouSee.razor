@@ -1,0 +1,19 @@
+﻿@page "/test/client/saywhatyouee"  
+@using QuizModels = QuizExperiment.Models.Client  
+@layout QuizExperiment.Admin.Client.Shared.Client.Layout
+
+<QuizExperiment.Admin.Client.Shared.Client.SayWhatYouSeeQuestion Question="@_currentQuestion"  
+OnAnswerSubmit="@AnswerQuestion" />  
+
+@code {  
+    private QuizModels.ClientSayWhatYouSeeQuestion _currentQuestion = new QuizModels.ClientSayWhatYouSeeQuestion
+    {  
+        Title = "This is a test Question, it goes on a bit, in fact it goes on for ages and ages and ages",    
+        ImageUrl = "https://placehold.co/600x400"
+    };  
+
+    private void AnswerQuestion(QuizModels.ClientAnswer answer)
+    {
+        Console.WriteLine($"User answered: {answer}");  
+    }  
+}
