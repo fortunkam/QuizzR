@@ -16,7 +16,7 @@ namespace QuizExperiment.Models.Client
 
         public int GetHashCode([DisallowNull] string obj)
         {
-            return obj.GetHashCode();
+            return obj.ToLowerInvariant().GetHashCode();
         }
     }
 }
