@@ -231,13 +231,18 @@
 
     private async Task SaveAndPresent()
     {
+        var query_string = "";
+        if (!string.IsNullOrWhiteSpace(FolderPath))
+        {
+            query_string = "?path=" + FolderPath;
+        }
         if (!AreAllQuestionsValid)
         {
             ShowValidationAlertMessage();
             return;
         }
         await Save();
-        NavigationManager.NavigateTo($"/present/{_questionSet?.Id}");
+        NavigationManager.NavigateTo($"/present/{_questionSet?.Id}{query_string}");
     }
 
     private async Task SaveAndContinue()
