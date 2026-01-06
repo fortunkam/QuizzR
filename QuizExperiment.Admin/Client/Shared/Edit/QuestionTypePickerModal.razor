@@ -28,6 +28,12 @@
                                 <span>Type the Answer</span>
                             </button>
                         </div>
+                        <div class="text-center">
+                            <button class="btn btn-outline-info" @onclick="GuessTheNumberClicked">
+                                <span class="oi oi-calculator" style="font-size:2rem;"></span><br />
+                                <span>Guess the Number</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="modal-footer bg-light">
                         <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
@@ -58,6 +64,10 @@
     private async Task SayWhatYouSeeClicked()
     {
         await SelectType("sayWhatYouSee");
+    }
+    private async Task GuessTheNumberClicked()
+    {
+        await SelectType("guessTheNumber");
     }
     private async Task SelectType(string type)
     {
