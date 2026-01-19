@@ -29,5 +29,6 @@
       "correctAnswerIndex": 2
     }
   ],
-  "folderPath": null
+  "folderPath": null,
+  "defaultTimeout": 30
 }

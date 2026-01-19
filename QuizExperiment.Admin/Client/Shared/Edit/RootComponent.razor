@@ -48,6 +48,22 @@
                 </div>
             </div>
         </nav>
+        <!--Default Timeout bar -->
+        <nav class="navbar navbar-dark" style="background-color: #979696;">
+            <div class="container-fluid">
+                <div class="d-flex flex-row align-items-center" style="padding-left:93px;">
+                    <div class="pe-3">
+                        <span class="fs-5 text-light">Default Timeout (seconds)</span>
+                    </div>
+                    <div class="pe-3" style="width: 150px;">
+                        <input @bind="@_questionSet.DefaultTimeout" type="number" min="1" class="form-control" placeholder="e.g. 30" />
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" @onclick="ApplyDefaultTimeoutToAllQuestions">Apply to All Questions</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
         if (!AreAllQuestionsValid)
         {
@@ -303,5 +319,23 @@
         }
         await Save();
         NavigationManager.NavigateTo($"/manage?path={_questionSet.FolderPath}");
+    }
+
+    private void ApplyDefaultTimeoutToAllQuestions()
+    {
+        if (_questionSet?.DefaultTimeout > 0)
+        {
+            foreach (var question in _questions)
+            {
+                question.Timeout = _questionSet.DefaultTimeout.Value;
+            }
+            string message = $"Applied timeout of {_questionSet.DefaultTimeout.Value} seconds to all {_questions.Count} questions.";
+            toastService.ShowSuccess(message);
+        }
+        else
+        {
+            string message = "Please enter a valid timeout value (greater than 0).";
+            toastService.ShowError(message);
+        }
     }
 }
