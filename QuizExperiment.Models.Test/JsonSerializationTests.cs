@@ -85,5 +85,74 @@ namespace QuizExperiment.Models.Test
                     $"A question is missing the 'questionType' property: {question}");
             }
         }
+
+        [Fact]
+        public void DeserializeQuestionSetWithDefaultTimeout()
+        {
+            // Arrange
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new PolymorphicQuestionConverter());
+            options.Converters.Add(new PolymorphicQuestionListConverter());
+            options.PropertyNamingPolicy = null;
+
+            // Act
+            var questionSet = new QuestionSet
+            {
+                Id = "test-id",
+                Title = "Test Quiz",
+                DefaultTimeout = 45,
+                Questions = new List<Question>
+                {
+                    new MultipleChoiceQuestion
+                    {
+                        Title = "Test Question",
+                        Options = new[] { "A", "B", "C", "D" },
+                        CorrectAnswerIndex = 0,
+                        Timeout = 30
+                    }
+                }
+            };
+            var json = JsonSerializer.Serialize(questionSet, options);
+            var deserializedQuestionSet = JsonSerializer.Deserialize<QuestionSet>(json, options);
+
+            // Assert
+            Assert.NotNull(deserializedQuestionSet);
+            Assert.Equal(45, deserializedQuestionSet.DefaultTimeout);
+            Assert.Equal("Test Quiz", deserializedQuestionSet.Title);
+        }
+
+        [Fact]
+        public void DeserializeQuestionSetWithoutDefaultTimeout()
+        {
+            // Arrange
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new PolymorphicQuestionConverter());
+            options.Converters.Add(new PolymorphicQuestionListConverter());
+            options.PropertyNamingPolicy = null;
+
+            // Act
+            var questionSet = new QuestionSet
+            {
+                Id = "test-id",
+                Title = "Test Quiz",
+                Questions = new List<Question>
+                {
+                    new MultipleChoiceQuestion
+                    {
+                        Title = "Test Question",
+                        Options = new[] { "A", "B", "C", "D" },
+                        CorrectAnswerIndex = 0,
+                        Timeout = 30
+                    }
+                }
+            };
+            var json = JsonSerializer.Serialize(questionSet, options);
+            var deserializedQuestionSet = JsonSerializer.Deserialize<QuestionSet>(json, options);
+
+            // Assert
+            Assert.NotNull(deserializedQuestionSet);
+            Assert.Null(deserializedQuestionSet.DefaultTimeout);
+            Assert.Equal("Test Quiz", deserializedQuestionSet.Title);
+        }
     }
 }
