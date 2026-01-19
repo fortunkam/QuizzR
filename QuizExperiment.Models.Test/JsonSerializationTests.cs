@@ -5,6 +5,15 @@ namespace QuizExperiment.Models.Test
 {
     public class JsonSerializationTests
     {
+        private static JsonSerializerOptions GetJsonSerializerOptions()
+        {
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new PolymorphicQuestionConverter());
+            options.Converters.Add(new PolymorphicQuestionListConverter());
+            options.PropertyNamingPolicy = null;
+            return options;
+        }
+
         [Fact]
         public void DeserializeAndReserialize_V1Schema_PrintsOutput()
         {
@@ -18,10 +27,7 @@ namespace QuizExperiment.Models.Test
                 jsonPath = Path.GetFullPath(jsonPath);
             }
             var json = File.ReadAllText(jsonPath);
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new PolymorphicQuestionConverter());
-            options.Converters.Add(new PolymorphicQuestionListConverter());
-            options.PropertyNamingPolicy = null;
+            var options = GetJsonSerializerOptions();
 
             // Act
             var questionSet = JsonSerializer.Deserialize<QuestionSet>(json, options);
@@ -45,10 +51,7 @@ namespace QuizExperiment.Models.Test
         {
             // Arrange
             var baseDir = AppContext.BaseDirectory;
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new PolymorphicQuestionConverter());
-            options.Converters.Add(new PolymorphicQuestionListConverter());
-            options.PropertyNamingPolicy = null;
+            var options = GetJsonSerializerOptions();
 
             // Act
             var questionSet = new QuestionSet
@@ -90,10 +93,7 @@ namespace QuizExperiment.Models.Test
         public void DeserializeQuestionSetWithDefaultTimeout()
         {
             // Arrange
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new PolymorphicQuestionConverter());
-            options.Converters.Add(new PolymorphicQuestionListConverter());
-            options.PropertyNamingPolicy = null;
+            var options = GetJsonSerializerOptions();
 
             // Act
             var questionSet = new QuestionSet
@@ -125,10 +125,7 @@ namespace QuizExperiment.Models.Test
         public void DeserializeQuestionSetWithoutDefaultTimeout()
         {
             // Arrange
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new PolymorphicQuestionConverter());
-            options.Converters.Add(new PolymorphicQuestionListConverter());
-            options.PropertyNamingPolicy = null;
+            var options = GetJsonSerializerOptions();
 
             // Act
             var questionSet = new QuestionSet
