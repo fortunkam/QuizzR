@@ -21,6 +21,20 @@ The project consists of...
 9. Commit the changes, this should cause the action to run and deploy everything
 10. Create and present new quizzes using <APPNAME>.azurewebsites.net/manage, players can join using <APPNAME>.azurewebsites.net
 
+## Troubleshooting the Azure welcome page
+
+If App Service shows the default Azure .NET welcome page after a successful deployment, check the startup command under **Configuration > General settings** (or **Settings > Stack settings** in the newer portal). It must be:
+
+```text
+dotnet QuizExperiment.Admin.Server.dll
+```
+
+The hosted Blazor publish output contains both client and server runtime configurations, so do not rely on App Service to infer the server entry point. The infrastructure and application workflows explicitly set this command. Save the setting and restart the app to apply it to an existing deployment.
+
+The beta workflow deploys to `quizzr-webapp-beta`; the main workflow deploys to `quizzr-webapp`. To redeploy manually, run the corresponding application workflow from **Actions > Run workflow**, selecting the desired branch for beta or `main` for production. Pull request builds do not deploy to production. Both workflows verify that the deployed URL returns the QuizzR page rather than treating ZIP deployment success as proof that the application started.
+
+If the page still does not load, inspect **Log stream** for startup failures and confirm that `QuizExperiment.Admin.Server.dll`, its runtime configuration, and `wwwroot/index.html` are present under `/home/site/wwwroot`.
+
 ## How to run a quiz
 
 1. Create a quiz using the `/manage` url.

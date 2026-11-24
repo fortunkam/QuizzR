@@ -13,7 +13,7 @@ namespace QuizExperiment.Models.Test
             var jsonPath = Path.Combine(baseDir, "TestData", "v1SchemaQuestionSet.json");
             if (!File.Exists(jsonPath))
             {
-                // Try to walk up to the project directory if running from bin/Debug/net8.0
+                // Try to walk up to the project directory if running from bin/Debug/net10.0
                 jsonPath = Path.Combine(baseDir, "..", "..", "..", "TestData", "v1SchemaQuestionSet.json");
                 jsonPath = Path.GetFullPath(jsonPath);
             }

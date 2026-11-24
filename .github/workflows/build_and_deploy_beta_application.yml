@@ -24,7 +24,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -69,6 +69,22 @@ jobs:
         app-name: ${{ env.APPNAME }}
         slot-name: production
         package: website
+        startup-command: 'dotnet QuizExperiment.Admin.Server.dll'
+
+    - name: Verify QuizzR is serving the application
+      env:
+        APP_URL: ${{ steps.deploywebapp.outputs.webapp-url }}
+      run: |
+        for attempt in {1..12}; do
+          if curl --fail --silent --show-error --max-time 20 "$APP_URL/" -o response.html &&
+             grep -Fq '<title>QuizzR - Fun and Games with Microsoft Blazor and SignalR</title>' response.html; then
+            exit 0
+          fi
+          echo "QuizzR is not ready (attempt $attempt/12)."
+          sleep 10
+        done
+        echo "::error::The deployed site did not serve the QuizzR page. Check App Service startup logs."
+        exit 1
 
     - name: az cli logout
       run: az logout

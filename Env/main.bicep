@@ -15,8 +15,8 @@ param workbookName string = '5ebb021f-9af7-4d88-8a01-4e1e1ab81402'
 param location string = resourceGroup().location
 
 @description('The Runtime stack of current web app')
-param linuxFxVersion string = 'DOTNETCORE|9.0'
-param linuxFxBetaVersion string = 'DOTNETCORE|9.0'
+param linuxFxVersion string = 'DOTNETCORE|10.0'
+param linuxFxBetaVersion string = 'DOTNETCORE|10.0'
 
 @secure()
 param giphyApiKey string
@@ -99,6 +99,7 @@ resource webApplication 'Microsoft.Web/sites@2021-03-01' = {
     serverFarmId: appServicePlan.id
     siteConfig: {
       linuxFxVersion: linuxFxVersion
+      appCommandLine: 'dotnet QuizExperiment.Admin.Server.dll'
     }
   }
   identity: {
@@ -118,6 +119,7 @@ resource webApplicationBeta 'Microsoft.Web/sites@2021-03-01' = {
     serverFarmId: appServicePlan.id
     siteConfig: {
       linuxFxVersion: linuxFxBetaVersion
+      appCommandLine: 'dotnet QuizExperiment.Admin.Server.dll'
     }
   }
   identity: {
@@ -247,4 +249,3 @@ resource funcworkbook 'Microsoft.Insights/workbooks@2021-08-01' = {
 }
 
 output webApplicationPrincipalId string = webApplication.identity.principalId
-
