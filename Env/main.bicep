@@ -99,6 +99,7 @@ resource webApplication 'Microsoft.Web/sites@2021-03-01' = {
     serverFarmId: appServicePlan.id
     siteConfig: {
       linuxFxVersion: linuxFxVersion
+      appCommandLine: 'dotnet QuizExperiment.Admin.Server.dll'
     }
   }
   identity: {
@@ -118,6 +119,7 @@ resource webApplicationBeta 'Microsoft.Web/sites@2021-03-01' = {
     serverFarmId: appServicePlan.id
     siteConfig: {
       linuxFxVersion: linuxFxBetaVersion
+      appCommandLine: 'dotnet QuizExperiment.Admin.Server.dll'
     }
   }
   identity: {
