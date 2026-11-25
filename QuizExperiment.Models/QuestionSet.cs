@@ -27,5 +27,8 @@ namespace QuizExperiment.Models
 
         [JsonPropertyName("folderPath")]
         public string? FolderPath { get; set; }
+
+        [JsonPropertyName("defaultTimeout")]
+        public int? DefaultTimeout { get; set; }
     }
 }
