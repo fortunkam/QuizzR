@@ -13,6 +13,7 @@ namespace QuizExperiment.Models.Client
     [JsonDerivedType(typeof(ClientMultipleChoiceQuestion), "multipleChoice")]
     [JsonDerivedType(typeof(ClientTrueFalseQuestion), "trueFalse")]
     [JsonDerivedType(typeof(ClientSayWhatYouSeeQuestion), "sayWhatYouSee")]
+    [JsonDerivedType(typeof(ClientGuessTheNumberQuestion), "guessTheNumber")]
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "questionType")]
     public abstract class ClientQuestion
     {

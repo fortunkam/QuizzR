@@ -68,6 +68,15 @@ namespace QuizExperiment.Models.Test
                         Title = "The sky is blue.",
                         IsTrue = true,
                         Timeout = 15
+                    },
+                    new GuessTheNumberQuestion
+                    {
+                        Title = "Guess the number",
+                        ImageUrl = "https://example.com/image.png",
+                        MinValue = 1,
+                        MaxValue = 100,
+                        CorrectAnswer = 42,
+                        Timeout = 30
                     }
                 }
             };

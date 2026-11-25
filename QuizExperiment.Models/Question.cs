@@ -7,6 +7,7 @@ namespace QuizExperiment.Models
     [JsonDerivedType(typeof(MultipleChoiceQuestion), "multipleChoice")]
     [JsonDerivedType(typeof(SayWhatYouSeeQuestion), "sayWhatYouSee")]
     [JsonDerivedType(typeof(TrueFalseQuestion), "trueFalse")]
+    [JsonDerivedType(typeof(GuessTheNumberQuestion), "guessTheNumber")]
     public abstract class Question
     {
         [JsonPropertyName("title")]

@@ -19,6 +19,10 @@
         {
             <SayWhatYouSeeQuestion Question="@sayWhatYouSeeQuestion" OnAnswerSubmit="@OnAnswerSubmit" />
         }
+        else if(Question is ClientGuessTheNumberQuestion guessTheNumberQuestion)
+        {
+            <GuessTheNumberQuestion Question="@guessTheNumberQuestion" OnAnswerSubmit="@OnAnswerSubmit" />
+        }
         else
         {
             <p class="text-warning">Unsupported question type.</p>

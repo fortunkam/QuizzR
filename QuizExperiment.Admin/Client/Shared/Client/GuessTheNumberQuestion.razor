@@ -1,0 +1,56 @@
+@using QuizExperiment.Models.Client
+
+@{
+    if(Question != null)
+    {
+        <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center quiz-page">
+            <h1 class="h1 text-center quiz-client-title px-3">@Question.Title</h1>
+            <div class="quiz-button-container">
+                <div class="d-flex flex-column align-items-center p-4">
+                    <p class="text-light fs-5 mb-3">Enter a number between @Question.MinValue and @Question.MaxValue</p>
+                    <input type="number" 
+                           class="form-control form-control-lg text-center mb-3" 
+                           style="max-width: 300px; font-size: 2rem;"
+                           placeholder="Your guess"
+                           min="@Question.MinValue"
+                           max="@Question.MaxValue"
+                           @bind-value="userGuess" />
+                    <button class="btn btn-primary btn-lg" 
+                            @onclick="SubmitAnswer"
+                            disabled="@(!IsValidGuess())">
+                        Submit Answer
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+
+    [Parameter]
+    public ClientGuessTheNumberQuestion? Question { get; set; }
+
+    [Parameter]
+    public EventCallback<ClientAnswer> OnAnswerSubmit { get; set; }
+
+    private int? userGuess;
+
+    private bool IsValidGuess()
+    {
+        if (!userGuess.HasValue || Question == null) return false;
+        return userGuess.Value >= Question.MinValue && userGuess.Value <= Question.MaxValue;
+    }
+
+    private async Task SubmitAnswer()
+    {
+        if (!IsValidGuess()) return;
+        
+        var answer = new ClientGuessTheNumberAnswer
+        {
+            Answer = userGuess!.Value
+        };
+        await OnAnswerSubmit.InvokeAsync(answer);
+    }
+
+}

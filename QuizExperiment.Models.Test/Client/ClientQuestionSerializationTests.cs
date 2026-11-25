@@ -34,6 +34,31 @@ namespace QuizExperiment.Models.Test
         }
 
         [Fact]
+        public void Serialize_GuessTheNumberQuestion_Sets_QuestionType()
+        {
+            // Arrange
+            var question = new ClientGuessTheNumberQuestion
+            {
+                Title = "Guess the number",
+                ImageUrl = "https://example.com/image.png",
+                MinValue = 1,
+                MaxValue = 100
+            };
+
+            // Serialize as base type to ensure questionType is included
+            var outputJson = JsonSerializer.Serialize<ClientQuestion>(question);
+
+            // Output
+            Console.WriteLine("Serialized JSON:\n" + outputJson);
+
+            using var doc = JsonDocument.Parse(outputJson);
+
+            Assert.True(doc.RootElement.TryGetProperty("questionType", out var typeProperty),
+                    $"A question is missing the 'questionType' property: {question}");
+            Assert.Equal("guessTheNumber", typeProperty.GetString());
+        }
+
+        [Fact]
         public void SayWhatYouSeeStringEqualityComparer_IsCaseInsensitive()
         {
             // Arrange

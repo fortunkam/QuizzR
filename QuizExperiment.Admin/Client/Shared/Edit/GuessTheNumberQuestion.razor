@@ -1,0 +1,45 @@
+@using QuizModels = QuizExperiment.Models
+@using System.Text.Json
+@inject HttpClient Http
+
+@if (Question is not null)
+{
+    var guessTheNumberQuestion = Question as QuizModels.GuessTheNumberQuestion;
+    if (guessTheNumberQuestion is not null)
+    {
+        <CommonQuestion Question="Question" />
+        <div class="quiz-edit-question-answers-table-container flex-fill flex-grow-1">
+            <table class="table table-bordered quiz-edit-question-answers-table">
+                <thead>
+                    <th colspan="2">ANSWER RANGE</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="quiz-edit-question-answers-table-answer">
+                            <label>Minimum Value:</label>
+                            <input type="number" class="form-control quiz-edit-question-input-answer"
+                                   placeholder="Min" required="required" @bind-value="guessTheNumberQuestion.MinValue" />
+                        </td>
+                        <td class="quiz-edit-question-answers-table-answer">
+                            <label>Maximum Value:</label>
+                            <input type="number" class="form-control quiz-edit-question-input-answer"
+                                   placeholder="Max" required="required" @bind-value="guessTheNumberQuestion.MaxValue" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="quiz-edit-question-answers-table-answer">
+                            <label>Correct Answer:</label>
+                            <input type="number" class="form-control quiz-edit-question-input-answer"
+                                   placeholder="Correct Answer" required="required" @bind-value="guessTheNumberQuestion.CorrectAnswer" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public QuizModels.Question? Question { get; set; }
+}

@@ -87,6 +87,10 @@
                         {
                             <SayWhatYouSeeQuestion Question="_currentQuestion" />
                         }
+                        else if (_currentQuestion is QuizModels.GuessTheNumberQuestion)
+                        {
+                            <GuessTheNumberQuestion Question="_currentQuestion" />
+                        }
                         else
                         {
                             <div class="d-flex flex-column align-items-center">
@@ -151,6 +155,15 @@
                 ImageUrl = "",
                 Title = "",
                 // Add any other default properties for SayWhatYouSeeQuestion here
+            },
+            "guessTheNumber" => new QuizModels.GuessTheNumberQuestion()
+            {
+                Timeout = 30,
+                ImageUrl = "",
+                Title = "",
+                MinValue = 0,
+                MaxValue = 100,
+                CorrectAnswer = 50
             },
             _ => new QuizModels.MultipleChoiceQuestion()
             {
